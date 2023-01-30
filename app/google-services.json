@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1049464705887",
+    "firebase_url": "https://unison-33b45.firebaseio.com",
+    "project_id": "unison-33b45",
+    "storage_bucket": "unison-33b45.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049464705887:android:b3fe1e336ab6207b",
+        "android_client_info": {
+          "package_name": "com.unisonpharmaceuticals"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049464705887-3i9q6g4nm5fpuocn5qmu1s9djcll7avk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unisonpharmaceuticals",
+            "certificate_hash": "632eb78ed09782d4ff3a483a0a80fc927b2c0363"
+          }
+        },
+        {
+          "client_id": "1049464705887-p6t4ml07k3l812tm43fq8kq0kurqt5eg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8-sUgaw1vIK1nI7GE40kiDDr900BDecI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049464705887-p6t4ml07k3l812tm43fq8kq0kurqt5eg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

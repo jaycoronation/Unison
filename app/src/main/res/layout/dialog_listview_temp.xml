@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_gravity="center"
+              android:layout_marginLeft="5dp"
+              android:layout_marginRight="5dp"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:focusable="false"
+              android:focusableInTouchMode="true">
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_corner_left_right"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+        <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_close_light_primary"
+                android:layout_gravity="center|start"/>
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+                android:id="@+id/txtHeader_Dialog_ListView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Task"
+                android:textColor="@color/light_primary"
+                android:textSize="18sp"/>
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+                android:id="@+id/txtSubmitDialog"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:text="DONE"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:visibility="invisible"/>
+    </FrameLayout>
+
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingTop="8dp">
+        <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search..."
+                android:theme="@style/TextLabelForm">
+
+            <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtSearch_Dialog_ListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawableRight="@drawable/ic_search"
+                    android:drawablePadding="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main"/>
+        </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+        <com.unisonpharmaceuticals.views.BottomSheetListView
+                android:id="@+id/lv_Dialog"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:divider="@null"
+                android:scrollbars="none"
+                android:visibility="visible"/>
+    </LinearLayout>
+
+</LinearLayout>

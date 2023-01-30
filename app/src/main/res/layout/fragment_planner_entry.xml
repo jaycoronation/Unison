@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar_manager"
+        layout="@layout/toolbar"
+        android:visibility="gone" />
+
+    <include layout="@layout/layout_loading_transparent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputPlanDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Planning Date"
+                android:theme="@style/TextLabelForm">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtPlanDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_date"
+                    android:drawableRight="@drawable/ic_calendar"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputEmployee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Employee"
+                android:theme="@style/TextLabelForm">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtEmployee"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_employee"
+                    android:drawableRight="@drawable/ic_dropdown"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Area"
+                android:theme="@style/TextLabelForm">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:drawableRight="@drawable/ic_dropdown"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputSpeciality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Doctor Speciality"
+                android:theme="@style/TextLabelForm">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtDoctorSpeciality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_speciality"
+                    android:drawableRight="@drawable/ic_dropdown"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputDoctor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Doctor"
+                android:theme="@style/TextLabelForm">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtDoctor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_doctor"
+                    android:drawableRight="@drawable/ic_dropdown"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/llWorkWith"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/ivEmployee"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_employee_selector" />
+
+                    <com.unisonpharmaceuticals.views.RegularTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Work With Self"
+                        android:textColor="@color/text_sub" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <CheckBox
+                        android:id="@+id/cbWorkWith"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/checkbox"
+                        android:checked="true"
+                        android:textColor="@color/text_main" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/viewWorkWith"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@drawable/edt_bottom_drawable" />
+            </LinearLayout>
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputWorkWith"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Work With"
+                android:theme="@style/TextLabelForm"
+                android:visibility="gone">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtWorkWith"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableLeft="@drawable/ic_workwith"
+                    android:drawableRight="@drawable/ic_dropdown"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textAllCaps="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+            <com.unisonpharmaceuticals.views.RegularTextView
+                android:id="@+id/tvNoPlan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="No Data Found!"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPlan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:nestedScrollingEnabled="false" />
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="horizontal">
+
+                    <com.unisonpharmaceuticals.views.RegularTextView
+                        android:id="@+id/tvAddPlan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/btn_selector"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="12dp"
+                        android:text="Add Plan"
+                        android:textColor="@drawable/primary_white_text_selector" />
+
+                    <com.unisonpharmaceuticals.views.RegularTextView
+                        android:id="@+id/tvConfirmPlan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/btn_selector"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="12dp"
+                        android:text="Confirm Plan"
+                        android:textColor="@drawable/primary_white_text_selector"
+                        android:visibility="gone" />
+
+                    <com.unisonpharmaceuticals.views.RegularTextView
+                        android:id="@+id/tvApprovePlan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/btn_selector"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="12dp"
+                        android:text="Approve Plan"
+                        android:textColor="@drawable/primary_white_text_selector"
+                        android:visibility="gone" />
+
+                    <com.unisonpharmaceuticals.views.RegularTextView
+                        android:id="@+id/tvCancelPlan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/btn_black_selector"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="12dp"
+                        android:text="Reset"
+                        android:textColor="@drawable/black_white_text_selecetor" />
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

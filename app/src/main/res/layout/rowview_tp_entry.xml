@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+    <androidx.cardview.widget.CardView
+            android:id="@+id/card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="2dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="1dp">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+            <com.unisonpharmaceuticals.views.SemiBoldTextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1 July, 2017 - Wednesday"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                        android:id="@+id/inputTPArea"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/TextLabelROW"
+                        android:hint="Select TP Area">
+                    <com.unisonpharmaceuticals.views.RegularEditText
+                            android:id="@+id/edtTPArea"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingStart="5dp"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_sub"
+                            android:drawableRight="@drawable/ic_dropdown"
+                            android:singleLine="true"
+                            android:focusable="false"/>
+                </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+                <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                        android:id="@+id/inputTPWW"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/TextLabelROW"
+                        android:hint="Select Work With">
+                    <com.unisonpharmaceuticals.views.RegularEditText
+                            android:id="@+id/edtTPWW"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingStart="5dp"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_sub"
+                            android:drawableRight="@drawable/ic_dropdown"
+                            android:singleLine="true"
+                            android:focusable="false"/>
+                </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:orientation="horizontal">
+                <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                        android:id="@+id/inputRemark"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/TextLabelROW">
+                    <com.unisonpharmaceuticals.views.RegularEditText
+                            android:id="@+id/edtRemark"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingStart="5dp"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_sub"
+                            android:hint="Remark"
+                            android:singleLine="true"/>
+                </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+                    <CheckBox
+                            android:id="@+id/cbLeave"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|start"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="20dp"
+                            android:textColor="@color/text_main"
+                            android:text="Leave"
+                            android:paddingLeft="10dp"
+                            android:textSize="12sp"
+                            android:button="@drawable/checkbox"/>
+                    <CheckBox
+                            android:id="@+id/cbHoliday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_main"
+                            android:text="Holiday"
+                            android:paddingLeft="10dp"
+                            android:textSize="12sp"
+                            android:button="@drawable/checkbox"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

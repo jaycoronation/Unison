@@ -1,0 +1,1 @@
+alter table DBDoctor add SPECIALITY TEXT;

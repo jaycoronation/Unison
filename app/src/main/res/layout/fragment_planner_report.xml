@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar_manager"
+        layout="@layout/toolbar"
+        android:visibility="gone" />
+
+    <include layout="@layout/layout_loading" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputPlanDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Planning Date"
+                android:theme="@style/TextLabelForm">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtPlanDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawableLeft="@drawable/ic_date"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/ic_calendar"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+
+            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                android:id="@+id/inputEmployee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Employee"
+                android:theme="@style/TextLabelForm">
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                    android:id="@+id/edtEmployee"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableBottom="@drawable/edt_bottom_drawable"
+                    android:drawableLeft="@drawable/ic_employee"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/ic_dropdown"
+                    android:focusable="false"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_main" />
+            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+            <com.unisonpharmaceuticals.views.RegularTextView
+                android:id="@+id/tvGenerateReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_selector"
+                android:paddingBottom="12dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="12dp"
+                android:text="Generate Report"
+                android:textColor="@drawable/primary_white_text_selector" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

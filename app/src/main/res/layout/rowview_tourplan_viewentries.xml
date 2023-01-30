@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/llTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Details"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Sr No"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone" />
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Date"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <!--<com.unison.views.SemiBoldTextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:text="TP Name"
+                android:textColor="@color/white"/>
+
+        <View
+                android:layout_width="0.3dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"/>
+
+        <com.unison.views.SemiBoldTextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:text="City"
+                android:textColor="@color/white"/>
+
+        <View
+                android:layout_width="0.3dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"/>-->
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Area"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <!-- <com.unison.views.SemiBoldTextView
+                 android:layout_width="80dp"
+                 android:layout_height="wrap_content"
+                 android:padding="8dp"
+                 android:textSize="14sp"
+                 android:gravity="center"
+                 android:text="H/O/E"
+                 android:textColor="@color/white"/>
+
+         <View
+                 android:layout_width="0.3dp"
+                 android:layout_height="match_parent"
+                 android:background="@color/white"/>-->
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Work With"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="From City"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="To City"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <com.unisonpharmaceuticals.views.SemiBoldTextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Remark"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+        <com.unisonpharmaceuticals.views.BoldTextView
+            android:id="@+id/tvDetails"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/tvSrNo"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub"
+            android:visibility="gone" />
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/tvDate"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+        <!--<com.unison.views.RegularTextView
+                android:id="@+id/tvTPName"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:textSize="12sp"
+                android:minLines="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+
+                android:textColor="@color/text_main"/>
+
+        <View
+                android:layout_width="0.3dp"
+                android:layout_height="match_parent"
+                android:background="@color/text_sub"/>
+
+        <com.unison.views.RegularTextView
+                android:id="@+id/tvCity"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:textSize="12sp"
+                android:minLines="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+
+                android:textColor="@color/text_main"/>
+
+        <View
+                android:layout_width="0.3dp"
+                android:layout_height="match_parent"
+                android:background="@color/text_sub"/>-->
+
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/tvArea"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+        <!--<com.unison.views.RegularTextView
+                android:id="@+id/tvHorE"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_gravity="center"
+                android:textSize="12sp"
+                android:minLines="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:gravity="center"
+
+                android:textColor="@color/text_main"/>
+
+        <View
+                android:layout_width="0.3dp"
+                android:layout_height="match_parent"
+                android:background="@color/text_sub"/>-->
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/tvWorkWith"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/tvFromCity"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/tvToCity"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/tvRemark"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="8dp"
+            android:textColor="@color/text_main"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0.3dp"
+            android:layout_height="match_parent"
+            android:background="@color/text_sub" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.3dp"
+        android:background="@color/text_sub" />
+</LinearLayout>

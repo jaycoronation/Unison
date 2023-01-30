@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent" android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:focusableInTouchMode="true"
+              android:focusable="false"
+              tools:context=".activity.MobileNumberActivity">
+    <include layout="@layout/layout_loading"/>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/img_bg"
+                android:scaleType="centerCrop"/>
+        <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_margin="20dp"
+                    android:orientation="vertical">
+
+                <ImageView
+                        android:layout_width="200dp"
+                        android:layout_height="100dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_logo_white"/>
+
+                <com.unisonpharmaceuticals.views.BoldTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:padding="3dp"
+                        android:gravity="center"
+                        android:text="Welcome to Unison"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"/>
+
+                <com.unisonpharmaceuticals.views.RegularTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:text="Please enter your mobile number to continue.You will receive OTP via SMS."
+                        android:textSize="16sp"
+                        android:textColor="@color/white"/>
+
+                <com.unisonpharmaceuticals.views.CustomTextInputLayout
+                        android:id="@+id/inputMobile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="30dp"
+                        android:theme="@style/TextLabel">
+
+                    <com.unisonpharmaceuticals.views.RegularEditText
+                            android:id="@+id/edtMobile"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Mobile Number"
+                            android:inputType="number"
+                            android:maxLength="10"
+                            android:textColor="@color/white"
+                            android:singleLine="true"/>
+                </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+
+                <com.unisonpharmaceuticals.views.BoldTextView
+                        android:id="@+id/btnSubmit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingLeft="30dp"
+                        android:paddingRight="30dp"
+                        android:paddingBottom="16dp"
+                        android:paddingTop="16dp"
+                        android:gravity="center"
+                        android:layout_marginTop="32dp"
+                        android:background="@drawable/login_btn_selector"
+                        android:text="Continue"
+                        android:textColor="@drawable/primary_white_text_selector"/>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+        <include layout="@layout/layout_loading"/>
+    </FrameLayout>
+</LinearLayout>

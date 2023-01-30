@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+    <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <LinearLayout
+                    android:id="@+id/llTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@color/colorPrimary"
+                    android:baselineAligned="false">
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+
+                <com.unisonpharmaceuticals.views.SemiBoldTextView
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:text="Date"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"/>
+
+                <com.unisonpharmaceuticals.views.SemiBoldTextView
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:textSize="14sp"
+                        android:text="TP Area"
+                        android:textColor="@color/white"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"/>
+
+                <com.unisonpharmaceuticals.views.SemiBoldTextView
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:textSize="14sp"
+                        android:text="Work With"
+                        android:textColor="@color/white"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"/>
+
+                <com.unisonpharmaceuticals.views.SemiBoldTextView
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:text="Remark"
+                        android:textColor="@color/white"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"/>
+
+                <com.unisonpharmaceuticals.views.SemiBoldTextView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:text="Leave"
+                        android:textColor="@color/white"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"/>
+
+                <com.unisonpharmaceuticals.views.SemiBoldTextView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Holiday"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@color/white">
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+
+                <com.unisonpharmaceuticals.views.RegularTextView
+                        android:id="@+id/tvDate"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:padding="8dp"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_main"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                        android:id="@+id/edtTPArea"
+                        android:layout_width="170dp"
+                        android:hint="Select TP Area"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_dark_gray"
+                        android:drawableRight="@drawable/ic_dropdown"
+                        android:singleLine="true"
+                        android:minLines="1"
+                        android:maxLines="1"
+                        android:focusable="false"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                        android:id="@+id/edtTPWW"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Select Work With"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_dark_gray"
+                        android:drawableRight="@drawable/ic_dropdown"
+                        android:singleLine="true"
+                        android:focusable="false"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+
+                <com.unisonpharmaceuticals.views.RegularEditText
+                        android:id="@+id/edtRemark"
+                        android:layout_width="150dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:focusable="false"
+                        android:textColor="@color/text_dark_gray"
+                        android:hint="Remark"
+                        android:singleLine="true"/>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+
+
+                <LinearLayout
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center">
+
+                    <CheckBox
+                            android:id="@+id/cbLeave"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textColor="@color/text_main"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:button="@drawable/checkbox"/>
+                </LinearLayout>
+
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+
+                <LinearLayout
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center">
+
+                    <CheckBox
+                            android:id="@+id/cbHoliday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_main"
+                            android:textSize="12sp"
+                            android:button="@drawable/checkbox"/>
+                </LinearLayout>
+
+                <View
+                        android:layout_width="0.3dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/text_sub"/>
+            </LinearLayout>
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.3dp"
+                    android:background="@color/text_sub"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

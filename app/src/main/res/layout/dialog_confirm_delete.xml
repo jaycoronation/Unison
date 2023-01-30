@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fontpath="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/white_curve_bg"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/txtHeader_Dialog_Delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:background="@color/colorPrimary"
+            android:gravity="center|left"
+            android:paddingBottom="8dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="8dp"
+            android:text="Delete Entry"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+        <com.unisonpharmaceuticals.views.RegularTextView
+            android:id="@+id/txtHeader2_Dialog_Delete"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|left"
+            android:layout_marginTop="15dp"
+            android:gravity="center|left"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="Do you want to Delete?"
+            android:textColor="@color/text_dark_gray"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center|right"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnNo_Dialog_Confirm"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="5dp"
+                android:background="@null"
+                android:text="NO"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/btnYes_Dialog_Confirm"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:background="@null"
+                android:text="YES"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

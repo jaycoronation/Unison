@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#019ce4</color>
+    <color name="colorPrimaryDark">#0080c0</color>
+    <color name="colorAccent">#000000</color>
+
+    <color name="light_primary">#b9e2f7</color>
+
+    <color name="app_green">#00b578</color>
+    <color name="app_red">#d70c1d</color>
+    <color name="app_yellow">#ddb425</color>
+
+    <color name="yellow">#FFFF00</color>
+
+    <color name="text_main">#414142</color>
+    <color name="text_sub">#a8a9ad</color>
+
+    <color name="bg_transparent">#3320A1D9</color>
+    <color name="bg_light">#1620a1d9</color>
+    <color name="bg_light2">#29b1aeae</color>
+    <color name="bg_gray">#10666666</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="bg_main_light">#F2F2F2</color>
+    <color name="bg_main_dark">#E9E9E9</color>
+    <color name="text_dark_gray">#444444</color>
+    <color name="text_semidark_gray">#666666</color>
+    <color name="text_light_gray">#999999</color>
+    <color name="text_disabled">#BDBDBD</color>
+
+    <color name="bg_sunday">#b0e1df</color>
+    <color name="bg_holiday">#99ffcc</color>
+    <color name="bg_leave">#e7fbd2</color>
+    <color name="bg_extra_tp_area">#20a1d9</color>
+
+    <color name="roboto_calendar_background">#FFFFFF</color>
+    <color name="roboto_calendar_month_font">#2A99BC</color>
+    <color name="roboto_calendar_day_of_the_week_font">#161d20</color>
+    <color name="roboto_calendar_selected_day_font">#FFFFFF</color>
+    <color name="roboto_calendar_selected_day_background">@color/light_primary</color>
+    <color name="roboto_calendar_current_day_ring">#e6e7e8</color>
+    <color name="roboto_calendar_day_of_the_month_font">#849ba9</color>
+    <color name="roboto_calendar_circle_1">#e98885</color>
+    <color name="roboto_calendar_circle_2">#55c6da</color>
+    <color name="roboto_calendar_month_arrow">#55c6da</color>
+
+
+    <color name="temp">#49ffffff</color>
+
+</resources>
