@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:datePickerDialogTheme" tools:targetApi="lollipop">@style/DialogTheme</item>
+        <item name="android:datePickerDialogTheme">@style/DialogTheme</item>
     </style>
 
     <style name="TextLabel" parent="Widget.Design.TextInputLayout"> <!-- Hint color and label color in FALSE state -->

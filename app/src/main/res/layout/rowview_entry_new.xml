@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:focusable="false"
-    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
@@ -23,69 +22,58 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtProduct"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/ic_product"
+                android:drawableEnd="@drawable/ic_dropdown"
+                android:drawableBottom="@drawable/edt_bottom_drawable"
+                android:drawablePadding="10dp"
+                android:focusable="false"
+                android:inputType="text"
                 android:hint="Product"
-                android:theme="@style/TextLabelForm">
+                android:textSize="@dimen/font_small"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_main" />
 
-                <com.unisonpharmaceuticals.views.RegularEditText
-                    android:id="@+id/edtProduct"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:drawableLeft="@drawable/ic_product"
-                    android:drawableRight="@drawable/ic_dropdown"
-                    android:drawableBottom="@drawable/edt_bottom_drawable"
-                    android:drawablePadding="10dp"
-                    android:focusable="false"
-                    android:padding="10dp"
-                    android:singleLine="true"
-                    android:textColor="@color/text_main" />
-            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
-
-            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtUnit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/ic_unit"
+                android:drawableBottom="@drawable/edt_bottom_drawable"
+                android:drawablePadding="10dp"
+                android:inputType="number"
+                android:padding="10dp"
                 android:hint="Unit"
-                android:theme="@style/TextLabelForm">
+                android:drawableEnd="@drawable/ic_dropdown"
+                android:focusable="false"
+                android:textSize="@dimen/font_small"
+                android:focusableInTouchMode="true"
+                android:singleLine="true"
+                android:textColor="@color/text_main" />
 
-                <com.unisonpharmaceuticals.views.RegularEditText
-                    android:id="@+id/edtUnit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:drawableLeft="@drawable/ic_unit"
-                    android:drawableBottom="@drawable/edt_bottom_drawable"
-                    android:drawablePadding="10dp"
-                    android:inputType="number"
-                    android:padding="10dp"
-                    android:singleLine="true"
-                    android:textColor="@color/text_main" />
-            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
-
-            <com.unisonpharmaceuticals.views.CustomTextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtReason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/ic_sample_new"
+                android:drawableEnd="@drawable/ic_dropdown"
+                android:drawableBottom="@drawable/edt_bottom_drawable"
+                android:drawablePadding="10dp"
+                android:focusable="false"
                 android:hint="Select Type Of Sample"
-                android:theme="@style/TextLabelForm">
-
-                <com.unisonpharmaceuticals.views.RegularEditText
-                    android:id="@+id/edtReason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:drawableLeft="@drawable/ic_sample_new"
-                    android:drawableRight="@drawable/ic_dropdown"
-                    android:drawableBottom="@drawable/edt_bottom_drawable"
-                    android:drawablePadding="10dp"
-                    android:focusable="false"
-                    android:inputType="number"
-                    android:padding="10dp"
-                    android:singleLine="true"
-                    android:text="R"
-                    android:textColor="@color/text_main" />
-            </com.unisonpharmaceuticals.views.CustomTextInputLayout>
+                android:inputType="number"
+                android:padding="10dp"
+                android:textSize="@dimen/font_small"
+                android:singleLine="true"
+                android:text="R"
+                android:textColor="@color/text_main" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

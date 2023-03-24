@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:nestedScrollingEnabled="false"
     android:paddingLeft="5dp"
     android:paddingRight="5dp">
 
@@ -64,6 +66,10 @@
             android:inputType="number"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/font_small"
+            android:maxLines="1"
+            android:maxLength="4"
+            android:focusableInTouchMode="true"
+            android:imeOptions="actionNext"
             android:visibility="invisible" />
 
     </LinearLayout>

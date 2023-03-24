@@ -38,12 +38,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -52,7 +50,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
@@ -60,6 +57,7 @@ import com.unisonpharmaceuticals.R;
 import com.unisonpharmaceuticals.activity.ActivityDailyCallReport;
 import com.unisonpharmaceuticals.activity.ActivityPendingEntry;
 import com.unisonpharmaceuticals.activity.NCRActivity;
+import com.unisonpharmaceuticals.activity.SelectProductActivity;
 import com.unisonpharmaceuticals.activity.ViewSubmittedEntryActivity;
 import com.unisonpharmaceuticals.classes.SessionManager;
 import com.unisonpharmaceuticals.databse.UnisonDatabaseHelper;
@@ -155,13 +153,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     // New parameter
     private EditText edtDBC, edtDoctor, edtWorkWith, edtArea,
-             edtInternee, edtSpeciality, edtEmployee,
+            edtInternee, edtSpeciality, edtEmployee,
             edtAdvice;
     public static EditText edtDate;
 
     private EditText edtRemarks;
 
-    private LinearLayout llSampleDetails, llAdvice,llPlannedEntry;
+    private LinearLayout llSampleDetails, llAdvice, llPlannedEntry;
 
     private View viewPlanner;
 
@@ -205,7 +203,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     private String product1 = "", product2 = "", product3 = "", product4 = "";
 
     public static Handler handlerNCR;
-    public static Handler handlerNCR1, areaHandler;
+    public static Handler handlerNCR1, areaHandler,productUnit;
 
     /*New*/
     private BottomSheetDialog listDialog;
@@ -230,11 +228,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     private ArrayList<WorkWithResponse.StaffBean> listWorkWith = new ArrayList<>();
     private ArrayList<WorkWithResponse.StaffBean> listWorkWithSearch = new ArrayList<>();
 
-    private ArrayList<VariationResponse.VariationsBean> listVariation = new ArrayList<>();
+    public  ArrayList<VariationResponse.VariationsBean> listVariation = new ArrayList<>();
     private ArrayList<VariationResponse.VariationsBean> listVariationSearch = new ArrayList<>();
 
-    private ArrayList<ReasonResponse.ReasonsBean> listReason = new ArrayList<>();
-    private ArrayList<VariationResponse.VariationsBean> listSelectedProducts = new ArrayList<>();
+    public  ArrayList<ReasonResponse.ReasonsBean> listReason = new ArrayList<>();
+    public  ArrayList<VariationResponse.VariationsBean> listSelectedProducts = new ArrayList<>();
 
     private ArrayList<StaffResponse.StaffBean> listEmployee = new ArrayList<>();
     private ArrayList<StaffResponse.StaffBean> listEmployeeSearch = new ArrayList<>();
@@ -244,6 +242,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     private RecyclerView rvVariation;
     private VariationAdapter variationAdapter;
+
     ProductUnitAdapter productUnitAdapter;
 
     private String NCRDrData = "";
@@ -257,7 +256,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     int apiCounts = 0;
 
-    private boolean isLoading = false , isPlannerClicked = false, isNCREntry = false;
+    private boolean isLoading = false, isPlannerClicked = false, isNCREntry = false;
 
     private long mLastClickTime = 0;
 
@@ -293,8 +292,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         handlerNCR1 = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                if (msg.what == 111)
-                {
+                if (msg.what == 111) {
                     NCRDrData = String.valueOf(msg.obj);
                     isNCREntry = true;
                 }
@@ -305,55 +303,16 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         areaHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                if (msg.what == 111)
-                {
+                if (msg.what == 111) {
                     int size = (int) msg.obj;
                     if (size > 0) {
                         ActivityDailyCallReport.ivAddArea.setVisibility(View.VISIBLE);
                     } else {
                         ActivityDailyCallReport.ivAddArea.setVisibility(View.GONE);
                     }
-                }
-                else if(msg.what==112)
-                {
+                } else if (msg.what == 112) {
                     if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)
-                            && listArea.size()>0)//Working manager
-                    {
-                        Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
-                        dataCall.enqueue(new Callback<SubmittedResponse>() {
-                            @Override
-                            public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
-                                try {
-                                    if (response.body().getSuccess() == 1)
-                                    {
-                                        List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
-                                        if (listData.size() > 0) {
-                                            if (listSubmitedEntryOfDr != null) {
-                                                sessionManager.setCallDoneFromTP("true");
-                                                for (int i = 0; i < listData.size(); i++)
-                                                {
-                                                    DrDcrGetSet getSet = new DrDcrGetSet();
-                                                    getSet.setDrId(listData.get(i).getDoctor_id());
-                                                    getSet.setDrName(listData.get(i).getDoctor_name());
-                                                    getSet.setReportType(listData.get(i).getReport_type());
-                                                    listSubmitedEntryOfDr.add(getSet);
-                                                }
-                                            }
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<SubmittedResponse> call, Throwable t) {
-                                isLoading = false;
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                            }
-                        });
-                    }
-                    else if(sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR))
+                            && listArea.size() > 0)//Working manager
                     {
                         Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
                         dataCall.enqueue(new Callback<SubmittedResponse>() {
@@ -375,7 +334,41 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                             }
                                         }
                                     }
-                                } catch (Exception e) {
+                                }
+                                catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<SubmittedResponse> call, Throwable t) {
+                                isLoading = false;
+                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                            }
+                        });
+                    } else if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR)) {
+                        Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
+                        dataCall.enqueue(new Callback<SubmittedResponse>() {
+                            @Override
+                            public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
+                                try {
+                                    if (response.body().getSuccess() == 1) {
+                                        List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
+                                        if (listData.size() > 0) {
+                                            if (listSubmitedEntryOfDr != null) {
+                                                sessionManager.setCallDoneFromTP("true");
+                                                for (int i = 0; i < listData.size(); i++) {
+                                                    DrDcrGetSet getSet = new DrDcrGetSet();
+                                                    getSet.setDrId(listData.get(i).getDoctor_id());
+                                                    getSet.setDrName(listData.get(i).getDoctor_name());
+                                                    getSet.setReportType(listData.get(i).getReport_type());
+                                                    listSubmitedEntryOfDr.add(getSet);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -387,26 +380,19 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             }
                         });
                     }
-                }
-                else if(msg.what==113)
-                {
+                } else if (msg.what == 113) {
                     try {
-                        if (sessionManager.getDayEnd().equals("false"))
-                        {
-                            if (sessionManager.getCallDoneFromTP().equalsIgnoreCase("true"))
-                            {
+                        if (sessionManager.getDayEnd().equals("false")) {
+                            if (sessionManager.getCallDoneFromTP().equalsIgnoreCase("true")) {
                                 showListDialog(ADD_AREA);
-                            }
-                            else
-                            {
+                            } else {
                                 AppUtils.showToast(activity, "To add area, You should have done atleast one call from your current tourplan.");
                             }
+                        } else {
+                            AppUtils.showToast(activity, "Your day has been ended by you.Kindly try again tomorrow.");
                         }
-                        else
-                        {
-                            AppUtils.showToast(activity,"Your day has been ended by you.Kindly try again tomorrow.");
-                        }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -417,8 +403,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         handlerNCR = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                if (msg.what == 111)
-                {
+                if (msg.what == 111) {
                     inputDoctor.setVisibility(View.VISIBLE);
                     edtDoctor.setText((String) msg.obj);
                     inputDoctor.setEnabled(false);
@@ -428,18 +413,14 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                     ActivityDailyCallReport.ncrDoctorName = (String) msg.obj;
                     ActivityDailyCallReport.ncrDoctorId = "0";
-                }
-                else if (msg.what == 101)
-                {
-                    if(sessionManager.isNetworkAvailable())
-                    {
+                } else if (msg.what == 101) {
+                    if (sessionManager.isNetworkAvailable()) {
                         Call<VariationResponse> variationCall = apiService.getVarioationProducts(sessionManager.getUserId(), sessionManager.getUserId(), "false");
                         variationCall.enqueue(new Callback<VariationResponse>() {
                             @Override
                             public void onResponse(Call<VariationResponse> call, Response<VariationResponse> response) {
                                 try {
-                                    if (response.body().getSuccess() == 1)
-                                    {
+                                    if (response.body().getSuccess() == 1) {
                                         listVariation = (ArrayList<VariationResponse.VariationsBean>) response.body().getVariations();
                                         try {
 
@@ -459,15 +440,15 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                                         bean.getItem_id_code());
                                                 variation.save();
                                             }
-                                        } catch (Exception e) {
+                                        }
+                                        catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
                                     }
-                                } catch (Exception e) {
+                                }
+                                catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -507,6 +488,77 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         });
 
+        productUnit = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == 666) {
+                    try {
+                        ArrayList<VariationResponse.VariationsBean> listSelected = (ArrayList<VariationResponse.VariationsBean>) msg.obj;
+                        int isSelected = msg.arg1;
+                        boolean isSelectAll = false;
+                        if(isSelected == 1)
+                        {
+                            isSelectAll = true;
+                        }
+
+                      //  Log.e("<><> listSelected : " ,listSelected.size() + " <><>");
+                        //AppUtils.hideKeyboardNew(activity);
+                        if (listSelected.size() > 0) {
+                            if (isSelectAll) {
+                                if (listSelectedProducts == null) {
+                                    listSelectedProducts = new ArrayList<>();
+                                }
+
+                                listSelectedProducts.clear();
+
+                                for (int i = 0; i < listSelected.size(); i++) {
+                                    listSelectedProducts.add(listSelected.get(i));
+                                }
+
+                                txtAddCount.setText(String.valueOf(listSelectedProducts.size()));
+                                variationAdapter = new VariationAdapter(listSelectedProducts);
+                                rvVariation.setAdapter(variationAdapter);
+                            } else {
+                                AppUtils.showToast(activity, "Please enter unit for all samples.");
+                            }
+                        }
+                        else {
+                            AppUtils.showToast(activity, "Please Select atleast One sample.");
+                            txtAddCount.setText("1");
+                            listSelectedProducts = new ArrayList<>();
+                            ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                            VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                            bean.setStock("");
+                            bean.setItem_code("");
+                            bean.setItem_id_code("");
+                            bean.setProduct_id("0");
+                            bean.setReason("Regular Sample");
+                            bean.setReason_code("R");
+                            bean.setName("Product");
+                            listTemp.add(bean);
+                            variationAdapter = new VariationAdapter(listTemp);
+                            rvVariation.setAdapter(variationAdapter);
+                            for (int i = 0; i < listVariation.size(); i++) {
+                                VariationResponse.VariationsBean bean1 = listVariation.get(i);
+                                bean1.setStock("");
+                                bean1.setChecked(false);
+                                //Added for not take previous reason 7_3_19
+                                bean1.setReason("");
+                                bean1.setReason_code("R");
+                                listVariation.set(i, bean1);
+                            }
+
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                return false;
+            }
+        });
+
         return rootView;
     }
 
@@ -532,16 +584,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
 
                 try {
-                    if(!sessionManager.getArea().equalsIgnoreCase("") || sessionManager.getArea()!=null)
-                    {
+                    if (!sessionManager.getArea().equalsIgnoreCase("") || sessionManager.getArea() != null) {
                         JSONArray jsonArray = new JSONArray(sessionManager.getArea());
-                        if(jsonArray.length()>0)
-                        {
-                            for (int i = 0; i < jsonArray.length(); i++)
-                            {
+                        if (jsonArray.length() > 0) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject object = (JSONObject) jsonArray.get(i);
-                                if(object.getString("is_tour_plan").equalsIgnoreCase("0"))
-                                {
+                                if (object.getString("is_tour_plan").equalsIgnoreCase("0")) {
                                     AreaResponse.AreasBean bean = new AreaResponse.AreasBean();
                                     bean.setArea_id(object.getString("area_id"));
                                     bean.setArea(object.getString("area"));
@@ -554,7 +602,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             message.what = 111;
                             message.obj = listAreaForAdd.size();
                             areaHandler.sendMessage(message);
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -588,7 +637,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }*/
 
 
-
                 listEmployee.clear();
                 List<DBStaff> listEmployeeFromDb = DBStaff.listAll(DBStaff.class);
                 String empName = "";
@@ -602,16 +650,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         bean.setStaff_id(listEmployeeFromDb.get(i).getStaff_id());
                         bean.setDesignation(listEmployeeFromDb.get(i).getDesignation());
                         if (i == 0) {
-                            empName = listEmployeeFromDb.get(i).getName()+""+listEmployeeFromDb.get(i).getStaff_id();
+                            empName = listEmployeeFromDb.get(i).getName() + "" + listEmployeeFromDb.get(i).getStaff_id();
                         } else {
-                            empName = empName + "," + listEmployeeFromDb.get(i).getName()+""+listEmployeeFromDb.get(i).getStaff_id();
+                            empName = empName + "," + listEmployeeFromDb.get(i).getName() + "" + listEmployeeFromDb.get(i).getStaff_id();
                         }
 
                         if (!bean.getStaff_id().equalsIgnoreCase(sessionManager.getUserId())) {
                             listEmployee.add(bean);
                         }
 
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -627,9 +676,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     specialityBean.setSpeciality(listSpecialityFromDb.get(i).getSpeciality());
                     specialityBean.setSpeciality_id(listSpecialityFromDb.get(i).getSpeciality_id());
                     if (i == 0) {
-                        speciality = listSpecialityFromDb.get(i).getSpeciality_id()+""+listSpecialityFromDb.get(i).getSpeciality();
+                        speciality = listSpecialityFromDb.get(i).getSpeciality_id() + "" + listSpecialityFromDb.get(i).getSpeciality();
                     } else {
-                        speciality = speciality + "," + listSpecialityFromDb.get(i).getSpeciality_id()+""+listSpecialityFromDb.get(i).getSpeciality();
+                        speciality = speciality + "," + listSpecialityFromDb.get(i).getSpeciality_id() + "" + listSpecialityFromDb.get(i).getSpeciality();
                     }
                     listSpeciality.add(specialityBean);
                 }
@@ -644,7 +693,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         bean.setSpeciality_code(listDocotrFromDb.get(i).getSpeciality_code());
                         bean.setEnable_focus(listDocotrFromDb.get(i).getEnable_focus());
                         listDoctor.add(bean);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -657,9 +707,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         bean.setReport_code(listReportsFromDb.get(i).getReport_code());
                         bean.setReport_id(listReportsFromDb.get(i).getReport_id());
                         bean.setReport_name(listReportsFromDb.get(i).getReport_name());
-                       listReports.add(bean);
+                        listReports.add(bean);
 
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -673,7 +724,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         bean.setName(listWorkWithDB.get(i).getName());
                         bean.setDesignation(listWorkWithDB.get(i).getDesignation());
                         listWorkWith.add(bean);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -695,7 +747,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         bean.setStock(listVariationFromDB.get(i).getStock());
                         bean.setProduct_type(listVariationFromDB.get(i).getProduct_type());
                         listVariation.add(bean);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -712,7 +765,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         bean.setComment(listRasonFromDB.get(i).getComment());
                         bean.setReason_code(listRasonFromDB.get(i).getReason_code());
                         listReason.add(bean);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -723,8 +777,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
 
-                if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER))
-                {
+                if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
                     if (listArea.size() == 0)//Manager and blank if condition for working manager because working manager can male field entry
                     {
                         ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
@@ -757,10 +810,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         llSampleDetails.setVisibility(View.GONE);
                         rvVariation.setVisibility(View.GONE);
                     }//for off day
-                    else
-                    {
-                        if(sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1"))
-                        {
+                    else {
+                        if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
                             ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
                             for (int i = 0; i < listReports.size(); i++) {
                                 ReportResponse.ReportsBean bean = listReports.get(i);
@@ -842,17 +893,15 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             @Override
             public void run() {
                 isLoading = true;
-                Call<AreaResponse> loginCall = apiService.getAreaFromUserId("1000", sessionManager.getUserId(), sessionManager.getUserId(),"");
+                Call<AreaResponse> loginCall = apiService.getAreaFromUserId("1000", sessionManager.getUserId(), sessionManager.getUserId(), "");
                 loginCall.enqueue(new Callback<AreaResponse>() {
                     @Override
                     public void onResponse(Call<AreaResponse> call, Response<AreaResponse> response) {
                         try {
-                            if (response.body().getSuccess() == 1)
-                            {
+                            if (response.body().getSuccess() == 1) {
                                 ArrayList<AreaResponse.AreasBean> list = (ArrayList<AreaResponse.AreasBean>) response.body().getAreas();
 
-                                for (int i = 0; i < list.size(); i++)
-                                {
+                                for (int i = 0; i < list.size(); i++) {
                                     if (list.get(i).getIs_tour_plan().equalsIgnoreCase("1")) {
                                         listArea.add(list.get(i));
                                     } else {
@@ -867,7 +916,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     message.what = 111;
                                     message.obj = listAreaForAdd.size();
                                     areaHandler.sendMessage(message);
-                                } catch (Exception e) {
+                                }
+                                catch (Exception e) {
                                     e.printStackTrace();
                                 }
 
@@ -879,7 +929,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                             apiCounts = apiCounts + 1;
                             showLoader(apiCounts);
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -931,7 +982,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                         }
                                     }
 
-                                    Log.e("<><> listReports", String.valueOf(listReports.size()));
+                                   // Log.e("<><> listReports", String.valueOf(listReports.size()));
                                 }
                             } else {
                                 AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
@@ -939,7 +990,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             isLoading = false;
                             apiCounts = apiCounts + 1;
                             showLoader(apiCounts);
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -974,7 +1026,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             apiCounts = apiCounts + 1;
                             showLoader(apiCounts);
                             isLoading = false;
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -1004,7 +1057,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             apiCounts = apiCounts + 1;
                             showLoader(apiCounts);
                             isLoading = false;
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -1047,7 +1101,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                             reason.save();
                                         }
                                     }
-                                } catch (Exception e) {
+                                }
+                                catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             } else {
@@ -1057,7 +1112,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             isLoading = false;
                             apiCounts = apiCounts + 1;
                             showLoader(apiCounts);
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -1077,8 +1133,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     @Override
                     public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
                         try {
-                            if (response.body().getSuccess() == 1)
-                            {
+                            if (response.body().getSuccess() == 1) {
                                 List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
                                 if (listData.size() > 0) {
                                     if (listSubmitedEntryOfDr != null) {
@@ -1096,7 +1151,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             isLoading = false;
                             apiCounts = apiCounts + 1;
                             showLoader(apiCounts);
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -1141,7 +1197,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             isLoading = false;
                             apiCounts = apiCounts + 1;
                             showLoader(apiCounts);
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -1167,11 +1224,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                 if (counts == 7) {
                     llLoading.setVisibility(View.GONE);
-                    if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER))
-                    {
+                    if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
 
-                        if (listAreaAll.size() == 0)
-                        {
+                        if (listAreaAll.size() == 0) {
                             ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
                             for (int i = 0; i < listReports.size(); i++) {
                                 ReportResponse.ReportsBean bean = listReports.get(i);
@@ -1201,11 +1256,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             llNewCycle.setVisibility(View.GONE);
                             llSampleDetails.setVisibility(View.GONE);
                             rvVariation.setVisibility(View.GONE);
-                        }
-                        else//for add manager
+                        } else//for add manager
                         {
-                            if(sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1"))
-                            {
+                            if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
                                 ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
                                 for (int i = 0; i < listReports.size(); i++) {
                                     ReportResponse.ReportsBean bean = listReports.get(i);
@@ -1261,8 +1314,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
                 isLoading = false;
                 llLoading.setVisibility(View.GONE);
-                if(listSpeciality.size()>0)
-                {
+                if (listSpeciality.size() > 0) {
                     clickSpeciality();
                 }
             }
@@ -1285,19 +1337,16 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
 
             @Override
-            protected Void doInBackground(Void... voids)
-            {
-                Log.e("************", "doInBackground: "+areaCode );
+            protected Void doInBackground(Void... voids) {
+                Log.e("************", "doInBackground: " + areaCode);
 
                 listSpeciality.clear();
                 List<DBSpeciality> listSpecialityFromDb = DBSpeciality.listAll(DBSpeciality.class);
                 ArrayList<SpecialistBean.SpecialityBean> listTempSpec = new ArrayList<>();
                 List<DBDoctor> listDr = DBDoctor.listAll(DBDoctor.class);
-                for (int j = 0; j < listDr.size(); j++)
-                {
+                for (int j = 0; j < listDr.size(); j++) {
 
-                    if (areaCode.equalsIgnoreCase(listDr.get(j).getArea_id()))
-                    {
+                    if (areaCode.equalsIgnoreCase(listDr.get(j).getArea_id())) {
                         SpecialistBean.SpecialityBean specialityBean = new SpecialistBean.SpecialityBean();
                         specialityBean.setSpeciality(listDr.get(j).getSpeciality());
                         specialityBean.setSpeciality_id(listDr.get(j).getSpeciality_id());
@@ -1308,20 +1357,18 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
 
                 String speciality = "";
-                if(listTempSpec.size()>0)
-                {
-                    for (int i = 0; i < listTempSpec.size(); i++)
-                    {
-                        if (speciality.contains(listTempSpec.get(i).getSpeciality_id()+""+listTempSpec.get(i).getSpeciality())) {
+                if (listTempSpec.size() > 0) {
+                    for (int i = 0; i < listTempSpec.size(); i++) {
+                        if (speciality.contains(listTempSpec.get(i).getSpeciality_id() + "" + listTempSpec.get(i).getSpeciality())) {
                             continue;
                         }
                         SpecialistBean.SpecialityBean specialityBean = new SpecialistBean.SpecialityBean();
                         specialityBean.setSpeciality(listTempSpec.get(i).getSpeciality());
                         specialityBean.setSpeciality_id(listTempSpec.get(i).getSpeciality_id());
                         if (i == 0) {
-                            speciality = listTempSpec.get(i).getSpeciality_id()+""+listTempSpec.get(i).getSpeciality();
+                            speciality = listTempSpec.get(i).getSpeciality_id() + "" + listTempSpec.get(i).getSpeciality();
                         } else {
-                            speciality = speciality + " , " + listTempSpec.get(i).getSpeciality_id()+""+listTempSpec.get(i).getSpeciality();
+                            speciality = speciality + " , " + listTempSpec.get(i).getSpeciality_id() + "" + listTempSpec.get(i).getSpeciality();
                         }
 
                         listSpeciality.add(specialityBean);
@@ -1336,8 +1383,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 super.onPostExecute(aVoid);
                 llLoading.setVisibility(View.GONE);
 
-                if(listSpeciality.size()>0)
-                {
+                if (listSpeciality.size() > 0) {
                     Collections.sort(listSpeciality, new Comparator<SpecialistBean.SpecialityBean>() {
                         @Override
                         public int compare(SpecialistBean.SpecialityBean item, SpecialistBean.SpecialityBean t1) {
@@ -1354,19 +1400,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
-    public  ArrayList<SpecialistBean.SpecialityBean> removeDuplicates(List<SpecialistBean.SpecialityBean> l)
-    {
-        Set<SpecialistBean.SpecialityBean> s = new TreeSet<SpecialistBean.SpecialityBean>(new Comparator<SpecialistBean.SpecialityBean>()
-        {
+    public ArrayList<SpecialistBean.SpecialityBean> removeDuplicates(List<SpecialistBean.SpecialityBean> l) {
+        Set<SpecialistBean.SpecialityBean> s = new TreeSet<SpecialistBean.SpecialityBean>(new Comparator<SpecialistBean.SpecialityBean>() {
             @Override
-            public int compare(SpecialistBean.SpecialityBean o1, SpecialistBean.SpecialityBean o2)
-            {
-                if(o1.getSpeciality_id().equalsIgnoreCase(o2.getSpeciality_id()))
-                {
+            public int compare(SpecialistBean.SpecialityBean o1, SpecialistBean.SpecialityBean o2) {
+                if (o1.getSpeciality_id().equalsIgnoreCase(o2.getSpeciality_id())) {
                     return 0;
-                }
-                else
-                {
+                } else {
                     return 1;
                 }
             }
@@ -1378,17 +1418,15 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         //List<Object> res = Arrays.asList(s.toArray());
     }
 
-    private void getFilteredDocotrs(String specialityId)
-    {
-        Log.e("**********", "getFilteredDocotrs: "+specialityId );
+    private void getFilteredDocotrs(String specialityId) {
+        Log.e("**********", "getFilteredDocotrs: " + specialityId);
 
         llLoading.setVisibility(View.VISIBLE);
         listDoctor.clear();
         List<DBDoctor> listDr = DBDoctor.listAll(DBDoctor.class);
         for (int j = 0; j < listDr.size(); j++) {
             if (specialityId.equalsIgnoreCase(listDr.get(j).getSpeciality_id()) &&
-                    selectedAreaId.equalsIgnoreCase(listDr.get(j).getArea_id()))
-            {
+                    selectedAreaId.equalsIgnoreCase(listDr.get(j).getArea_id())) {
                 DoctorResponse.DoctorsBean bean = new DoctorResponse.DoctorsBean();
                 bean.setSpeciality_code(listDr.get(j).getSpeciality_code());
                 bean.setDoctor_id(listDr.get(j).getDoctor_id());
@@ -1398,8 +1436,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         }
 
-        if(listDoctor.size()>0)
-        {
+        if (listDoctor.size() > 0) {
             Collections.sort(listDoctor, new Comparator<DoctorResponse.DoctorsBean>() {
                 @Override
                 public int compare(DoctorResponse.DoctorsBean item, DoctorResponse.DoctorsBean t1) {
@@ -1414,8 +1451,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         llLoading.setVisibility(View.GONE);
     }
 
-    private void getDoctorFromSpeciality(String areaId, String specialityId)
-    {
+    private void getDoctorFromSpeciality(String areaId, String specialityId) {
         isLoading = true;
         llLoading.setVisibility(View.VISIBLE);
         listDoctor.clear();
@@ -1426,16 +1462,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 sessionManager.getUserId());
         doctorCall.enqueue(new Callback<DoctorResponse>() {
             @Override
-            public void onResponse(Call<DoctorResponse> call, Response<DoctorResponse> response)
-            {
+            public void onResponse(Call<DoctorResponse> call, Response<DoctorResponse> response) {
                 isLoading = false;
 
-                if (response.body().getSuccess() == 1)
-                {
+                if (response.body().getSuccess() == 1) {
                     listDoctor = (ArrayList<DoctorResponse.DoctorsBean>) response.body().getDoctors();
-                }
-                else
-                {
+                } else {
                     AppUtils.showToast(activity, response.body().getMessage());
                 }
             }
@@ -1450,8 +1482,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         llLoading.setVisibility(View.GONE);
     }
 
-    public void onClickListeners()
-    {
+    public void onClickListeners() {
        /* ActivityDailyCallReport.ivAddArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1501,20 +1532,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             ivAdd.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
                     try {
-                        if (variationAdapter != null)
-                        {
-                            if (listVariation.size() > 1)
-                            {
-                                Log.e("CODE::<< ", "onClick: "+selectedDoctorId  +"      "+selectedReportCode);
+                        if (variationAdapter != null) {
+                            if (listVariation.size() > 1) {
+                                Log.e("CODE::<< ", "onClick: " + selectedDoctorId + "      " + selectedReportCode);
 
-                                if(selectedReportCode.equalsIgnoreCase("DCR") ||
+                                if (selectedReportCode.equalsIgnoreCase("DCR") ||
                                         selectedReportCode.equalsIgnoreCase("ACR") ||
                                         selectedReportCode.equalsIgnoreCase("JCR") ||
                                         selectedReportCode.equalsIgnoreCase("LCR") ||
@@ -1522,32 +1550,21 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                         selectedReportCode.equalsIgnoreCase("SRD") ||
                                         selectedReportCode.equalsIgnoreCase("TNS") ||
                                         selectedReportCode.equalsIgnoreCase("XCR") ||
-                                        selectedReportCode.equalsIgnoreCase("ZCR"))
-                                {
-                                    if(isNCREntry)
-                                    {
+                                        selectedReportCode.equalsIgnoreCase("ZCR")) {
+                                    if (isNCREntry) {
                                         showDialog("Product", 0);
-                                    }
-                                    else
-                                    {
-                                        if(selectedDoctorId.equalsIgnoreCase(""))
-                                        {
-                                            AppUtils.showToast(activity,"Please select doctor first.");
-                                        }
-                                        else
-                                        {
+                                    } else {
+                                        if (selectedDoctorId.equalsIgnoreCase("")) {
+                                            AppUtils.showToast(activity, "Please select doctor first.");
+                                        } else {
                                             showDialog("Product", 0);
                                         }
                                     }
-                                }
-                                else if(selectedReportCode.equalsIgnoreCase("INT") ||
+                                } else if (selectedReportCode.equalsIgnoreCase("INT") ||
                                         selectedReportCode.equalsIgnoreCase("ROA") ||
-                                        selectedReportCode.equalsIgnoreCase("ROR"))
-                                {
+                                        selectedReportCode.equalsIgnoreCase("ROR")) {
                                     showDialog("Product", 0);
-                                }
-                                else
-                                {
+                                } else {
                                     showDialog("Product", 0);
                                 }
                                 //showDialog("Product", 0);
@@ -1555,7 +1572,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 AppUtils.showToast(activity, "No Products Found.");
                             }
                         }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -1581,7 +1599,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                 }
             });
-        } catch (Exception e1) {
+        }
+        catch (Exception e1) {
             e1.printStackTrace();
         }
 
@@ -1596,13 +1615,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 View viewWorkWith = activity.findViewById(R.id.viewWorkWith);
-                if (isChecked)
-                {
+                if (isChecked) {
                     inputWorkWith.setVisibility(View.GONE);
                     viewWorkWith.setVisibility(View.VISIBLE);
                     ivEmployee.setSelected(true);
-                } else
-                    {
+                } else {
                     inputWorkWith.setVisibility(View.VISIBLE);
                     viewWorkWith.setVisibility(View.GONE);
                     ivEmployee.setSelected(false);
@@ -1613,8 +1630,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         edtArea.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                try
-                {
+                try {
                     if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                         return;
                     }
@@ -1629,7 +1645,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                     }
 
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -1653,7 +1670,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                     }
 
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -1662,8 +1680,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
         edtSpeciality.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 clickSpeciality();
             }
         });
@@ -1685,7 +1702,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
                     datePicker(edtDate);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -1710,7 +1728,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             public void onClick(View v) {
                 try {
                     checkStoragePermission();
-                } catch (Exception e2) {
+                }
+                catch (Exception e2) {
                     e2.printStackTrace();
                 }
             }
@@ -1724,10 +1743,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
-                    if (sessionManager.getDayEnd().equals("false"))
-                    {
-                        if (validatePrimaryData())
-                        {
+                    if (sessionManager.getDayEnd().equals("false")) {
+                        if (validatePrimaryData()) {
                             Gson gson = new Gson();
                             String productJson = gson.toJson(listSelectedProducts);
 
@@ -1738,14 +1755,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 isWorkWith = false;
                             }
 
-                            if(selectedReportCode.equalsIgnoreCase("INT") ||
+                            if (selectedReportCode.equalsIgnoreCase("INT") ||
                                     selectedReportCode.equalsIgnoreCase("ROR") ||
-                                    selectedReportCode.equalsIgnoreCase("ROA"))
-                            {
+                                    selectedReportCode.equalsIgnoreCase("ROA")) {
                                 focusForString = "";
                             }
-
-
 
                             NewEntryGetSet getSet = new NewEntryGetSet(edtArea.getText().toString().trim(),
                                     selectedAreaId,
@@ -1774,8 +1788,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             getSet.save();
 
                             //Beacsue when came from planned entjry, the speciality AND area  may not available as regular dcr
-                            if(isPlannerClicked)
-                            {
+                            if (isPlannerClicked) {
                                 edtSpeciality.setText("");
                                 selectedSpecialityId = "";
 
@@ -1791,21 +1804,19 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                             AppUtils.storeJsonResponse(new Gson().toJson(getSet), selectedReportCode + "_Call");
 
-                            if(selectedReportCode.equalsIgnoreCase("STK"))
-                            {
+                            if (selectedReportCode.equalsIgnoreCase("STK")) {
                                 sessionManager.setIsSTKDone(true);
                             }
 
 
                             if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)
-                                    && listArea.size()==0)//for manager
+                                    && listArea.size() == 0)//for manager
                             {
                                 selectedEmployeeID = "";
                                 edtEmployee.setText("");
                                 edtDate.setText("");
                                 edtAdvice.setText("");
-                            }
-                            else//for working manager and MR
+                            } else//for working manager and MR
                             {
 
                                 if (listWorkWith != null && listWorkWith.size() > 0) {
@@ -1876,6 +1887,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 rvVariation.setAdapter(variationAdapter);*/
 
 
+                                listSelectedProducts = new ArrayList<>();
                                 ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
                                 VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
                                 bean.setStock("");
@@ -1889,8 +1901,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 variationAdapter = new VariationAdapter(listTemp);
                                 rvVariation.setAdapter(variationAdapter);
 
-                                for (int i = 0; i < listVariation.size(); i++)
-                                {
+                                for (int i = 0; i < listVariation.size(); i++) {
                                     VariationResponse.VariationsBean bean1 = listVariation.get(i);
                                     bean1.setStock("");
                                     bean1.setChecked(false);
@@ -1900,7 +1911,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     listVariation.set(i, bean1);
                                 }
 
-                                Log.i("************* ", "onClick: "+listVariation.size());
+                                Log.i("************* ", "onClick: " + listVariation.size());
                             }
 
                             if (handlerNCR != null) {
@@ -1909,12 +1920,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 handlerNCR.sendMessage(message);
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         AppUtils.showToast(activity, "Your day has been ended by you.Kindly try again tomorrow.");
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -1937,8 +1947,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                     }
 
-                    if (listUserEntry.size() > 0)
-                    {
+                    if (listUserEntry.size() > 0) {
                         //sessionManager.setCallDoneFromTP("true");
                         Intent intent = new Intent(activity, ActivityPendingEntry.class);
                         startActivity(intent);
@@ -1946,7 +1955,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     } else {
                         AppUtils.showToast(activity, "No Pending Entry For Submission.");
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -1961,18 +1971,16 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
 
-                    if(sessionManager.isNetworkAvailable())
-                    {
+                    if (sessionManager.isNetworkAvailable()) {
                         Intent intent = new Intent(activity, ViewSubmittedEntryActivity.class);
                         activity.startActivity(intent);
                         AppUtils.startActivityAnimation(activity);
-                    }
-                    else
-                    {
-                        AppUtils.showToast(activity,activity.getString(R.string.network_failed_message));
+                    } else {
+                        AppUtils.showToast(activity, activity.getString(R.string.network_failed_message));
                     }
 
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -1997,13 +2005,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     String selectedDate = "";
 
-    private void datePicker(final EditText edtTaskName)
-    {
+    private void datePicker(final EditText edtTaskName) {
 
-        if (edtTaskName.getText().toString().trim().length() > 0)
-        {
-            try
-            {
+        if (edtTaskName.getText().toString().trim().length() > 0) {
+            try {
                 String date = AppUtils.universalDateConvert(edtTaskName.getText().toString().trim().toString(), "yyyy-MM-dd", "dd/MM/yyyy");
                 String[] datearr = date.split("/");
                 mDay = Integer.parseInt(datearr[0]);
@@ -2011,31 +2016,24 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 mMonth = mMonth - 1;
                 mYear = Integer.parseInt(datearr[2]);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 final Calendar c = Calendar.getInstance();
                 mYear = c.get(Calendar.YEAR);
                 mMonth = c.get(Calendar.MONTH);
                 mDay = c.get(Calendar.DAY_OF_MONTH);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
         // Get Current Date
-        DatePickerDialog datePickerDialog = new DatePickerDialog(activity, new DatePickerDialog.OnDateSetListener()
-        {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(activity, new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
-            {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 view.setMinDate(new Date().getTime());
 
                 date_time = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
@@ -2043,15 +2041,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                 Date convertedDate2 = new Date();
-                try
-                {
+                try {
                     convertedDate2 = dateFormat.parse(date_time);
                     String showDate = df.format(convertedDate2);
                     Log.e("showDate", showDate.toString());
                     selectedDate = showDate;
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -2062,8 +2058,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         datePickerDialog.show();
     }
 
-    private void clickSpeciality()
-    {
+    private void clickSpeciality() {
         try {
             if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                 return;
@@ -2082,13 +2077,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             } else {
                 AppUtils.showToast(activity, "Please Select Area First");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void clickReportType()
-    {
+    private void clickReportType() {
         try {
             if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                 return;
@@ -2103,20 +2098,19 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     AppUtils.showToast(activity, "No Reports available.");
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void clickDoctor()
-    {
+    private void clickDoctor() {
         try {
             if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                 return;
             }
             mLastClickTime = SystemClock.elapsedRealtime();
-            if (edtSpeciality.getText().toString().length() > 0)
-            {
+            if (edtSpeciality.getText().toString().length() > 0) {
                 if (isLoading) {
                     AppUtils.showLoadingToast(activity);
                 } else {
@@ -2130,13 +2124,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             } else {
                 AppUtils.showToast(activity, "Please Select Doctor Speciality First.");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void clickWorkWith()
-    {
+    private void clickWorkWith() {
         try {
             if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                 return;
@@ -2151,7 +2145,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     AppUtils.showToast(activity, "No Work With List Available");
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -2169,7 +2164,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             try {
                 datepicker.getDatePicker().setMaxDate(new Date().getTime());
                 return datepicker;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
             return new DatePickerDialog(getActivity(), this, yy, mm, dd);
@@ -2200,7 +2196,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             } else {
                 edtDate.setText("");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -2239,53 +2236,48 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             btnYes.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     if (dialog != null) {
                         dialog.dismiss();
                         dialog.cancel();
                     }
 
-                    if (sessionManager.isNetworkAvailable())
-                    {
+                    if (sessionManager.isNetworkAvailable()) {
                         //apiTaskToken();
                         List<NewEntryGetSet> books = NewEntryGetSet.listAll(NewEntryGetSet.class);
 
                         ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
-                        for (int i = 0; i < books.size(); i++)
-                        {
-                            if (books.get(i).getUser_id().equals(sessionManager.getUserId()))
-                            {
+                        for (int i = 0; i < books.size(); i++) {
+                            if (books.get(i).getUser_id().equals(sessionManager.getUserId())) {
 
                                 listUserEntry.add(books.get(i));
                             }
                         }
 
-                        if (listUserEntry.size() > 0)
-                        {
-                            submitPendingEntries(DataUtils.getJsonStringFromPendingEntry(sessionManager, listUserEntry),false);
+                        if (listUserEntry.size() > 0) {
+                            submitPendingEntries(DataUtils.getJsonStringFromPendingEntry(sessionManager, listUserEntry), false);
                         }
                     } else {
                         AppUtils.showToast(activity, "Please check your internet connection.");
                         // For log purpose
                         try {
                             AppUtils.storeJsonResponse("No internet available while mannual submit", "NoInternet");
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 }
             });
             dialog.show();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void submitPendingEntries(final String stringToPass, final boolean isForDayEnd)
-    {
-        new AsyncTask<Void, Void, Void>()
-        {
+    private void submitPendingEntries(final String stringToPass, final boolean isForDayEnd) {
+        new AsyncTask<Void, Void, Void>() {
             int success = 0;
             String message = "";
 
@@ -2296,8 +2288,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
 
             @Override
-            protected Void doInBackground(Void... voids)
-            {
+            protected Void doInBackground(Void... voids) {
                 try {
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("field_entry", stringToPass);
@@ -2315,36 +2306,30 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     JSONObject jsonObject = new JSONObject(response);
                     success = AppUtils.getValidAPIIntegerResponse(jsonObject.getString("success"));
                     message = AppUtils.getValidAPIStringResponse(jsonObject.getString("message"));
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid)
-            {
+            protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 llLoading.setVisibility(View.GONE);
                 AppUtils.showToast(activity, message);
-                if (success == 1)
-                {
-                    if(!isForDayEnd)
-                    {
+                if (success == 1) {
+                    if (!isForDayEnd) {
                         Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
                         dataCall.enqueue(new Callback<SubmittedResponse>() {
                             @Override
                             public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
-                                try
-                                {
-                                    if (response.body().getSuccess() == 1)
-                                    {
+                                try {
+                                    if (response.body().getSuccess() == 1) {
                                         List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
-                                        if (listData.size() > 0)
-                                        {
+                                        if (listData.size() > 0) {
                                             sessionManager.setCallDoneFromTP("true");
-                                            for (int i = 0; i < listData.size(); i++)
-                                            {
+                                            for (int i = 0; i < listData.size(); i++) {
                                                 DrDcrGetSet getSet = new DrDcrGetSet();
                                                 getSet.setDrId(listData.get(i).getDoctor_id());
                                                 getSet.setDrName(listData.get(i).getDoctor_name());
@@ -2353,7 +2338,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                             }
                                         }
                                     }
-                                } catch (Exception e) {
+                                }
+                                catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -2366,17 +2352,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                         sessionManager.setCallDoneFromTP("true");
                         NewEntryGetSet.deleteAll(NewEntryGetSet.class);
-                    }
-                    else
-                    {
+                    } else {
                         NewEntryGetSet.deleteAll(NewEntryGetSet.class);
                         sessionManager.logoutWithoutDialog();
                     }
-                }
-                else
-                {
-                    if(isForDayEnd)
-                    {
+                } else {
+                    if (isForDayEnd) {
                         NewEntryGetSet.deleteAll(NewEntryGetSet.class);
                         sessionManager.logoutWithoutDialog();
                     }
@@ -2400,9 +2381,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             sqlDB.close();
             udbh.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             if (sqlDB != null && sqlDB.isOpen()) {
                 sqlDB.close();
                 udbh.close();
@@ -2416,8 +2399,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         try {
             String dbs = selectedReportCode;
 
-            if (!dbs.equalsIgnoreCase("STK"))
-            {
+            if (!dbs.equalsIgnoreCase("STK")) {
                 if (edtArea.getText().toString().length() < 1 &&
                         !dbs.equalsIgnoreCase("ADV") &&
                         !dbs.equalsIgnoreCase("STK") &&
@@ -2434,8 +2416,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         dbs.equals("XCR") ||
                         dbs.equals("TNS") ||
                         dbs.equals("JCR") ||
-                        dbs.equals("SRD"))
-                {
+                        dbs.equals("SRD")) {
                     if (edtDBC.getText().toString().length() < 1) {
                         AppUtils.showToast(activity, "Please Select DBC");
                         isReturn = false;
@@ -2486,21 +2467,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         AppUtils.showToast(activity, "Please Fill Sample Details");
                         isReturn = false;
                     }
-                } else if (dbs.equals("INT"))
-                {
-                    if (edtDBC.getText().toString().length() < 1)
-                    {
+                } else if (dbs.equals("INT")) {
+                    if (edtDBC.getText().toString().length() < 1) {
                         AppUtils.showToast(activity, "Please Select DBC");
                         isReturn = false;
-                    }
-                    else if (!cbWorkWith.isChecked()) {
+                    } else if (!cbWorkWith.isChecked()) {
                         if (edtWorkWith.getText().toString().length() < 1) {
                             AppUtils.showToast(activity, "Please Select Work With");
                             isReturn = false;
                         }
                     } else if (edtInternee.getText().toString().length() == 0 ||
-                            edtInternee.getText().toString().equalsIgnoreCase("0"))
-                    {
+                            edtInternee.getText().toString().equalsIgnoreCase("0")) {
                         AppUtils.showToast(activity, "Please Enter No of Internee");
                         isReturn = false;
                     }
@@ -2557,16 +2534,15 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         isReturn = false;
                     }
                 }
-            }
-            else if (dbs.equals("STK"))
-            {
+            } else if (dbs.equals("STK")) {
                 if (!variationAdapter.isListFilled()) {
                     AppUtils.showToast(activity, "Please Fill Sample Details");
                     isReturn = false;
                 }
                 //isReturn = true;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         return isReturn;
@@ -2663,42 +2639,33 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         variationAdapter = new VariationAdapter(listVariation);
         rvVariation.setAdapter(variationAdapter);
 
-        if(sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR))
-        {
-            if(sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1"))
-            {
+        if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR)) {
+            if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
                 llOffDay.setVisibility(View.VISIBLE);
-            }
-            else
-            {
+            } else {
                 llOffDay.setVisibility(View.GONE);
 
                 try {
                     listPlannedDoctor = (ArrayList<DBPlanner>) DBPlanner.listAll(DBPlanner.class);
 
-                    if(listPlannedDoctor.size()>0)
-                    {
+                    if (listPlannedDoctor.size() > 0) {
                         llPlannedEntry.setVisibility(View.VISIBLE);
                         viewPlanner.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
+                    } else {
                         llPlannedEntry.setVisibility(View.GONE);
                         viewPlanner.setVisibility(View.GONE);
                     }
 
-                    Log.e("PLanner List >> ", "setUpViews: "+listPlannedDoctor.size() );
-                } catch (Exception e) {
+                    Log.e("PLanner List >> ", "setUpViews: " + listPlannedDoctor.size());
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 //Check Internet and set data accordingly
-                if (sessionManager.isNetworkAvailable())
-                {
+                if (sessionManager.isNetworkAvailable()) {
                     getDataFromServer();
-                }
-                else
-                {
+                } else {
                     timer = new CountDownTimer(1000, 10000) {
                         @Override
                         public void onTick(long millisUntilFinished) {
@@ -2714,36 +2681,29 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                 }
             }
-        }
-        else
-        {
+        } else {
 
             try {
                 listPlannedDoctor = (ArrayList<DBPlanner>) DBPlanner.listAll(DBPlanner.class);
 
-                if(listPlannedDoctor.size()>0)
-                {
+                if (listPlannedDoctor.size() > 0) {
                     llPlannedEntry.setVisibility(View.VISIBLE);
                     viewPlanner.setVisibility(View.VISIBLE);
-                }
-                else
-                {
+                } else {
                     llPlannedEntry.setVisibility(View.GONE);
                     viewPlanner.setVisibility(View.GONE);
                 }
 
-                Log.e("PLanner List >> ", "setUpViews: "+listPlannedDoctor.size() );
-            } catch (Exception e) {
+                Log.e("PLanner List >> ", "setUpViews: " + listPlannedDoctor.size());
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
 
             //Check Internet and set data accordingly
-            if (sessionManager.isNetworkAvailable())
-            {
+            if (sessionManager.isNetworkAvailable()) {
                 getDataFromServer();
-            }
-            else
-            {
+            } else {
                 timer = new CountDownTimer(1000, 10000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
@@ -2759,63 +2719,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             }
         }
-
-
-
-
-
-        //For PLanner
-        /*try {
-            listPlannedDoctor = (ArrayList<DBPlanner>) DBPlanner.listAll(DBPlanner.class);
-
-            if(listPlannedDoctor.size()>0)
-            {
-                llPlannedEntry.setVisibility(View.VISIBLE);
-                viewPlanner.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                llPlannedEntry.setVisibility(View.GONE);
-                viewPlanner.setVisibility(View.GONE);
-            }
-
-            Log.e("PLanner List >> ", "setUpViews: "+listPlannedDoctor.size() );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //Check Internet and set data accordingly
-        if (sessionManager.isNetworkAvailable())
-        {
-            getDataFromServer();
-        }
-        else
-        {
-            timer = new CountDownTimer(1000, 10000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-
-                }
-
-                @Override
-                public void onFinish() {
-                    fillAllListFromDatabase();
-                }
-            };
-            timer.start();
-
-        }*/
-
     }
 
     private void initVariationAdapter() {
-		/*if(handlerNCR!=null)
-		{
-			Message message = Message.obtain();
-			message.what=101;
-			handlerNCR.sendMessage(message);
-		}*/
-
         dbs = "";
         cbNewCycle.setChecked(false);
         edtWorkWith.setText("");
@@ -2824,6 +2730,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         edtRemarks.setText("");
         txtAddCount.setText("1");
 
+        listSelectedProducts = new ArrayList<>();
         ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
         VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
         bean.setStock("");
@@ -2843,20 +2750,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             getSet.setChecked(false);
             listVariation.set(i, getSet);
         }
-
-		/*listVariation.clear();
-		ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
-		VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
-		bean.setStock("");
-		bean.setItem_code("");
-		bean.setItem_id_code("");
-		bean.setProduct_id("0");
-		bean.setReason("Regular Sample");
-		bean.setReason_code("R");
-		bean.setName("Product");
-		listVariation.add(bean);
-		variationAdapter = new VariationAdapter(listVariation);
-		rvVariation.setAdapter(variationAdapter);*/
     }
 
     private void showConfirmationDialogForDayEnd() {
@@ -2895,7 +2788,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
             });
             dialog.show();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -2962,7 +2856,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     if (listVariation != null && listVariation.size() > 1) {
                         try {
                             showFocusedDialog(edttext1, "Product", "1");
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
@@ -2981,7 +2876,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     if (listVariation != null && listVariation.size() > 1) {
                         try {
                             showFocusedDialog(edttext2, "Product", "2");
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
@@ -3000,7 +2896,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     if (listVariation != null && listVariation.size() > 0) {
                         try {
                             showFocusedDialog(edttext3, "Product", "3");
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -3017,7 +2914,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     if (listVariation != null && listVariation.size() > 0) {
                         try {
                             showFocusedDialog(edttext4, "Product", "4");
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -3033,7 +2931,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     mLastClickTime = SystemClock.elapsedRealtime();
                     try {
                         showFocusedDialog(edtReason1, "Reason", "");
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -3049,7 +2948,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     mLastClickTime = SystemClock.elapsedRealtime();
                     try {
                         showFocusedDialog(edtReason2, "Reason", "");
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -3065,7 +2965,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                         mLastClickTime = SystemClock.elapsedRealtime();
                         showFocusedDialog(edtReason3, "Reason", "");
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -3080,7 +2981,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                         mLastClickTime = SystemClock.elapsedRealtime();
                         showFocusedDialog(edtReason4, "Reason", "");
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -3190,7 +3092,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 public void onClick(View v) {
                     try {
                         dialog.dismiss();
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -3217,7 +3120,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             });
 
             dialog.show();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -3254,8 +3158,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     dialog.dismiss();
                     dialog.cancel();
 
-                    if (sessionManager.isNetworkAvailable())
-                    {
+                    if (sessionManager.isNetworkAvailable()) {
                         dayEnd();
 //						getApiStringFromDataBase();
                     } else {
@@ -3264,24 +3167,22 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
             });
             dialog.show();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     String strStatus = "";
 
-    private void dayEnd()
-    {
+    private void dayEnd() {
         llLoading.setVisibility(View.VISIBLE);
         Call<DayEndResponse> reportCall = apiService.dayEnd(sessionManager.getUserId(), sessionManager.getUserId());
         reportCall.enqueue(new Callback<DayEndResponse>() {
             @Override
             public void onResponse(Call<DayEndResponse> call, Response<DayEndResponse> response) {
-                try
-                {
-                    if (response.body().getSuccess() == 1)
-                    {
+                try {
+                    if (response.body().getSuccess() == 1) {
                         sessionManager.setDayEnd("true");
 
                         dayEndWithSubmitAndLogout();
@@ -3339,12 +3240,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             handlerNCR.sendMessage(message);
                         }*/
 
-                    }
-                    else
-                    {
+                    } else {
                         AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -3357,34 +3257,27 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         llLoading.setVisibility(View.GONE);
     }
 
-
-    private void dayEndWithSubmitAndLogout()
-    {
-        if (sessionManager.isNetworkAvailable())
-        {
+    private void dayEndWithSubmitAndLogout() {
+        if (sessionManager.isNetworkAvailable()) {
             //apiTaskToken();
             List<NewEntryGetSet> books = NewEntryGetSet.listAll(NewEntryGetSet.class);
             ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
-            for (int i = 0; i < books.size(); i++)
-            {
-                if (books.get(i).getUser_id().equals(sessionManager.getUserId()))
-                {
+            for (int i = 0; i < books.size(); i++) {
+                if (books.get(i).getUser_id().equals(sessionManager.getUserId())) {
 
                     listUserEntry.add(books.get(i));
                 }
             }
-            if (listUserEntry.size() > 0)
-            {
-                submitPendingEntries(DataUtils.getJsonStringFromPendingEntry(sessionManager, listUserEntry),true);
+            if (listUserEntry.size() > 0) {
+                submitPendingEntries(DataUtils.getJsonStringFromPendingEntry(sessionManager, listUserEntry), true);
             }
-        }
-        else
-        {
+        } else {
             AppUtils.showToast(activity, "Please check your internet connection.");
             // For log purpose
             try {
                 AppUtils.storeJsonResponse("No internet available while mannual submit - DayEnd", "NoInternet-DayEnd");
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -3440,11 +3333,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                 inputSearch.setVisibility(View.VISIBLE);
 
-                edtSearch.addTextChangedListener(new TextWatcher()
-                {
+                edtSearch.addTextChangedListener(new TextWatcher() {
                     @Override
-                    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3)
-                    {
+                    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                         int textlength = edtSearch.getText().length();
 
                         listVariationSearch.clear();
@@ -3494,7 +3385,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             if (dialog != null) {
                                 dialog.dismiss();
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -3503,7 +3395,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
 
             dialog.show();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -3529,16 +3422,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             this.activity = a;
             ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
             for (int i = 0; i < item.size(); i++) {
-                if (item.get(i).getProduct_type().equalsIgnoreCase("1") || item.get(i).getName().equalsIgnoreCase("product"))
-                {
-                }
-                else
-                {
+                if (item.get(i).getProduct_type().equalsIgnoreCase("1") || item.get(i).getName().equalsIgnoreCase("product")) {
+                } else {
                     listTemp.add(item.get(i));
                 }
             }
-            try
-            {
+            try {
                 listTemp.addAll(DataUtils.getSalesProduct(sessionManager));
             }
             catch (Exception e) {
@@ -3573,8 +3462,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             ViewHolder holder = null;
 
             View rowView = convertView;
-            if (convertView == null)
-            {
+            if (convertView == null) {
                 try {
                     rowView = inflater.inflate(R.layout.rowview_mkt_code, null);
 
@@ -3583,7 +3471,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     holder.txtmktCode = (TextView) rowView.findViewById(R.id.txtName);
 
                     rowView.setTag(holder);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
@@ -3610,7 +3499,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         holder.txtmktCode.setText(getSet.getItem_id_code() + " : " + getSet.getName());
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -3657,7 +3547,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
 
 
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -3673,8 +3564,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         }
     }
 
-    InputFilter filter = new InputFilter()
-    {
+    InputFilter filter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
             for (int i = start; i < end; ++i) {
@@ -3688,45 +3578,34 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     private static final int PERMISSION_REQUEST_CODE_STORAGE = 1;
 
-    private void checkStoragePermission()
-    {
-        try
-        {
+    private void checkStoragePermission() {
+        try {
             int result;
             result = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            if (result == PackageManager.PERMISSION_GRANTED)
-            {
+            if (result == PackageManager.PERMISSION_GRANTED) {
                 List<NewEntryGetSet> books = NewEntryGetSet.listAll(NewEntryGetSet.class);
 
                 ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
 
-                for (int i = 0; i < books.size(); i++)
-                {
-                    if (books.get(i).getUser_id().equals(sessionManager.getUserId()))
-                    {
+                for (int i = 0; i < books.size(); i++) {
+                    if (books.get(i).getUser_id().equals(sessionManager.getUserId())) {
                         listUserEntry.add(books.get(i));
                     }
                 }
 
-                if (listUserEntry.size() > 0)
-                {
+                if (listUserEntry.size() > 0) {
                     pendingEntryCount = listUserEntry.size();
                     showConfirmationDialog();
-                }
-                else
-                {
+                } else {
                     AppUtils.showToast(activity, "No Pending Entry For Submission.");
                 }
 
-            }
-            else
-            {
+            } else {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST_CODE_STORAGE);
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -3755,7 +3634,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     } else {
                         AppUtils.showToast(activity, "Permissions Denied!");
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
@@ -3764,7 +3644,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     /*New*/
     AreaAdapter areaAdapter;
-
     public void showListDialog(final String isFor) {
         listDialog = new BottomSheetDialog(activity, R.style.MaterialDialogSheetTemp);
 
@@ -3811,8 +3690,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                if (isFor.equalsIgnoreCase(WORKWITH) && areaAdapter != null)
-                {
+                if (isFor.equalsIgnoreCase(WORKWITH) && areaAdapter != null) {
                     workWithString = areaAdapter.getSelectedWorkWitIds();
                     if (workWithString.length() == 0) {
                         AppUtils.showToast(activity, "Please select at least one option.");
@@ -3876,8 +3754,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             }
                         }
                     }
-                }
-                else if (isFor.equals(DOCTOR)) {
+                } else if (isFor.equals(DOCTOR)) {
                     listDoctorSearch.clear();
                     for (int i = 0; i < listDoctor.size(); i++) {
                         if (textlength <= listDoctor.get(i).getDoctor().length()) {
@@ -3888,8 +3765,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             }
                         }
                     }
-                }
-                else if (isFor.equals(DOCTOR_PLANNER)) {
+                } else if (isFor.equals(DOCTOR_PLANNER)) {
                     listPlannedDoctorSearch.clear();
                     for (int i = 0; i < listPlannedDoctor.size(); i++) {
                         if (textlength <= listPlannedDoctor.get(i).getDoctor().length()) {
@@ -3899,8 +3775,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             }
                         }
                     }
-                }
-                else if (isFor.equals("DBC")) {
+                } else if (isFor.equals("DBC")) {
                     listReportSearch.clear();
                     for (int i = 0; i < listReports.size(); i++) {
                         if (textlength <= listReports.get(i).getReport_name().length()) {
@@ -3947,24 +3822,18 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             @Override
             public void onDismiss(DialogInterface dialog) {
                 AppUtils.hideKeyboard(tvDone, activity);
-                if (isFor.equalsIgnoreCase(WORKWITH) && areaAdapter != null)
-                {
+                if (isFor.equalsIgnoreCase(WORKWITH) && areaAdapter != null) {
                     workWithString = areaAdapter.getSelectedWorkWitIds();
-                    if (workWithString.length() == 0)
-                    {
+                    if (workWithString.length() == 0) {
                         //AppUtils.showToast(activity, "Please select at least one option.");
                         edtWorkWith.setText("");
-                    }
-                    else
-                    {
+                    } else {
                         AppUtils.hideKeyboard(tvDone, activity);
                         edtWorkWith.setText(areaAdapter.getSelectedWorkWithName());
                         listDialog.dismiss();
                         listDialog.cancel();
                     }
-                }
-                else
-                {
+                } else {
                     AppUtils.hideKeyboard(tvDone, activity);
                     listDialog.dismiss();
                     listDialog.cancel();
@@ -3974,7 +3843,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
         listDialog.show();
     }/**/
-
     private void AppendListForArea(Dialog dialog, String isFor, boolean isForSearch, RecyclerView rvArea) {
         areaAdapter = new AreaAdapter(dialog, isFor, true, "", rvArea);
         rvArea.setAdapter(areaAdapter);
@@ -4009,8 +3877,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 holder.viewLine.setVisibility(View.VISIBLE);
             }
 
-            if (isFor.equalsIgnoreCase(AREA))
-            {
+            if (isFor.equalsIgnoreCase(AREA)) {
                 final AreaResponse.AreasBean getSet;
 
                 if (isForSearch) {
@@ -4079,7 +3946,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             } else {
                                 getFilteredSpeciality(getSet.getArea_id());
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -4152,7 +4020,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             } else {
                                 getFilteredSpeciality(getSet.getArea_id());
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -4179,7 +4048,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             dialog.cancel();
                             edtEmployee.setText(getSet.getName());
                             selectedEmployeeID = getSet.getStaff_id();
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -4215,12 +4085,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             edtWorkWith.setText("");
                             workWithString = "";
 
-                            if(listWorkWith!=null && listWorkWith.size()>0)
-                            {
+                            if (listWorkWith != null && listWorkWith.size() > 0) {
                                 for (int i = 0; i < listWorkWith.size(); i++) {
                                     WorkWithResponse.StaffBean bean = listWorkWith.get(i);
                                     bean.setSelected(false);
-                                    listWorkWith.set(i,bean);
+                                    listWorkWith.set(i, bean);
                                 }
                             }
 
@@ -4232,6 +4101,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             cbNewCycle.setChecked(false);
 
                             txtAddCount.setText("1");
+
+                            listSelectedProducts = new ArrayList<>();
                             ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
                             VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
                             bean.setStock("");
@@ -4256,16 +4127,14 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             }
 
 
-                            if (sessionManager.isNetworkAvailable())
-                            {
+                            if (sessionManager.isNetworkAvailable()) {
                                 getDoctorFromSpeciality(selectedAreaId, getSet.getSpeciality_id());
-                            }
-                            else
-                            {
+                            } else {
                                 getFilteredDocotrs(getSet.getSpeciality_id());
                             }
                             clickReportType();
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -4285,8 +4154,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        try
-                        {
+                        try {
                             AppUtils.hideKeyboard(holder.tvValue, activity);
                             dialog.dismiss();
                             //initVariationAdapter();
@@ -4296,10 +4164,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             selectedReportCode = getSet.getReport_code();
                             edtDBC.setText(getSet.getReport_code() + " : " + getSet.getReport_name());
 
-                            if(isPlannerClicked)
-                            {
+                            if (isPlannerClicked) {
                                 txtAddCount.setText("1");
 
+                                listSelectedProducts = new ArrayList<>();
                                 ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
                                 VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
                                 bean.setStock("");
@@ -4321,9 +4189,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     getSet.setReason_code("R");
                                     listVariation.set(i, getSet);
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 dbs = "";
                                 cbNewCycle.setChecked(false);
                                 edtWorkWith.setText("");
@@ -4332,6 +4198,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 edtRemarks.setText("");
                                 txtAddCount.setText("1");
 
+                                listSelectedProducts = new ArrayList<>();
                                 ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
                                 VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
                                 bean.setStock("");
@@ -4357,14 +4224,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             }
 
                             clickOfDBC(getSet.getReport_code());
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 });
-            }
-            else if (isFor.equalsIgnoreCase(DOCTOR))
-            {
+            } else if (isFor.equalsIgnoreCase(DOCTOR)) {
                 final DoctorResponse.DoctorsBean getSet;
                 if (isForSearch) {
                     getSet = listDoctorSearch.get(position);
@@ -4373,12 +4239,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
 
                 holder.tvValue.setAllCaps(true);
-                if(getSet.getSpeciality_code().equalsIgnoreCase(""))
-                {
+                if (getSet.getSpeciality_code().equalsIgnoreCase("")) {
                     holder.tvValue.setText(getSet.getDoctor());
-                }
-                else
-                {
+                } else {
                     holder.tvValue.setText(getSet.getDoctor() + " (" + getSet.getSpeciality_code() + ")");
                 }
                 holder.tvId.setText(getSet.getDoctor_id());
@@ -4386,13 +4249,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        try
-                        {
+                        try {
                             cbNewCycle.setChecked(false);
 
                             focusForString = "";
 
                             txtAddCount.setText("1");
+                            listSelectedProducts = new ArrayList<>();
                             ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
                             VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
                             bean.setStock("");
@@ -4416,26 +4279,22 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 listVariation.set(i, getSet);
                             }
 
-                            if (isDoctorUsed(getSet.getDoctor_id(),selectedReportCode))
-                            {
+                            if (isDoctorUsed(getSet.getDoctor_id(), selectedReportCode)) {
                                 AppUtils.showToast(activity, "You already have submitted DCR entry with this doctor.");
-                            }
-                            else
-                            {
+                            } else {
                                 dialog.dismiss();
                                 edtDoctor.setText(getSet.getDoctor().toUpperCase());
                                 selectedDoctorId = getSet.getDoctor_id();
                                 enable_focus = getSet.getEnable_focus();
                                 clickOfDBC("doctor");
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 });
-            }
-            else if (isFor.equalsIgnoreCase(WORKWITH))
-            {
+            } else if (isFor.equalsIgnoreCase(WORKWITH)) {
                 holder.cb.setVisibility(View.VISIBLE);
 
                 final WorkWithResponse.StaffBean getSet;
@@ -4466,9 +4325,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                 });
 
-            }
-            else if(isFor.equalsIgnoreCase(DOCTOR_PLANNER))
-            {
+            } else if (isFor.equalsIgnoreCase(DOCTOR_PLANNER)) {
                 final DBPlanner getSet;
                 if (isForSearch) {
                     getSet = listPlannedDoctorSearch.get(position);
@@ -4476,21 +4333,16 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     getSet = listPlannedDoctor.get(position);
                 }
 
-                holder.tvValue.setText(getSet.getDoctor()+"("+getSet.getDoctor_id()+")");
+                holder.tvValue.setText(getSet.getDoctor() + "(" + getSet.getDoctor_id() + ")");
                 holder.tvValue.setAllCaps(true);
 
-                holder.itemView.setOnClickListener(new View.OnClickListener()
-                {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        try
-                        {
-                            if(isDoctorUsed(getSet.getDoctor_id(),selectedReportCode))
-                            {
+                        try {
+                            if (isDoctorUsed(getSet.getDoctor_id(), selectedReportCode)) {
                                 AppUtils.showToast(activity, "You already have submitted DCR entry with this doctor.");
-                            }
-                            else
-                            {
+                            } else {
                                 dialog.dismiss();
 
                                 isPlannerClicked = true;
@@ -4502,7 +4354,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 //clickOfDBC("doctor");
                             }
 
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -4510,34 +4363,27 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         }
 
-        private boolean isDoctorUsed(String drId,String reportType)
-        {
+        private boolean isDoctorUsed(String drId, String reportType) {
             boolean b = false;
 
             List<NewEntryGetSet> listEntries = NewEntryGetSet.listAll(NewEntryGetSet.class);
             ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
-            for (int i = 0; i < listEntries.size(); i++)
-            {
-                if (listEntries.get(i).getUser_id().equals(sessionManager.getUserId()))
-                {
+            for (int i = 0; i < listEntries.size(); i++) {
+                if (listEntries.get(i).getUser_id().equals(sessionManager.getUserId())) {
                     listUserEntry.add(listEntries.get(i));
                 }
             }
 
-            for (int i = 0; i < listUserEntry.size(); i++)
-            {
-                if (listUserEntry.get(i).getDr_id().equalsIgnoreCase(drId))
-                {
+            for (int i = 0; i < listUserEntry.size(); i++) {
+                if (listUserEntry.get(i).getDr_id().equalsIgnoreCase(drId)) {
                     b = true;
                     break;
                 }
             }
 
-            if (listSubmitedEntryOfDr != null && listSubmitedEntryOfDr.size() > 0)
-            {
+            if (listSubmitedEntryOfDr != null && listSubmitedEntryOfDr.size() > 0) {
                 for (int i = 0; i < listSubmitedEntryOfDr.size(); i++) {
-                    if (listSubmitedEntryOfDr.get(i).getDrId().equals(drId))
-                    {
+                    if (listSubmitedEntryOfDr.get(i).getDrId().equals(drId)) {
                         b = true;
                         break;
                     }
@@ -4584,16 +4430,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }*/
 
 
-
-            String str = getAllReportTypeForDoctor(listUserEntry,drId);
-            if(!str.equals(""))
-            {
-                if(str.contains(reportType))
-                {
+            String str = getAllReportTypeForDoctor(listUserEntry, drId);
+            if (!str.equals("")) {
+                if (str.contains(reportType)) {
                     b = true;
-                }
-                else
-                {
+                } else {
                     b = false;
                     /*if(str.contains("DCR") ||
                             str.contains("LCR") ||
@@ -4611,58 +4452,50 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
             }
 
-            return  b;
+            return b;
         }
 
         /*For get All avalable report list*/
-        private String getAllReportTypeForDoctor(ArrayList<NewEntryGetSet> listUserEntry,String drId)
-        {
+        private String getAllReportTypeForDoctor(ArrayList<NewEntryGetSet> listUserEntry, String drId) {
             StringBuilder codes = new StringBuilder();
-            if(listUserEntry.size()>0)
-            {
-                for (int i = 0; i < listUserEntry.size(); i++)
-                {
-                    if(listUserEntry.get(i).getDr_id().equalsIgnoreCase(drId))
-                    {
+            if (listUserEntry.size() > 0) {
+                for (int i = 0; i < listUserEntry.size(); i++) {
+                    if (listUserEntry.get(i).getDr_id().equalsIgnoreCase(drId)) {
                         codes.append(listUserEntry.get(i).getReport_type());
-                        if ( i != listUserEntry.size()-1){
+                        if (i != listUserEntry.size() - 1) {
                             codes.append(",");
                         }
                     }
                 }
             }
 
-            Log.e("listSubmitted Entjry Size", "getAllReportTypeForDoctor: "+listSubmitedEntryOfDr.size() );
-            if (listSubmitedEntryOfDr != null && listSubmitedEntryOfDr.size() > 0)
-            {
+            Log.e("listSubmitted Entjry Size", "getAllReportTypeForDoctor: " + listSubmitedEntryOfDr.size());
+            if (listSubmitedEntryOfDr != null && listSubmitedEntryOfDr.size() > 0) {
                 for (int i = 0; i < listSubmitedEntryOfDr.size(); i++) {
-                    if (listSubmitedEntryOfDr.get(i).getDrId().equals(drId))
-                    {
+                    if (listSubmitedEntryOfDr.get(i).getDrId().equals(drId)) {
                         codes.append(listSubmitedEntryOfDr.get(i).getReportType());
-                        if ( i != listSubmitedEntryOfDr.size()-1){
+                        if (i != listSubmitedEntryOfDr.size() - 1) {
                             codes.append(",");
                         }
                     }
                 }
             }
 
-            return  AppUtils.removeLastComma(String.valueOf(codes));
+            return AppUtils.removeLastComma(String.valueOf(codes));
         }
 
-        private void plannerDoctorClicked(DBPlanner getSet)
-        {
+        private void plannerDoctorClicked(DBPlanner getSet) {
             try {
                 JSONArray jsonArray = new JSONArray(getSet.getWork_with());
 
-                Log.e("**********JsonArray>> ", "plannerDoctorClicked: "+jsonArray );
+                Log.e("**********JsonArray>> ", "plannerDoctorClicked: " + jsonArray);
 
-                if(listWorkWith.size()>0)
-                {
+                if (listWorkWith.size() > 0) {
                     try {
                         for (int i = 0; i < listWorkWith.size(); i++) {
                             WorkWithResponse.StaffBean bean = listWorkWith.get(i);
                             bean.setSelected(false);
-                            listWorkWith.set(i,bean);
+                            listWorkWith.set(i, bean);
                         }
                     }
                     catch (Exception e) {
@@ -4670,26 +4503,21 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                 }
 
-                if(jsonArray.length()>0)
-                {
+                if (jsonArray.length() > 0) {
                     cbWorkWith.setChecked(false);
 
                     StringBuilder stringBuilder = new StringBuilder();
                     StringBuilder workWithIDs = new StringBuilder();
 
                     try {
-                        for (int i = 0; i < jsonArray.length(); i++)
-                        {
-                            if(listWorkWith.size()>0)
-                            {
-                                for (int j = 0; j < listWorkWith.size(); j++)
-                                {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            if (listWorkWith.size() > 0) {
+                                for (int j = 0; j < listWorkWith.size(); j++) {
                                     JSONObject object = (JSONObject) jsonArray.get(i);
-                                    if(object.getString("id").equalsIgnoreCase(listWorkWith.get(j).getStaff_id()))
-                                    {
+                                    if (object.getString("id").equalsIgnoreCase(listWorkWith.get(j).getStaff_id())) {
                                         WorkWithResponse.StaffBean bean = listWorkWith.get(j);
                                         bean.setSelected(true);
-                                        listWorkWith.set(j,bean);
+                                        listWorkWith.set(j, bean);
 
                                         if (stringBuilder.length() == 0) {
                                             stringBuilder.append(listWorkWith.get(j).getName());
@@ -4709,16 +4537,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
+                } else {
                     cbWorkWith.setChecked(true);
-                    for (int j = 0; j < listWorkWith.size(); j++)
-                    {
+                    for (int j = 0; j < listWorkWith.size(); j++) {
                         try {
                             WorkWithResponse.StaffBean bean = listWorkWith.get(j);
                             bean.setSelected(false);
-                            listWorkWith.set(j,bean);
+                            listWorkWith.set(j, bean);
                         }
                         catch (Exception e) {
                             e.printStackTrace();
@@ -4726,7 +4551,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                 }
 
-            } catch (JSONException e) {
+            }
+            catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -4746,6 +4572,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             txtAddCount.setText("1");
 
+            listSelectedProducts = new ArrayList<>();
             ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
             VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
             bean.setStock("");
@@ -4848,16 +4675,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 } else {
                     return listWorkWith.size();
                 }
-            }
-            else if(isFor.equalsIgnoreCase(DOCTOR_PLANNER))
-            {
+            } else if (isFor.equalsIgnoreCase(DOCTOR_PLANNER)) {
                 if (isForSearch) {
                     return listPlannedDoctorSearch.size();
                 } else {
                     return listPlannedDoctor.size();
                 }
-            }
-            else {
+            } else {
                 return 0;
             }
         }
@@ -4879,19 +4703,16 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     }
 
     private void clickOfDBC(String dbsFromAdapter) {
-        try
-        {
+        try {
             dbs = dbsFromAdapter;
 
-            if(isPlannerClicked)
-            {
+            if (isPlannerClicked) {
                 if (dbsFromAdapter.equals("DCR") ||
                         dbsFromAdapter.equals("LCR") ||
                         dbsFromAdapter.equals("ACR") ||
                         dbsFromAdapter.equals("XCR") ||
                         dbsFromAdapter.equals("JCR") ||
-                        dbsFromAdapter.equals("ZCR"))
-                {
+                        dbsFromAdapter.equals("ZCR")) {
                     inputArea.setVisibility(View.VISIBLE);
                     inputDoctor.setVisibility(View.VISIBLE);
                     llWorkWith.setVisibility(View.VISIBLE);
@@ -4900,21 +4721,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     llAdvice.setVisibility(View.GONE);
                     inputSpeciality.setVisibility(View.VISIBLE);
 
-                    if(dbs.equalsIgnoreCase("ZCR") ||
-                            dbs.equalsIgnoreCase("XCR"))
-                    {
+                    if (dbs.equalsIgnoreCase("ZCR") ||
+                            dbs.equalsIgnoreCase("XCR")) {
                         llNewCycle.setVisibility(View.GONE);
-                    }
-                    else
-                    {
+                    } else {
                         llNewCycle.setVisibility(View.VISIBLE);
                     }
                     rvVariation.setVisibility(View.VISIBLE);
                     viewLine.setVisibility(View.GONE);
                     llSampleDetails.setVisibility(View.VISIBLE);
 
-                    if(!selectedSpecialityId.equals(""))
-                    {
+                    if (!selectedSpecialityId.equals("")) {
                         clickDoctor();
                     }
 
@@ -4938,25 +4755,20 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     viewLine.setVisibility(View.GONE);
                     llSampleDetails.setVisibility(View.VISIBLE);
 
-                    if(!selectedSpecialityId.equals(""))
-                    {
+                    if (!selectedSpecialityId.equals("")) {
                         clickDoctor();
                     }
 
                 } else if (dbsFromAdapter.equals("NCR")) {
                     dbs = "DCR";
                     edtDBC.setText("DCR : Daily Call Report");
-                    if (sessionManager.getDayEnd().equals("false"))
-                    {
+                    if (sessionManager.getDayEnd().equals("false")) {
                         startActivity(new Intent(activity, NCRActivity.class));
                         AppUtils.startActivityAnimation(activity);
-                    }
-                    else
-                    {
+                    } else {
                         AppUtils.showToast(activity, "Your day has been ended.");
                     }
-                } else if (dbsFromAdapter.equals("INT"))
-                {
+                } else if (dbsFromAdapter.equals("INT")) {
                     inputArea.setVisibility(View.VISIBLE);
                     llWorkWith.setVisibility(View.VISIBLE);
                     if (cbWorkWith.isChecked()) {
@@ -5068,19 +4880,14 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     rvVariation.setVisibility(View.VISIBLE);
                     viewLine.setVisibility(View.GONE);
                     llSampleDetails.setVisibility(View.VISIBLE);
-                }
-                else if (dbsFromAdapter.equals("STK"))
-                {
+                } else if (dbsFromAdapter.equals("STK")) {
                     //For STK Onlye one time in a day
-                    if(sessionManager.isSTKDone())
-                    {
-                        AppUtils.showToast(activity,"You already done STK entry.");
+                    if (sessionManager.isSTKDone()) {
+                        AppUtils.showToast(activity, "You already done STK entry.");
                         dbs = "DCR";
                         edtDBC.setText("DCR : Daily Call Report");
                         return;
-                    }
-                    else
-                    {
+                    } else {
                         inputArea.setVisibility(View.GONE);
                         inputRMK.setVisibility(View.GONE);
                         llAdvice.setVisibility(View.GONE);
@@ -5114,27 +4921,22 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 } else {
                     //For clicked select doctor editText
 
-                    if(!selectedReportCode.equalsIgnoreCase("INT")&&
-                            !selectedReportCode.equalsIgnoreCase("ROR")&&
-                            !selectedReportCode.equalsIgnoreCase("ROA"))
-                    {
-                        if(enable_focus==1)
-                        {
+                    if (!selectedReportCode.equalsIgnoreCase("INT") &&
+                            !selectedReportCode.equalsIgnoreCase("ROR") &&
+                            !selectedReportCode.equalsIgnoreCase("ROA")) {
+                        if (enable_focus == 1) {
                             showDialogForFocused(selectedDoctorId);
                         }
                     }
 
                 }
-            }
-            else
-            {
+            } else {
                 if (dbsFromAdapter.equals("DCR") ||
                         dbsFromAdapter.equals("LCR") ||
                         dbsFromAdapter.equals("ACR") ||
                         dbsFromAdapter.equals("XCR") ||
                         dbsFromAdapter.equals("JCR") ||
-                        dbsFromAdapter.equals("ZCR"))
-                {
+                        dbsFromAdapter.equals("ZCR")) {
                     inputArea.setVisibility(View.VISIBLE);
                     inputDoctor.setVisibility(View.VISIBLE);
                     llWorkWith.setVisibility(View.VISIBLE);
@@ -5153,13 +4955,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     //llNewCycle.setVisibility(View.VISIBLE);
 
 
-                    if(dbs.equalsIgnoreCase("ZCR") ||
-                            dbs.equalsIgnoreCase("XCR"))
-                    {
+                    if (dbs.equalsIgnoreCase("ZCR") ||
+                            dbs.equalsIgnoreCase("XCR")) {
                         llNewCycle.setVisibility(View.GONE);
-                    }
-                    else
-                    {
+                    } else {
                         llNewCycle.setVisibility(View.VISIBLE);
                     }
 
@@ -5168,8 +4967,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     viewLine.setVisibility(View.GONE);
                     llSampleDetails.setVisibility(View.VISIBLE);
 
-                    if(!selectedSpecialityId.equals(""))
-                    {
+                    if (!selectedSpecialityId.equals("")) {
                         clickDoctor();
                     }
 
@@ -5195,21 +4993,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     viewLine.setVisibility(View.GONE);
                     llSampleDetails.setVisibility(View.VISIBLE);
 
-                    if(!selectedSpecialityId.equals(""))
-                    {
+                    if (!selectedSpecialityId.equals("")) {
                         clickDoctor();
                     }
 
                 } else if (dbsFromAdapter.equals("NCR")) {
                     dbs = "DCR";
                     edtDBC.setText("DCR : Daily Call Report");
-                    if (sessionManager.getDayEnd().equals("false"))
-                    {
+                    if (sessionManager.getDayEnd().equals("false")) {
                         startActivity(new Intent(activity, NCRActivity.class));
                         AppUtils.startActivityAnimation(activity);
-                    }
-                    else
-                    {
+                    } else {
                         AppUtils.showToast(activity, "Your day has been ended.");
                     }
                 } else if (dbsFromAdapter.equals("INT")) {
@@ -5326,19 +5120,15 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     viewLine.setVisibility(View.GONE);
                     llSampleDetails.setVisibility(View.VISIBLE);
 
-                } else if (dbsFromAdapter.equals("STK"))
-                {
+                } else if (dbsFromAdapter.equals("STK")) {
 
                     //For STK Onlye one time in a day
-                    if(sessionManager.isSTKDone())
-                    {
-                        AppUtils.showToast(activity,"You already done STK entry.");
+                    if (sessionManager.isSTKDone()) {
+                        AppUtils.showToast(activity, "You already done STK entry.");
                         dbs = "DCR";
                         edtDBC.setText("DCR : Daily Call Report");
                         return;
-                    }
-                    else
-                    {
+                    } else {
                         inputArea.setVisibility(View.GONE);
                         inputRMK.setVisibility(View.GONE);
                         llAdvice.setVisibility(View.GONE);
@@ -5367,127 +5157,103 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                         listEntry.add(addEntryGetSet);
                     }
-                }
-                else
-                {
+                } else {
                     //For clicked select doctor editText
-                    if(!selectedReportCode.equalsIgnoreCase("INT")&&
-                            !selectedReportCode.equalsIgnoreCase("ROR")&&
-                            !selectedReportCode.equalsIgnoreCase("ROA"))
-                    {
-                        if(enable_focus==1)
-                        {
+                    if (!selectedReportCode.equalsIgnoreCase("INT") &&
+                            !selectedReportCode.equalsIgnoreCase("ROR") &&
+                            !selectedReportCode.equalsIgnoreCase("ROA")) {
+                        if (enable_focus == 1) {
                             showDialogForFocused(selectedDoctorId);
                         }
                     }
                 }
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private class VariationAdapter extends RecyclerView.Adapter<VariationAdapter.ViewHolder>
-    {
+    private class VariationAdapter extends RecyclerView.Adapter<VariationAdapter.ViewHolder> {
         ArrayList<VariationResponse.VariationsBean> listItems;
+        boolean isTextChange = false;
 
-        VariationAdapter(ArrayList<VariationResponse.VariationsBean> list)
-        {
+        VariationAdapter(ArrayList<VariationResponse.VariationsBean> list) {
             this.listItems = list;
         }
 
         @Override
-        public VariationAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
-        {
+        public VariationAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.rowview_entry_new, viewGroup, false);
-
-            return new VariationAdapter.ViewHolder(v);
+            ViewHolder vh = new ViewHolder(v);
+            return vh;
         }
 
         @Override
-        public void onBindViewHolder(final VariationAdapter.ViewHolder holder, final int position)
-        {
+        public void onBindViewHolder(final VariationAdapter.ViewHolder holder, final int position) {
             try
             {
                 final VariationResponse.VariationsBean getSet = listItems.get(position);
-
-                if (getSet.getName().equalsIgnoreCase("product")) {
-                    holder.edtProduct.setText(getSet.getName());
-                } else {
-                    holder.edtProduct.setText(getSet.getItem_id_code() + " : " + getSet.getName());
-                }
-
-                if (getSet.getReason_code().equalsIgnoreCase("F"))//If reason f than set qty zero and disable qty edit
+                if (getSet.getName().equalsIgnoreCase("product"))
                 {
-                    holder.edtUnit.setText("0");
-                    holder.edtUnit.setEnabled(false);
+                    holder.edtProduct.setText(getSet.getName());
                 }
                 else
                 {
-                    holder.edtUnit.setEnabled(true);
+                    holder.edtProduct.setText(getSet.getItem_id_code() + " : " + getSet.getName());
                 }
 
-                if (getSet.getStock().equals("") || getSet.getStock().equals("0"))
+                if(getSet.getStock().equals("") || getSet.getStock().equals("0") ||
+                        getSet.getReason_code().equalsIgnoreCase("F"))
                 {
                     holder.edtUnit.setText("0");
+                }
+                else
+                {
+                    holder.edtUnit.setText(getSet.getStock());
+                }
+
+                if (dbs.equalsIgnoreCase("STK")) {
+                    holder.edtReason.setVisibility(View.GONE);
+                } else {
+                    holder.edtReason.setVisibility(View.VISIBLE);
+                }
+
+                if (getSet.getStock().equals("") || getSet.getStock().equals("0")) {
                     getSet.setReason("Refuse Sample");
                     getSet.setReason_code("F");
                     getSet.setReason_id(ApiClient.REFUSE_REASON_ID);
                     holder.edtReason.setText("F");
-                }
-                else
-                {
-                    holder.edtUnit.setText(String.valueOf(getSet.getStock()));
+                } else {
                     holder.edtReason.setText(getSet.getReason_code());
                 }
 
-                holder.edtUnit.setSelection(holder.edtUnit.getText().length());
-
-                if (dbs.equalsIgnoreCase("STK"))
-                {
-                    holder.edtReason.setVisibility(View.GONE);
-                    //holder.edtUnit.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(4)});
-                } else {
-                    holder.edtReason.setVisibility(View.VISIBLE);
-                    //holder.edtUnit.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(2)});
-                }
-
-                if (getSet.getProduct_type().equals("1"))
-                {
-                    if (getSet.getStock().equals("") || getSet.getStock().equals("0"))
-                    {
-                        holder.edtUnit.setText("0");
+                if (getSet.getProduct_type().equals("1")) {
+                    if (getSet.getStock().equals("") || getSet.getStock().equals("0")) {
                         getSet.setReason("Refuse Sample");
                         getSet.setReason_code("F");
                         getSet.setReason_id(ApiClient.REFUSE_REASON_ID);
                         holder.edtReason.setText("F");
 
-                    }
-                    else
-                    {
+                    } else {
                         holder.edtReason.setText("G");
                         getSet.setReason_code("G");
                         getSet.setReason_id(getIdFromReasonCode("G"));
                     }
-                }
-                else
-                {
+                } else {
                     holder.edtReason.setText(getSet.getReason_code());
                 }
 
-                holder.edtProduct.setOnClickListener(new OnClickListener()
-                {
+                holder.edtProduct.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick(View v)
-                    {
+                    public void onClick(View v) {
                         if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                             return;
                         }
                         mLastClickTime = SystemClock.elapsedRealtime();
-                        if (listVariation.size() > 1)
-                        {
-                            if(selectedReportCode.equalsIgnoreCase("DCR") ||
+                        if (listVariation.size() > 1) {
+                            if (selectedReportCode.equalsIgnoreCase("DCR") ||
                                     selectedReportCode.equalsIgnoreCase("ACR") ||
                                     selectedReportCode.equalsIgnoreCase("JCR") ||
                                     selectedReportCode.equalsIgnoreCase("LCR") ||
@@ -5496,27 +5262,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     selectedReportCode.equalsIgnoreCase("TNS") ||
                                     selectedReportCode.equalsIgnoreCase("XCR") ||
                                     selectedReportCode.equalsIgnoreCase("ZCR") ||
-                                    selectedReportCode.equalsIgnoreCase("STK"))
-                            {
+                                    selectedReportCode.equalsIgnoreCase("STK")) {
 
-                                if(isNCREntry)
-                                {
+                                if (isNCREntry) {
                                     showDialog("Product", 0);
-                                }
-                                else
-                                {
-                                    if(selectedReportCode.equalsIgnoreCase("STK"))
-                                    {
+                                } else {
+                                    if (selectedReportCode.equalsIgnoreCase("STK")) {
                                         showDialog("Product", 0);
-                                    }
-                                    else
-                                    {
-                                        if(selectedDoctorId.equalsIgnoreCase(""))
-                                        {
-                                            AppUtils.showToast(activity,"Please select doctor first.");
-                                        }
-                                        else
-                                        {
+                                    } else {
+                                        if (selectedDoctorId.equalsIgnoreCase("")) {
+                                            AppUtils.showToast(activity, "Please select doctor first.");
+                                        } else {
                                             showDialog("Product", 0);
                                         }
                                     }
@@ -5529,99 +5285,18 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 {
                                     showDialog("Product", 0);
                                 }*/
-                            }
-                            else if(selectedReportCode.equalsIgnoreCase("INT") ||
+                            } else if (selectedReportCode.equalsIgnoreCase("INT") ||
                                     selectedReportCode.equalsIgnoreCase("ROA") ||
-                                    selectedReportCode.equalsIgnoreCase("ROR"))
-                            {
+                                    selectedReportCode.equalsIgnoreCase("ROR")) {
                                 showDialog("Product", 0);
                             }
                             //showDialog("Product", 0);
-                        }
-                        else
-                        {
+                        } else {
                             AppUtils.showToast(activity, "No Products Found.");
                         }
-                        //JAY
-                        Log.e("<><>REASON",getSet.getReason_code());
                     }
                 });
 
-                holder.edtUnit.addTextChangedListener(new TextWatcher()
-                {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        if (!s.toString().trim().equals(""))
-                        {
-                            /*//Original Code
-                            VariationResponse.VariationsBean bean = listItems.get(position);
-                            bean.setStock(s.toString());
-                            listVariation.set(position, bean);*/
-
-                            //Changed by kiran, Change given by Riteshbhai
-                            VariationResponse.VariationsBean bean = listItems.get(position);
-                            bean.setStock(s.toString());
-                            if(Integer.parseInt(s.toString())==0)
-                            {
-                                Log.e("****>>>", "onBindViewHolder:                3  "  );
-
-                                bean.setReason("Refuse Sample");
-                                bean.setReason_code("F");
-                                bean.setReason_id(ApiClient.REFUSE_REASON_ID);
-                                holder.edtReason.setText("F");
-                            }
-                            else
-                            {
-
-                                Log.e("****>>>", "onBindViewHolder:                4  "  );
-
-                                if(bean.getProduct_type().equalsIgnoreCase("0"))
-                                {
-                                    if(!bean.getReason_code().equalsIgnoreCase("F"))
-                                    {
-                                        bean.setReason(bean.getReason());
-                                        bean.setReason_code(bean.getReason_code());
-                                        holder.edtReason.setText(bean.getReason_code());
-                                    }
-                                    else
-                                    {
-                                        bean.setReason("Regular Sample");
-                                        bean.setReason_code("R");
-                                        holder.edtReason.setText("R");
-                                    }
-                                }
-                                else
-                                {
-                                    bean.setReason("Gift Article");
-                                    bean.setReason_code("G");
-                                    holder.edtReason.setText("G");
-                                }
-                            }
-                            listVariation.set(position, bean);
-                        }
-                        else
-                        {
-                            VariationResponse.VariationsBean bean = listItems.get(position);
-                            bean.setStock("0");
-                            bean.setReason("Refuse Sample");
-                            bean.setReason_code("F");
-                            bean.setReason_id(ApiClient.REFUSE_REASON_ID);
-                            holder.edtReason.setText("F");
-                            listVariation.set(position, bean);
-                        }
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
                 holder.edtReason.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -5633,8 +5308,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                         if (holder.edtProduct.getText().toString().equals("") || holder.edtProduct.getText().toString().equals("Product")) {
                             AppUtils.showToast(activity, "Please select product!");
-                        }
-                        else {
+                        } else {
                             if (listReports.size() > 0) {
                                 showDialog("Reason", position);
                             } else {
@@ -5643,7 +5317,82 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                     }
                 });
-            } catch (Exception e) {
+
+                holder.edtUnit.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                            return;
+                        }
+                        mLastClickTime = SystemClock.elapsedRealtime();
+
+                        if (!getSet.getReason_code().equalsIgnoreCase("F"))//If reason f than set qty zero and disable qty edit
+                        {
+                            showUpdateUnitDialog(listItems,holder.getAdapterPosition());
+                        }
+                    }
+                });
+
+                /*holder.edtUnit.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (!s.toString().trim().equals("")) {
+                            //Changed by kiran, Change given by Riteshbhai
+                            final VariationResponse.VariationsBean bean = listItems.get(holder.getAdapterPosition());
+                            bean.setStock(s.toString().trim());
+                            if (Integer.parseInt(s.toString()) == 0) {
+                                Log.e("****>>>", "onBindViewHolder:                3  ");
+                                bean.setReason("Refuse Sample");
+                                bean.setReason_code("F");
+                                bean.setReason_id(ApiClient.REFUSE_REASON_ID);
+                                // holder.edtReason.setText("F");
+                            } else {
+
+                                Log.e("****>>>", "onBindViewHolder:                4  ");
+
+                                if (bean.getProduct_type().equalsIgnoreCase("0")) {
+                                    if (!bean.getReason_code().equalsIgnoreCase("F")) {
+                                        bean.setReason(bean.getReason());
+                                        bean.setReason_code(bean.getReason_code());
+                                        //   holder.edtReason.setText(bean.getReason_code());
+                                    } else {
+                                        bean.setReason("Regular Sample");
+                                        bean.setReason_code("R");
+                                        // holder.edtReason.setText("R");
+                                    }
+                                } else {
+                                    bean.setReason("Gift Article");
+                                    bean.setReason_code("G");
+                                    // holder.edtReason.setText("G");
+                                }
+                            }
+
+                            listItems.set(holder.getAdapterPosition(), bean);
+                        } else {
+                            final VariationResponse.VariationsBean bean = listItems.get(holder.getAdapterPosition());
+                            bean.setStock("0");
+                            bean.setReason("Refuse Sample");
+                            bean.setReason_code("F");
+                            bean.setReason_id(ApiClient.REFUSE_REASON_ID);
+                            // holder.edtReason.setText("F");
+                            listItems.set(holder.getAdapterPosition(), bean);
+                        }
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });*/
+
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -5659,9 +5408,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             return id;
         }
 
-
-        public boolean isListFilled()
-        {
+        public boolean isListFilled() {
             boolean isFilled = true;
             for (int i = 0; i < listItems.size(); i++) {
                 if (listItems.get(i).getName().equalsIgnoreCase("Product") ||
@@ -5679,7 +5426,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             private EditText edtProduct, edtUnit, edtReason;
-
             ViewHolder(View convertView) {
                 super(convertView);
                 edtProduct = (EditText) convertView.findViewById(R.id.edtProduct);
@@ -5689,824 +5435,331 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         }
     }
 
-    @SuppressWarnings("unused")
-    private class ViewHolder {
-        TextView txtProduct, txtReason;
-        EditText edtUnit;
-        LinearLayout llProduct, llReason;
-        ImageView ivMinus;
-        int ref;
-    }
-
     protected void showDialog(final String clickFor, final int mainListPos) {
-        try {
-            final Dialog dialog = new BottomSheetDialog(activity, R.style.MaterialDialogSheetTemp);
-            //final Dialog dialog = new Dialog(activity);
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            final View sheetView = activity.getLayoutInflater().inflate(R.layout.dialog_sample, null);
+        if (clickFor.equals("Reason"))
+        {
+            try {
+                final Dialog dialog = new BottomSheetDialog(activity, R.style.MaterialDialogSheetTemp);
+                //final Dialog dialog = new Dialog(activity);
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                final View sheetView = activity.getLayoutInflater().inflate(R.layout.dialog_sample, null);
 
             /*dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);*/
 
-            dialog.setContentView(sheetView);
+                dialog.setContentView(sheetView);
 
-            dialog.findViewById(R.id.ivBack).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    dialog.cancel();
-                }
-            });
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    AppUtils.hideKeyboard(sheetView, activity);
-                    if (productUnitAdapter.listSelected().size() > 0)
-                    {
-                        if (productUnitAdapter.isAllSelected())
-                        {
-                            dialog.dismiss();
-                            if (listSelectedProducts == null) {
-                                listSelectedProducts = new ArrayList<>();
-                            }
-
-                            listSelectedProducts.clear();
-
-                            for (int i = 0; i < productUnitAdapter.listSelected().size(); i++)
-                            {
-                                listSelectedProducts.add(productUnitAdapter.listSelected().get(i));
-                            }
-
-                            txtAddCount.setText(String.valueOf(listSelectedProducts.size()));
-
-                            variationAdapter = new VariationAdapter(listSelectedProducts);
-                            rvVariation.setAdapter(variationAdapter);
-                        }
-                        else {
-                            AppUtils.showToast(activity, "Please enter unit for all samples.");
-                        }
-                    }
-                    else
-                    {
-                        AppUtils.showToast(activity, "Please Select atleast One sample.");
-
-                        txtAddCount.setText("1");
-                        ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
-                        VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
-                        bean.setStock("");
-                        bean.setItem_code("");
-                        bean.setItem_id_code("");
-                        bean.setProduct_id("0");
-                        bean.setReason("Regular Sample");
-                        bean.setReason_code("R");
-                        bean.setName("Product");
-                        listTemp.add(bean);
-                        variationAdapter = new VariationAdapter(listTemp);
-                        rvVariation.setAdapter(variationAdapter);
-
-                        for (int i = 0; i < listVariation.size(); i++) {
-                            VariationResponse.VariationsBean bean1 = listVariation.get(i);
-                            bean1.setStock("");
-                            bean1.setChecked(false);
-                            //Added for not take previous reason 7_3_19
-                            bean1.setReason("");
-                            bean1.setReason_code("R");
-                            listVariation.set(i, bean1);
-                        }
-                    }
-                }
-            });
-            dialog.setCanceledOnTouchOutside(false);
-
-            LinearLayout llMainListLinear = (LinearLayout) dialog.findViewById(R.id.llMainListLinear);
-            llMainListLinear.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
-            final EditText edtSearch = (EditText) dialog.findViewById(R.id.edtSearch_Dialog_ListView);
-            TextInputLayout inputSearch = (TextInputLayout) dialog.findViewById(R.id.inputSearch);
-
-            final BottomSheetListView listView = (BottomSheetListView) dialog.findViewById(R.id.lv_Dialog);
-            TextView txtHeader = (TextView) dialog.findViewById(R.id.txtHeader_Dialog_ListView);
-            final TextView btnSubmit = (TextView) dialog.findViewById(R.id.txtSubmitDialog);
-
-            if (clickFor.equals("Product"))
-            {
-                txtHeader.setText("Select Product");
-                dialog.findViewById(R.id.ivBack).setVisibility(View.GONE);
-
-                productUnitAdapter = new ProductUnitAdapter(listVariation, listReason, dialog, "Product", mainListPos, false,listView);
-                listView.setAdapter(productUnitAdapter);
-                btnSubmit.setVisibility(View.VISIBLE);
-                //setListViewHeightBasedOnChildren(listView);
-                //setListHeight(listView,productUnitAdapter,listVariation);
-
-                inputSearch.setVisibility(View.VISIBLE);
-
-                edtSearch.addTextChangedListener(new TextWatcher()
-                {
+                dialog.findViewById(R.id.ivBack).setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                        int textlength = edtSearch.getText().length();
-                        listVariationSearch.clear();
-                        for (int i = 0; i < listVariation.size(); i++) {
-                            if (listVariation.get(i).getName().toLowerCase().contains(edtSearch.getText().toString().toLowerCase().trim()) ||
-                                    listVariation.get(i).getItem_id_code().toLowerCase().contains(edtSearch.getText().toString().toLowerCase().trim()) ||
-                                    listVariation.get(i).getItem_code().toLowerCase().contains(edtSearch.getText().toString().toLowerCase().trim()))
-                            {
-                                listVariationSearch.add(listVariation.get(i));
-                            }
-                        }
-                        productUnitAdapter = new ProductUnitAdapter(listVariation, listReason, dialog, "Product", mainListPos, true,listView);
-                        listView.setAdapter(productUnitAdapter);
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable arg0) {
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        dialog.cancel();
                     }
                 });
-            } else if (clickFor.equals("Reason")) {
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        AppUtils.hideKeyboard(sheetView, activity);
+                        /*if (productUnitAdapter.listSelected().size() > 0) {
+                            if (productUnitAdapter.isAllSelected()) {
+                                dialog.dismiss();
+                                if (listSelectedProducts == null) {
+                                    listSelectedProducts = new ArrayList<>();
+                                }
+
+                                listSelectedProducts.clear();
+
+                                for (int i = 0; i < productUnitAdapter.listSelected().size(); i++) {
+                                    listSelectedProducts.add(productUnitAdapter.listSelected().get(i));
+                                }
+
+                                txtAddCount.setText(String.valueOf(listSelectedProducts.size()));
+                                variationAdapter = new VariationAdapter(listSelectedProducts);
+                                rvVariation.setAdapter(variationAdapter);
+                            } else {
+                                AppUtils.showToast(activity, "Please enter unit for all samples.");
+                            }
+                        } else {
+                            AppUtils.showToast(activity, "Please Select atleast One sample.");
+                            txtAddCount.setText("1");
+                            ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                            VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                            bean.setStock("");
+                            bean.setItem_code("");
+                            bean.setItem_id_code("");
+                            bean.setProduct_id("0");
+                            bean.setReason("Regular Sample");
+                            bean.setReason_code("R");
+                            bean.setName("Product");
+                            listTemp.add(bean);
+                            variationAdapter = new VariationAdapter(listTemp);
+                            rvVariation.setAdapter(variationAdapter);
+                            for (int i = 0; i < listVariation.size(); i++) {
+                                VariationResponse.VariationsBean bean1 = listVariation.get(i);
+                                bean1.setStock("");
+                                bean1.setChecked(false);
+                                //Added for not take previous reason 7_3_19
+                                bean1.setReason("");
+                                bean1.setReason_code("R");
+                                listVariation.set(i, bean1);
+                            }
+                        }*/
+                    }
+                });
+
+
+                dialog.setCanceledOnTouchOutside(false);
+                LinearLayout llMainListLinear = (LinearLayout) dialog.findViewById(R.id.llMainListLinear);
+                llMainListLinear.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    }
+                });
+
+                final EditText edtSearch = (EditText) dialog.findViewById(R.id.edtSearch_Dialog_ListView);
+                TextInputLayout inputSearch = (TextInputLayout) dialog.findViewById(R.id.inputSearch);
+
+                final RecyclerView listView = (RecyclerView) dialog.findViewById(R.id.lv_Dialog);
+                TextView txtHeader = (TextView) dialog.findViewById(R.id.txtHeader_Dialog_ListView);
+                final TextView btnSubmit = (TextView) dialog.findViewById(R.id.txtSubmitDialog);
+
                 dialog.findViewById(R.id.ivBack).setVisibility(View.VISIBLE);
                 inputSearch.setVisibility(View.GONE);
                 txtHeader.setText("Select Reason");
-                productUnitAdapter = new ProductUnitAdapter(listVariation, listReason, dialog, "Reason", mainListPos, false,listView);
+                productUnitAdapter = new ProductUnitAdapter(mainListPos,dialog,listVariation);
                 listView.setAdapter(productUnitAdapter);
                 btnSubmit.setVisibility(View.INVISIBLE);
-            }
+                btnSubmit.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (productUnitAdapter.listSelected().size() > 0) {
+                            if (productUnitAdapter.isAllSelected()) {
+                                AppUtils.hideKeyboard(edtSearch, activity);
+                                dialog.dismiss();
+                                if (listSelectedProducts == null) {
+                                    listSelectedProducts = new ArrayList<>();
+                                }
 
+                                listSelectedProducts.clear();
+                                for (int i = 0; i < productUnitAdapter.listSelected().size(); i++) {
+                                    listSelectedProducts.add(productUnitAdapter.listSelected().get(i));
+                                }
 
-            btnSubmit.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    if (productUnitAdapter.listSelected().size() > 0)
-                    {
-                        if (productUnitAdapter.isAllSelected())
-                        {
-                            AppUtils.hideKeyboard(edtSearch, activity);
-                            dialog.dismiss();
-                            if (listSelectedProducts == null) {
-                                listSelectedProducts = new ArrayList<>();
+                                txtAddCount.setText(String.valueOf(listSelectedProducts.size()));
+                                variationAdapter = new VariationAdapter(listSelectedProducts);
+                                rvVariation.setAdapter(variationAdapter);
+                            } else {
+                                AppUtils.showToast(activity, "Please enter unit for all samples.");
                             }
-
-                            listSelectedProducts.clear();
-
-                            for (int i = 0; i < productUnitAdapter.listSelected().size(); i++)
-                            {
-                                listSelectedProducts.add(productUnitAdapter.listSelected().get(i));
-                            }
-
-                            txtAddCount.setText(String.valueOf(listSelectedProducts.size()));
-
-                            variationAdapter = new VariationAdapter(listSelectedProducts);
-                            rvVariation.setAdapter(variationAdapter);
+                        } else {
+                            AppUtils.showToast(activity, "Please Select atleast One sample.");
                         }
-                        else {
-                            AppUtils.showToast(activity, "Please enter unit for all samples.");
-                        }
-                    } else {
-                        AppUtils.showToast(activity, "Please Select atleast One sample.");
                     }
-                }
-            });
+                });
+                dialog.show();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            Intent intent = new Intent(activity, SelectProductActivity.class);
+            intent.putExtra("clickFor",clickFor);
+            intent.putExtra("dbs",dbs);
+            intent.putExtra("selectedReportCode",selectedReportCode);
+            intent.putExtra("mainListPos",mainListPos);
 
+            if (listVariation.size() > 0) {
+                Gson gsonDiscount = new Gson();
+                final String listVariationData = gsonDiscount.toJson(listVariation);
+                intent.putExtra("listVariationData", listVariationData);
+            }
 
-            dialog.show();
+            if (listReason.size() > 0) {
+                Gson gsonDiscount = new Gson();
+                final String listReasonData = gsonDiscount.toJson(listReason);
+                intent.putExtra("listReasonData", listReasonData);
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (listSelectedProducts.size() > 0) {
+                Gson gsonDiscount = new Gson();
+                final String listSelectedProductsData = gsonDiscount.toJson(listSelectedProducts);
+                intent.putExtra("listSelectedProductsData", listSelectedProductsData);
+            }
+
+            startActivity(intent);
         }
     }
 
-    public static void setListViewHeightBasedOnChildren
-            (ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) return;
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
-                View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0) view.setLayoutParams(new
-                    ViewGroup.LayoutParams(desiredWidth,
-                    WindowManager.LayoutParams.WRAP_CONTENT));
+    protected void showUpdateUnitDialog(ArrayList<VariationResponse.VariationsBean> list, int adapterPosition) {
+        final Dialog dialog = new BottomSheetDialog(activity, R.style.MaterialDialogSheetTemp);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        final View sheetView = activity.getLayoutInflater().inflate(R.layout.dialog_product_unit_update, null);
+        dialog.setContentView(sheetView);
+        dialog.setCanceledOnTouchOutside(false);
 
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+        dialog.findViewById(R.id.llCancel).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                dialog.cancel();
+            }
+        });
+
+        dialog.findViewById(R.id.llMainListLinear).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        final EditText edtUnit = (EditText) dialog.findViewById(R.id.edtUnit);
+
+        final VariationResponse.VariationsBean data = list.get(adapterPosition);
+
+        if(data.getStock().equals("") || data.getStock().equals("0") ||
+                data.getReason_code().equalsIgnoreCase("F"))
+        {
+            edtUnit.setText("0");
+        }
+        else
+        {
+            edtUnit.setText(data.getStock());
         }
 
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        dialog.findViewById(R.id.llSave).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String s = edtUnit.getText().toString().trim();
+                if (!s.toString().trim().equals("")) {
+                    //Changed by kiran, Change given by Riteshbhai
+                    final VariationResponse.VariationsBean bean = data;
+                    bean.setStock(s.toString().trim());
+                    if (Integer.parseInt(s.toString()) == 0) {
+                        Log.e("****>>>", "onBindViewHolder:                3  ");
+                        bean.setReason("Refuse Sample");
+                        bean.setReason_code("F");
+                        bean.setReason_id(ApiClient.REFUSE_REASON_ID);
+                        // holder.edtReason.setText("F");
+                    } else {
 
-        params.height = totalHeight + (listView.getDividerHeight() *
-                (listAdapter.getCount() - 1));
+                        Log.e("****>>>", "onBindViewHolder:                4  ");
 
-        listView.setLayoutParams(params);
-        listView.requestLayout();
+                        if (bean.getProduct_type().equalsIgnoreCase("0")) {
+                            if (!bean.getReason_code().equalsIgnoreCase("F")) {
+                                bean.setReason(bean.getReason());
+                                bean.setReason_code(bean.getReason_code());
+                                //   holder.edtReason.setText(bean.getReason_code());
+                            } else {
+                                bean.setReason("Regular Sample");
+                                bean.setReason_code("R");
+                                // holder.edtReason.setText("R");
+                            }
+                        } else {
+                            bean.setReason("Gift Article");
+                            bean.setReason_code("G");
+                            // holder.edtReason.setText("G");
+                        }
+                    }
+
+                    list.set(adapterPosition, bean);
+                } else {
+                    final VariationResponse.VariationsBean bean = data;
+                    bean.setStock("0");
+                    bean.setReason("Refuse Sample");
+                    bean.setReason_code("F");
+                    bean.setReason_id(ApiClient.REFUSE_REASON_ID);
+                    // holder.edtReason.setText("F");
+                    list.set(adapterPosition, bean);
+                }
+                variationAdapter.notifyItemChanged(adapterPosition);
+                dialog.dismiss();
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
     }
 
-    private void setListHeight(ListView listView, BaseAdapter adapter, ArrayList<VariationResponse.VariationsBean> list) {
-        try {
-            if (adapter == null) {
-                return;
-            }
-
-            int totalHeight = 0;
-
-            int TempCount = 0;
-
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getProduct_type().equals("1")) {
-                    TempCount = TempCount + 1;
-                }
-            }
-
-            for (int i = 0; i < adapter.getCount(); ++i) {
-                View listItem = adapter.getView(i, (View) null, listView);
-                listItem.measure(0, 0);
-                if (list.get(i).getProduct_type().equals("1")) {
-                    totalHeight += listItem.getMeasuredHeight();
-                }
-            }
-
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = totalHeight + listView.getDividerHeight() * (adapter.getCount() - 1);
-            listView.setLayoutParams(params);
-            listView.requestLayout();
-        } catch (Exception var5) {
-            var5.printStackTrace();
-        }
-
-    }
-
-    public class ProductUnitAdapter extends BaseAdapter {
-        private LayoutInflater inflater = null;
+    public class ProductUnitAdapter extends RecyclerView.Adapter<ProductUnitAdapter.ViewHolder>
+    {
         private ArrayList<VariationResponse.VariationsBean> listProducAdapter;
         private ArrayList<ReasonResponse.ReasonsBean> listReasonAdapter;
-        private String isFor = "";
-        Dialog dialog;
         private int mainListPos = 0;
-        private boolean isForSearch = false;
-        private BottomSheetListView bottomSheetListView;
+        private Dialog dialog;
 
-        public ProductUnitAdapter(ArrayList<VariationResponse.VariationsBean> productList,
-                                  ArrayList<ReasonResponse.ReasonsBean> reasonList,
-                                  Dialog dialog,
-                                  String isFor,
-                                  int mainListPos,
-                                  boolean isForSearch,
-                                  BottomSheetListView bottomSheetListView) {
-            //this.listProducAdapter = productList;
-            this.listReasonAdapter = reasonList;
-            this.dialog = dialog;
-            this.isFor = isFor;
+        ProductUnitAdapter(int mainListPos, Dialog dialog,ArrayList<VariationResponse.VariationsBean> productList)
+        {
             this.mainListPos = mainListPos;
-            this.isForSearch = isForSearch;
-            this.bottomSheetListView = bottomSheetListView;
-            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            if (selectedReportCode.equalsIgnoreCase("STK"))
-            {
-                this.listProducAdapter = productList;
-
-                if (isFor.equalsIgnoreCase("Product")) {
-                    for (int i = 0; i < listProducAdapter.size(); i++) {
-                        VariationResponse.VariationsBean getSet = listProducAdapter.get(i);
-                        getSet.setChecked(true);
-                        listProducAdapter.set(i, getSet);
-                    }
-                }
-
-            }
-            else if (selectedReportCode.equalsIgnoreCase("TNS") || selectedReportCode.equalsIgnoreCase("SRD"))
-            {
-                this.listProducAdapter = new ArrayList<>();
-                for (int i = 0; i < productList.size(); i++) {
-                    if (productList.get(i).getProduct_type().equalsIgnoreCase("1")) {
-                        this.listProducAdapter.add(productList.get(i));
-                    }
-                }
-            }
-            else
-            {
-                this.listProducAdapter = productList;
-            }
-
-
-            //For disaply only G and F if product reason is Gift
-            if (isFor.equalsIgnoreCase("Reason"))
-            {
-                if (listSelectedProducts.get(mainListPos).getProduct_type().equalsIgnoreCase("1"))
-                {
-                    listReasonAdapter = DataUtils.getReasonsFroGift();
-                }
-                else
-                {
-                    listReasonAdapter = DataUtils.getReasonsFroNonGift();
-                }
-            }
-
-        }
-
-        public int getCount()
-        {
-            if (isFor.equalsIgnoreCase("Product")) {
-                if (isForSearch) {
-                    return listVariationSearch.size();
-                } else {
-                    return listProducAdapter.size();
-                }
-
+            this.dialog = dialog;
+            this.listProducAdapter = productList;
+            if (listSelectedProducts.get(mainListPos).getProduct_type().equalsIgnoreCase("1")) {
+                listReasonAdapter = DataUtils.getReasonsFroGift();
             } else {
-                return listReasonAdapter.size();
+                listReasonAdapter = DataUtils.getReasonsFroNonGift();
             }
         }
 
-        public Object getItem(int position) {
-            return position;
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public View getView(final int position, View convertView, final ViewGroup parent)
+        @Override public ProductUnitAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
         {
-            final ProductUnitAdapter.ViewHolder holder;
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rowview_product_unit, parent, false);
+            ProductUnitAdapter.ViewHolder vh = new ProductUnitAdapter.ViewHolder(v);
+            return vh;
+        }
 
-            if (convertView == null) {
-                holder = new ProductUnitAdapter.ViewHolder();
-                convertView = inflater.inflate(R.layout.rowview_product_unit, null);
-                holder.txtProduct = (TextView) convertView.findViewById(R.id.txtProduct);
-                holder.txtProductCode = (TextView) convertView.findViewById(R.id.txtProductCode);
-                holder.cbProduct = (CheckBox) convertView.findViewById(R.id.cb);
-                holder.edtUnit = (EditText) convertView.findViewById(R.id.edtUnit);
-                //holder.edtUnit.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                convertView.setTag(holder);
-            } else {
-                holder = (ProductUnitAdapter.ViewHolder) convertView.getTag();
-            }
-
-            if (isFor.equalsIgnoreCase("Product"))
-            {
-                holder.pos = position;
-
-                final VariationResponse.VariationsBean getSet;
-
-                if (isForSearch) {
-                    getSet = listVariationSearch.get(position);
-                } else {
-                    getSet = listProducAdapter.get(position);
-                }
-
-                if (getSet.getName().equalsIgnoreCase("product")) {
-                    convertView.setVisibility(View.GONE);
-                } else {
-                    convertView.setVisibility(View.VISIBLE);
-                }
-
-                if (dbs.equalsIgnoreCase("STK")) {
-                    holder.cbProduct.setChecked(true);
-                    //ravi
-                    // holder.edtUnit.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(4)});
-                    getSet.setChecked(true);
-                } else {
-                    //ravi
-                    //  holder.edtUnit.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(2)});
-                    holder.cbProduct.setChecked(getSet.isChecked());
-                }
-
-                if (getSet.isChecked())
-                {
-                    holder.cbProduct.setChecked(true);
-                    holder.edtUnit.setVisibility(View.VISIBLE);
-                    if (getSet.getStock().equals("") || getSet.getStock().equals("0"))
-                    {
-                        if(getSet.getReason_code().equalsIgnoreCase("F"))
-                        {
-                            holder.edtUnit.setText("0");
-                            holder.edtUnit.setSelection(holder.edtUnit.getText().length());
-                        }
-                        else
-                        {
-                            holder.edtUnit.setText("");
-                        }
-
-
-                    } else {
-                        holder.edtUnit.setText(String.valueOf(getSet.getStock()));
-                        holder.edtUnit.setSelection(holder.edtUnit.getText().length());
-                    }
-
-                } else {
-
-                    holder.edtUnit.setVisibility(View.INVISIBLE);
-                    holder.cbProduct.setChecked(false);
-                }
-
-                holder.cbProduct.setVisibility(View.VISIBLE);
-                holder.txtProductCode.setText(getSet.getItem_id_code());
-                holder.txtProduct.setText(getSet.getName());
-
-                /*important*/
-				/*if(dbs.equalsIgnoreCase("TNS") || dbs.equalsIgnoreCase("SRD") )
-				{
-					if(getSet.getProduct_type().equals("1"))
-					{
-						convertView.setVisibility(View.VISIBLE);
-					}
-					else
-					{
-						convertView.setVisibility(View.GONE);
-					}
-				}*/
-
-                holder.edtUnit.addTextChangedListener(new TextWatcher()
-                {
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count)
-                    {
-                        try
-                        {
-                            if (isForSearch)
-                            {
-                                if (!s.toString().equals("")) {
-                                    if (getSet.isChecked()) {
-                                        listVariationSearch.get(holder.pos).setStock(s.toString());
-                                    } else {
-                                        listVariationSearch.get(holder.pos).setStock("");
-                                    }
-
-                                    listVariationSearch.set(holder.pos, listVariationSearch.get(holder.pos));
-
-                                }
-                            }
-                            else
-                            {
-                                if (!s.toString().equals(""))
-                                {
-                                    /*if (getSet.isChecked())
-                                    {
-                                        listProducAdapter.get(holder.pos).setStock(s.toString());
-                                    }
-                                    else
-                                    {
-                                        listProducAdapter.get(holder.pos).setStock("");
-                                    }
-
-                                    listProducAdapter.set(holder.pos, listProducAdapter.get(holder.pos));*/
-
-                                    //Changed on 12th jan 2018 evening
-                                    VariationResponse.VariationsBean variationsBean =  listProducAdapter.get(holder.pos);
-                                    variationsBean.setStock(s.toString());
-                                    if(Integer.parseInt(s.toString())==0)
-                                    {
-                                        variationsBean.setReason("Refuse Sample");
-                                        variationsBean.setReason_code("F");
-                                        variationsBean.setReason_id(ApiClient.REFUSE_REASON_ID);
-                                    }
-                                    else
-                                    {
-
-                                        if(variationsBean.getProduct_type().equalsIgnoreCase("0"))
-                                        {
-                                            if(!variationsBean.getReason_code().equalsIgnoreCase("F"))
-                                            {
-                                                variationsBean.setReason(variationsBean.getReason());
-                                                variationsBean.setReason_code(variationsBean.getReason_code());
-                                            }
-                                            else
-                                            {
-                                                variationsBean.setReason("Regular Sample");
-                                                variationsBean.setReason_code("R");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            variationsBean.setReason("Gift Article");
-                                            variationsBean.setReason_code("G");
-                                        }
-                                    }
-                                    listProducAdapter.set(holder.pos,variationsBean);
-                                }
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
-
-                /* holder.edtUnit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
-                            //ORIGINAL CODE
-                            //holder.edtUnit.setFocusableInTouchMode(false);
-                            //AppUtils.hideKeyboard(holder.edtUnit,activity);
-
-                            //JAY CHANGED THIS FOR TESTInG
-                            holder.edtUnit.setFocusableInTouchMode(true);
-
-                        }
-                    }
-                });*/
-
-               /* holder.cbProduct.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        AppUtils.hideKeyboard(holder.edtUnit,activity);
-                      */
-                /*  holder.edtUnit.setFocusableInTouchMode(true);
-                        holder.edtUnit.post(() -> {
-                            holder.edtUnit.requestFocus();
-                            AppUtils.showKeyboard(holder.edtUnit,activity);
-                        });*//*
-
-                        if (dbs.equalsIgnoreCase("STK"))
-                        {
-                            holder.cbProduct.setChecked(true);
-                            return;
-                        }
-                        else
-                        {
-                            getSet.setChecked(!getSet.isChecked());
-                            if (getSet.isChecked())
-                            {
-                                holder.edtUnit.setVisibility(View.VISIBLE);
-                                AppUtils.showKeyboard(holder.edtUnit,activity);
-                            }
-                            else
-                            {
-                                AppUtils.hideKeyboard(holder.edtUnit,activity);
-                                getSet.setStock("");
-                                holder.edtUnit.setVisibility(View.INVISIBLE);
-                            }
-                            if (isForSearch) {
-                                listVariationSearch.set(position, getSet);
-                            } else {
-                                listProducAdapter.set(position, getSet);
-                            }
-                            notifyDataSetChanged();
-                        }
-                    }
-                });
-
-                holder.txtProduct.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AppUtils.hideKeyboard(holder.edtUnit,activity);
-                      *//*  holder.edtUnit.setFocusableInTouchMode(true);
-                        holder.edtUnit.post(() -> {
-                            holder.edtUnit.requestFocus();
-                            AppUtils.showKeyboard(holder.edtUnit,activity);
-                        });*//*
-
-                        if (dbs.equalsIgnoreCase("STK"))
-                        {
-                            holder.cbProduct.setChecked(true);
-                            return;
-                        }
-                        else
-                        {
-                            getSet.setChecked(!getSet.isChecked());
-                            if (getSet.isChecked())
-                            {
-                                holder.edtUnit.setVisibility(View.VISIBLE);
-                                AppUtils.showKeyboard(holder.edtUnit,activity);
-                            }
-                            else
-                            {
-                                AppUtils.hideKeyboard(holder.edtUnit,activity);
-                                getSet.setStock("");
-                                holder.edtUnit.setVisibility(View.INVISIBLE);
-                            }
-                            if (isForSearch) {
-                                listVariationSearch.set(position, getSet);
-                            } else {
-                                listProducAdapter.set(position, getSet);
-                            }
-                            notifyDataSetChanged();
-                        }
-                    }
-                });
-
-                holder.txtProductCode.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AppUtils.hideKeyboard(holder.edtUnit,activity);
-                      *//*  holder.edtUnit.setFocusableInTouchMode(true);
-                        holder.edtUnit.post(() -> {
-                            holder.edtUnit.requestFocus();
-                            AppUtils.showKeyboard(holder.edtUnit,activity);
-                        });*//*
-
-                        if (dbs.equalsIgnoreCase("STK"))
-                        {
-                            holder.cbProduct.setChecked(true);
-                            return;
-                        }
-                        else
-                        {
-                            getSet.setChecked(!getSet.isChecked());
-                            if (getSet.isChecked())
-                            {
-                                holder.edtUnit.setVisibility(View.VISIBLE);
-                                AppUtils.showKeyboard(holder.edtUnit,activity);
-                            }
-                            else
-                            {
-                                AppUtils.hideKeyboard(holder.edtUnit,activity);
-                                getSet.setStock("");
-                                holder.edtUnit.setVisibility(View.INVISIBLE);
-                            }
-                            if (isForSearch) {
-                                listVariationSearch.set(position, getSet);
-                            } else {
-                                listProducAdapter.set(position, getSet);
-                            }
-                            notifyDataSetChanged();
-                        }
-                    }
-                });*/
-
-                convertView.setOnClickListener(new OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        AppUtils.hideKeyboard(holder.edtUnit,activity);
-                      /*  holder.edtUnit.setFocusableInTouchMode(true);
-                        holder.edtUnit.post(() -> {
-                            holder.edtUnit.requestFocus();
-                            AppUtils.showKeyboard(holder.edtUnit,activity);
-                        });*/
-
-                        if (dbs.equalsIgnoreCase("STK"))
-                        {
-                            holder.cbProduct.setChecked(true);
-                            return;
-                        }
-                        else
-                        {
-                            getSet.setChecked(!getSet.isChecked());
-                            if (getSet.isChecked())
-                            {
-                                holder.edtUnit.setVisibility(View.VISIBLE);
-                                //JAY
-                                //AppUtils.showKeyboard(holder.edtUnit,activity);
-                            }
-                            else
-                            {
-                                AppUtils.hideKeyboard(holder.edtUnit,activity);
-                                getSet.setStock("");
-                                holder.edtUnit.setVisibility(View.INVISIBLE);
-                            }
-                            if (isForSearch) {
-                                listVariationSearch.set(position, getSet);
-                            } else {
-                                listProducAdapter.set(position, getSet);
-                            }
-                            notifyDataSetChanged();
-                        }
-                    }
-                });
-
-            }
-            else
-            {
+        @Override
+        public void onBindViewHolder(final ProductUnitAdapter.ViewHolder holder, final int position) {
+            try {
+                holder.holderPos = holder.getAbsoluteAdapterPosition();
                 holder.cbProduct.setVisibility(View.GONE);
-                final ReasonResponse.ReasonsBean getSet = listReasonAdapter.get(position);
+                final ReasonResponse.ReasonsBean getSet = listReasonAdapter.get(holder.holderPos);
                 holder.cbProduct.setVisibility(View.GONE);
                 holder.txtProductCode.setText(getSet.getReason_code());
                 holder.txtProduct.setText(getSet.getReason());
-
-                convertView.setOnClickListener(new OnClickListener()
-                {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v)
-                    {
-                        isListReasonItemClicked = true;
-                        dialog.dismiss();
-
-                        for (int i = 0; i < listSelectedProducts.size(); i++)
-                        {
-                            if (i == mainListPos)
-                            {
+                    public void onClick(View v) {
+                        for (int i = 0; i < listSelectedProducts.size(); i++) {
+                            if (i == mainListPos) {
                                 VariationResponse.VariationsBean bean = listSelectedProducts.get(i);
                                 bean.setReason(getSet.getReason());
                                 bean.setReason_id(getSet.getReason_id());
                                 bean.setReason_code(getSet.getReason_code());
 
-                                if (getSet.getReason_code().equalsIgnoreCase("F"))
-                                {
+                                if (getSet.getReason_code().equalsIgnoreCase("F")) {
                                     bean.setStock("0");
-                                }
-                                else
-                                {
-                                    if(bean.getStock().equalsIgnoreCase("0") ||
-                                            bean.getStock().equalsIgnoreCase(""))
-                                    {
+                                } else {
+                                    if (bean.getStock().equalsIgnoreCase("0") ||
+                                            bean.getStock().equalsIgnoreCase("")) {
                                         bean.setStock("1");
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         bean.setStock(bean.getStock());
                                     }
 
                                 }
                                 listSelectedProducts.set(mainListPos, bean);
+                                variationAdapter = new VariationAdapter(listSelectedProducts);
+                                rvVariation.setAdapter(variationAdapter);
+                                dialog.dismiss();
                             }
                         }
-
-                        variationAdapter = new VariationAdapter(listSelectedProducts);
-                        rvVariation.setAdapter(variationAdapter);
                     }
                 });
-
             }
-
-            return convertView;
-        }
-
-        private void updateItemAtPosition(final int position, BottomSheetListView mListView, final VariationResponse.VariationsBean bean)
-        {
-            View v = mListView.getChildAt(position);
-
-            if(v == null)
-                return;
-
-            CheckBox cbProduct = (CheckBox) v.findViewById(R.id.cb);
-            EditText edtUnit = (EditText) v.findViewById(R.id.edtUnit);
-
-
-            if (bean.isChecked())
-            {
-                cbProduct.setChecked(true);
-            }
-            else
-            {
-                cbProduct.setChecked(false);
-            }
-            if (dbs.equalsIgnoreCase("STK")) {
-                cbProduct.setChecked(true);
-                //ravi
-               // edtUnit.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(4)});
-                bean.setChecked(true);
-            } else {
-                //ravi
-              //  edtUnit.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(2)});
-                cbProduct.setChecked(bean.isChecked());
-            }
-
-            if (bean.isChecked())
-            {
-                edtUnit.setVisibility(View.VISIBLE);
-                if (bean.getStock().equals("") || bean.getStock().equals("0"))
-                {
-                    if(bean.getReason_code().equalsIgnoreCase("F"))
-                    {
-                        edtUnit.setText("0");
-                    }
-                    else
-                    {
-                        edtUnit.setText("");
-                    }
-
-
-                } else {
-                    edtUnit.setText(String.valueOf(bean.getStock()));
-                }
-
-            } else {
-                edtUnit.setVisibility(View.INVISIBLE);
+            catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
-        public ArrayList<VariationResponse.VariationsBean> listSelected()
+        @Override public int getItemCount()
         {
+            return listReasonAdapter.size();
+        }
+
+        public ArrayList<VariationResponse.VariationsBean> listSelected() {
             ArrayList<VariationResponse.VariationsBean> listReturn = new ArrayList<VariationResponse.VariationsBean>();
 
-            for (int i = 0; i < listProducAdapter.size(); i++)
-            {
-                if (listProducAdapter.get(i).isChecked())
-                {
+            for (int i = 0; i < listProducAdapter.size(); i++) {
+                if (listProducAdapter.get(i).isChecked()) {
                     listReturn.add(listProducAdapter.get(i));
                 }
             }
@@ -6514,18 +5767,13 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             return listReturn;
         }
 
-        public boolean isAllSelected()
-        {
+        public boolean isAllSelected() {
             boolean isSelected = true;
-
             if (dbs.equalsIgnoreCase("STK")) {
                 isSelected = true;
                 return true;
-            }
-            else
-            {
-                for (int i = 0; i < listProducAdapter.size(); i++)
-                {
+            } else {
+                for (int i = 0; i < listProducAdapter.size(); i++) {
                     if (listProducAdapter.get(i).isChecked()) {
 						/*if (listProducAdapter.get(i).getStock().equals("") ||
 								listProducAdapter.get(i).getStock().equals("0"))
@@ -6535,9 +5783,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 						}*/
                         if (listProducAdapter.get(i).getReason_code().equalsIgnoreCase("F")) {
                             isSelected = true;
-                        }
-                        else
-                        {
+                        } else {
                             //For allow zero
                             if (listProducAdapter.get(i).getStock().equals("") /*||
                                     listProducAdapter.get(i).getStock().equals("0")*/) {
@@ -6555,11 +5801,21 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             return isSelected;
         }
 
-        private class ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder
+        {
             TextView txtProduct, txtProductCode;
-            EditText edtUnit;
-            int pos = 0;
+            AppCompatEditText edtUnit;
             CheckBox cbProduct;
+            private int holderPos = -1;
+
+            public ViewHolder(View itemView)
+            {
+                super(itemView);
+                txtProduct = (TextView) itemView.findViewById(R.id.txtProduct);
+                txtProductCode = (TextView) itemView.findViewById(R.id.txtProductCode);
+                cbProduct = (CheckBox) itemView.findViewById(R.id.cb);
+                edtUnit = (AppCompatEditText) itemView.findViewById(R.id.edtUnit);
+            }
         }
     }
 
@@ -6690,7 +5946,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             }
 
                         }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -6717,7 +5974,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                 mainArray.put(i, jsonObject);
 
-            } catch (JSONException e) {
+            }
+            catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -6728,70 +5986,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         return jsonString;
     }
 
-    private void configureBottomSheetBehavior(View contentView) {
-        final BottomSheetBehavior mBottomSheetBehavior = BottomSheetBehavior.from((View) contentView.getParent());
-
-        if (mBottomSheetBehavior != null) {
-            mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-
-                @Override
-                public void onStateChanged(@NonNull View bottomSheet, int newState) {
-//showing the different states
-                    switch (newState) {
-                        case BottomSheetBehavior.STATE_HIDDEN:
-                            bottomSheet.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                                }
-                            });
-                            break;
-                        case BottomSheetBehavior.STATE_EXPANDED:
-                            bottomSheet.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                                }
-                            });
-                            break;
-                        case BottomSheetBehavior.STATE_COLLAPSED:
-                            bottomSheet.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                                }
-                            });
-                            break;
-                        case BottomSheetBehavior.STATE_DRAGGING:
-                            bottomSheet.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                                }
-                            });
-
-                            break;
-                        case BottomSheetBehavior.STATE_SETTLING:
-                            bottomSheet.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                                }
-                            });
-                            break;
-                    }
-                }
-
-                @Override
-                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-                }
-            });
-        }
-    }
-
-    private void plannedDoctorClick()
-    {
+    private void plannedDoctorClick() {
         selectedDoctorId = "";
         enable_focus = 0;
         edtArea.setText("");

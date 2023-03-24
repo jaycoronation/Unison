@@ -565,6 +565,20 @@ public class AppUtils
 		}
 	}
 
+	public static void showKeyboardNew(EditText editText, Activity activity)
+	{
+		try
+		{
+			editText.requestFocus();
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * get string with every first letter of word in capital
 	 * @param s

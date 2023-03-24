@@ -20,13 +20,14 @@
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:hardwareAccelerated="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="q">
-
 
         <activity android:name=".activity.DoctorDetailsActivity" />
         <activity android:name=".activity.SpecialActivity" /> <!-- For Database -->
@@ -51,12 +52,14 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" /> <!-- Defining Services -->
-        <service android:name=".service.FireBaseMessagingService">
+        <service android:name=".service.FireBaseMessagingService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".service.FireBaseInstanceIDService">
+        <service android:name=".service.FireBaseInstanceIDService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -65,7 +68,8 @@
         <activity
             android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -87,7 +91,7 @@
         <activity
             android:name=".activity.ActivityDailyCallReport"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".activity.ViewDCREntryActivity"
@@ -129,7 +133,8 @@
 
         <receiver
             android:name=".service.MyReceiver"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -182,8 +187,11 @@
             android:name=".activity.PendingLeaveActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".activity.TempActivity" />
-        <activity android:name=".activity.SelectProductActivity" />
+
+        <activity android:name=".activity.SelectProductActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
+
     </application>
 
 </manifest>

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ActivityDailyCallReport extends BaseClass
+public class ActivityDailyCallReport extends FragmentActivity
 {
 	private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -67,11 +68,10 @@ public class ActivityDailyCallReport extends BaseClass
         
         sessionManager = new SessionManager(activity);
 
-        basicProcesses();
-
+        initViews();
+		viewClick();
     }
 
-	@Override
 	public void initViews()
 	{
 		toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -85,7 +85,7 @@ public class ActivityDailyCallReport extends BaseClass
 			{
 				AppUtils.hideKeyboard(toolbar,activity);
 				activity.finish();
-				finishActivityAnimation(activity);
+				AppUtils.finishActivityAnimation(activity);
 			}
 		});
 
@@ -208,9 +208,6 @@ public class ActivityDailyCallReport extends BaseClass
 			}
 		});
 
-
-
-
 		try
 		{
 			ncrDoctorName = getIntent().getStringExtra("DoctorName");
@@ -222,7 +219,6 @@ public class ActivityDailyCallReport extends BaseClass
 		}
 	}
 
-	@Override
 	public void viewClick()
 	{
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -385,7 +381,6 @@ public class ActivityDailyCallReport extends BaseClass
         });
 	}
 
-	@Override
 	public void getDataFromServer()
 	{
 
@@ -500,7 +495,7 @@ public class ActivityDailyCallReport extends BaseClass
     	if (keyCode == KeyEvent.KEYCODE_BACK)
     	{
 			finish();
-			finishActivityAnimation(activity);
+			AppUtils.finishActivityAnimation(activity);
     	}
 		return super.onKeyDown(keyCode, event);
     }
