@@ -83,6 +83,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
@@ -1283,19 +1284,80 @@ public class AppUtils
 	{
 		try
 		{
-			String folderName = AppUtils.getCurrentDateString();
-			File f1 = new File(Environment.getExternalStorageDirectory() + "/" + "Unison", folderName);//Make directory like : Unison -> 07 Dec, 2018
-			if (!f1.exists()) {
-				f1.mkdirs();
+
+			String folderName = "Unison";
+			String time = convertDateToString(System.currentTimeMillis());
+			String fileName = filename+"_"+System.currentTimeMillis()+".txt";
+			System.out.println("File Name: " + fileName);
+			File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), folderName);
+			if (!folder.exists()) {
+				boolean folderCreated = folder.mkdirs();
+				if (folderCreated) {
+					System.out.println("Folder created: " + folder.getAbsolutePath());
+				} else {
+					System.out.println("Failed to create folder: " + folder.getAbsolutePath());
+					return;
+				}
 			}
+
+			File file = new File(folder, fileName);
+			try {
+				boolean fileCreated = file.createNewFile();
+				if (fileCreated) {
+					System.out.println("File created: " + file.getAbsolutePath());
+					FileOutputStream fOut = new FileOutputStream(file);
+					OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+					myOutWriter.append(response.toString());
+					myOutWriter.close();
+					fOut.close();
+				} else {
+					System.out.println("Failed to create file: " + file.getAbsolutePath());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception ex) {
+				System.out.println("Exception: " + ex.getMessage());
+				ex.printStackTrace();
+			}
+
+
+
+
+			/*String folderName = AppUtils.getCurrentDateString().replace(" ", "");
+			File f1 = null;//Make directory like : Unison -> 07 Dec, 2018
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+				f1 = new File(Environment.getDataDirectory() + "/" + "Unison", folderName);
+			}
+			else
+			{
+				f1 = new File(Environment.getDataDirectory() + "/" + "Unison", folderName);
+			}
+			boolean isFileCreated = false;
+			if (!f1.exists()) {
+				isFileCreated = f1.mkdirs();
+			}
+			Log.i("File There", String.valueOf(isFileCreated));
+			Log.i("File Path Old", String.valueOf(f1.getPath()));
 			String time = convertDateToString(System.currentTimeMillis());
 			File myFile = new File(f1.getPath()+"/"+filename+"_"+time+"_"+System.currentTimeMillis()+".txt");
-			myFile.createNewFile();
+			if (!myFile.getParentFile().exists())
+			{
+				myFile.getParentFile().mkdirs();
+			}
+			if (!myFile.exists())
+			{
+				myFile.createNewFile();
+			}
+			else
+			{
+				myFile.delete();
+				myFile.createNewFile();
+			}
 			FileOutputStream fOut = new FileOutputStream(myFile);
 			OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
 			myOutWriter.append(response.toString());
 			myOutWriter.close();
-			fOut.close();
+			fOut.close();*/
 			Log.i("Store Response", "Successfully Stored.");
 		}
 		catch (Exception e)

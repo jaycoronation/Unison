@@ -266,8 +266,6 @@ public interface ApiInterface {
                                          @Field("work_with") String work_with,
                                          @Field("login_user_id") String login_user_id);
 
-
-
     @POST("dailyCall/confirmTourPlanner")
     @FormUrlEncoded
     Call<CommonResponse> confirmTourPlanner(@Field("staff_id") String staff_id,

@@ -10,8 +10,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" /> <!-- For Oreo and Above : for JobScheduler -->
+        tools:ignore="ScopedStorage" /><!-- For Oreo and Above : for JobScheduler -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -25,6 +26,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:hardwareAccelerated="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="q">
@@ -58,6 +60,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <service android:name=".service.FireBaseInstanceIDService"
             android:exported="true">
             <intent-filter>

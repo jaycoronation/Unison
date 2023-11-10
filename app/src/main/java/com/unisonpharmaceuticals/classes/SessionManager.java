@@ -575,14 +575,17 @@ public class SessionManager {
         context.startActivity(i);
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            {
                 if (JobSchedulerHelper.isJobServiceRunning(context, 11)) {
                     JobSchedulerHelper.cancelJob(context, 11, true);
                 }
                 if (JobSchedulerHelper.isJobServiceRunning(context, 22)) {
                     JobSchedulerHelper.cancelJob(context, 22, true);
                 }
-            } else {
+            }
+            else
+            {
                 Intent myService = new Intent(context, MYService.class);
                 context.stopService(myService);
 

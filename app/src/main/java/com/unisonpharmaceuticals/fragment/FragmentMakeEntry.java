@@ -1014,11 +1014,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         try {
                             if (response.body().getSuccess() == 1) {
                                 listWorkWith = (ArrayList<WorkWithResponse.StaffBean>) response.body().getStaff();
-                        /*WorkWithResponse.StaffBean bean = new WorkWithResponse.StaffBean();
-                        bean.setDesignation("");
-                        bean.setName("Self");
-                        bean.setStaff_id("0");
-                        listWorkWith.add(0,bean);*/
+                                /*WorkWithResponse.StaffBean bean = new WorkWithResponse.StaffBean();
+                                bean.setDesignation("");
+                                bean.setName("Self");
+                                bean.setStaff_id("0");
+                                listWorkWith.add(0,bean);*/
                             } else {
                                 AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
                                 Log.e("getWorkWithList  ## ", "onResponse: 1");
@@ -1749,9 +1749,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             String productJson = gson.toJson(listSelectedProducts);
 
                             boolean isWorkWith = true;
-                            if (cbWorkWith.isChecked()) {
+                            if (cbWorkWith.isChecked())
+                            {
                                 isWorkWith = true;
-                            } else {
+                            }
+                            else
+                            {
                                 isWorkWith = false;
                             }
 
@@ -1787,7 +1790,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                             getSet.save();
 
-                            //Beacsue when came from planned entjry, the speciality AND area  may not available as regular dcr
+                            //Beacsue when came from planned entry, the speciality AND area  may not available as regular dcr
                             if (isPlannerClicked) {
                                 edtSpeciality.setText("");
                                 selectedSpecialityId = "";
@@ -1801,8 +1804,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             isNCREntry = false;
 
                             AppUtils.showToast(activity, "Entry Saved!");
-
-                            AppUtils.storeJsonResponse(new Gson().toJson(getSet), selectedReportCode + "_Call");
+                            int result;
+                            result = ContextCompat.checkSelfPermission(activity,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                            if (result == PackageManager.PERMISSION_GRANTED)
+                            {
+                                AppUtils.storeJsonResponse(new Gson().toJson(getSet), selectedReportCode + "_Call");
+                            }
+                            else
+                            {
+                                ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },12);
+                            }
 
                             if (selectedReportCode.equalsIgnoreCase("STK")) {
                                 sessionManager.setIsSTKDone(true);
@@ -2289,7 +2301,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             @Override
             protected Void doInBackground(Void... voids) {
-                try {
+                try
+                {
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("field_entry", stringToPass);
                     hashMap.put("login_user_id", sessionManager.getUserId());
@@ -2307,7 +2320,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     success = AppUtils.getValidAPIIntegerResponse(jsonObject.getString("success"));
                     message = AppUtils.getValidAPIStringResponse(jsonObject.getString("message"));
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     e.printStackTrace();
                 }
                 return null;
@@ -3683,30 +3697,27 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         rvListDialog.setLayoutManager(new LinearLayoutManager(activity));
         rvListDialog.setAdapter(areaAdapter);
 
-        tvDone.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                if (isFor.equalsIgnoreCase(WORKWITH) && areaAdapter != null) {
-                    workWithString = areaAdapter.getSelectedWorkWitIds();
-                    if (workWithString.length() == 0) {
-                        AppUtils.showToast(activity, "Please select at least one option.");
-                    } else {
-                        AppUtils.hideKeyboard(tvDone, activity);
-                        edtWorkWith.setText(areaAdapter.getSelectedWorkWithName());
-                        listDialog.dismiss();
-                        listDialog.cancel();
-                    }
+        tvDone.setOnClickListener(v -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+            if (isFor.equalsIgnoreCase(WORKWITH) && areaAdapter != null) {
+                workWithString = areaAdapter.getSelectedWorkWitIds();
+                if (workWithString.length() == 0) {
+                    AppUtils.showToast(activity, "Please select at least one option.");
                 } else {
                     AppUtils.hideKeyboard(tvDone, activity);
+                    edtWorkWith.setText(areaAdapter.getSelectedWorkWithName());
                     listDialog.dismiss();
                     listDialog.cancel();
                 }
-
+            } else {
+                AppUtils.hideKeyboard(tvDone, activity);
+                listDialog.dismiss();
+                listDialog.cancel();
             }
+
         });
 
         btnNo.setOnClickListener(new View.OnClickListener() {

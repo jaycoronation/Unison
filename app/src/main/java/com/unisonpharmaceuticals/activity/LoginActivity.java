@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -566,8 +568,7 @@ public class LoginActivity extends BaseClass
         try
         {
             int result;
-            result = ContextCompat.checkSelfPermission(activity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            result = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (result == PackageManager.PERMISSION_GRANTED)
             {
                 if(llManagerLogin.getVisibility() == View.VISIBLE)
@@ -591,33 +592,33 @@ public class LoginActivity extends BaseClass
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-    {
-        switch (requestCode)
-        {
-            case PERMISSION_REQUEST_CODE_STORAGE:
-                try
-                {
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE_STORAGE) {
+            try {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     {
-                        if(llManagerLogin.getVisibility()==View.VISIBLE)
-                        {
-                            apiTaskLogin(edtManageCode.getText().toString().trim(),edtManagerPassword.getText().toString(),edtEmployeeCode.getText().toString().trim());
-                        }
-                        else
-                        {
-                            apiTaskLogin(edtUserId.getText().toString().trim(),edtPassword.getText().toString(),"");
+                        if (llManagerLogin.getVisibility() == View.VISIBLE) {
+                            apiTaskLogin(edtManageCode.getText().toString().trim(), edtManagerPassword.getText().toString(), edtEmployeeCode.getText().toString().trim());
+                        } else {
+                            apiTaskLogin(edtUserId.getText().toString().trim(), edtPassword.getText().toString(), "");
                         }
                     }
-                    else
+                else if (grantResults[0] == PackageManager.PERMISSION_DENIED)
                     {
-                        AppUtils.showToast(activity,"Permissions Denied!");
+                        showToast(activity,"Please allow storage permission first.");
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
                     }
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                break;
+                else
+                    {
+                        AppUtils.showToast(activity, "Permissions Denied!");
+                    }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

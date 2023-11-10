@@ -54,6 +54,7 @@ public class FragmentDCR extends Fragment
 	View rootView;
 
 	private LinearLayout llLoading;
+
 	public static EditText edtDate,edtEmployee;
 	LinearLayout llGenerateReport;
 	ArrayList<StaffResponse.StaffBean> listEmployee = new ArrayList<>();

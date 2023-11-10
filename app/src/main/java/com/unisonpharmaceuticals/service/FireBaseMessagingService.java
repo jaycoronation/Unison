@@ -42,7 +42,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
     private static final String ADMIN_CHANNEL_ID = "admin_channel";
     private NotificationManager notificationManager;
     private SessionManager sessionManager;
-    private String contentTitle = "Unison";
+    private final String contentTitle = "Unison";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage)
@@ -54,7 +54,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
             if(sessionManager.isLoggedIn())// Display notification if user logged in
             {
                 Map<String, String> map = remoteMessage.getData();
-                Log.e("##### NOTI JSON", "======> " + remoteMessage.getData().toString());
+                Log.e("##### NOTI JSON", "======> " + remoteMessage.getData());
                 JSONObject object = new JSONObject(map);
                 PushNotificationGetSet pushNotificationGetSet = new PushNotificationGetSet();
 

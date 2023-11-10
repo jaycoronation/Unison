@@ -38,7 +38,6 @@ public class AuthenticateActivity extends AppCompatActivity
     @BindView(R.id.edtOTP)EditText edtOTP;
     @BindView(R.id.btnSubmit)TextView btnSubmit;
     @BindView(R.id.llLoading)LinearLayout llLoading;
-
     @BindView(R.id.pbTime)ProgressBar pbTime;
     @BindView(R.id.txtTimer)TextView txtTimer;
     @BindView(R.id.llChangeMobileNumber)LinearLayout llChangeMobileNumber;
