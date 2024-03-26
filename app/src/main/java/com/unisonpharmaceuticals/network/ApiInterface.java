@@ -53,7 +53,6 @@ public interface ApiInterface {
     @POST("otp/send")
     @FormUrlEncoded    Call<CommonResponse> sendMobileOTP(@Field("mobile") String mobile);
 
-
     @POST("otp/checkMobileOtp")
     @FormUrlEncoded
     Call<CommonResponse> checkMobileOTP(@Field("mobile") String mobile,

@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.unisonpharmaceuticals"
         minSdkVersion 23
-        targetSdkVersion 31
-        versionCode 27
-        versionName "3.0.5"
+        targetSdkVersion 33
+        versionCode 34
+        versionName "3.1.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
     }
@@ -54,7 +54,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 
     implementation 'com.google.code.gson:gson:2.8.7'
-
 
     implementation 'com.jakewharton:butterknife:10.2.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'

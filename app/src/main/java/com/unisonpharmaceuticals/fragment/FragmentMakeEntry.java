@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -40,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.app.ActivityCompat;
@@ -48,7 +50,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputLayout;
@@ -90,7 +91,6 @@ import com.unisonpharmaceuticals.utils.DataUtils;
 import com.unisonpharmaceuticals.utils.MitsAutoHeightListView;
 import com.unisonpharmaceuticals.utils.MitsUtils;
 import com.unisonpharmaceuticals.views.BottomSheetListView;
-import com.unisonpharmaceuticals.views.RegularEditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -123,7 +123,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     private SessionManager sessionManager;
     private TextView txtAddCount;
-    private String dateCurrent = "";
+    private final String dateCurrent = "";
     private ScrollView scrollview;
 
     public static DatePickerDialog datepicker;
@@ -131,12 +131,14 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     private UnisonDatabaseHelper udbh;
     private SQLiteDatabase sqlDB;
 
-    private String entryAdded = "false";
-    private String callDoneFromTP = "false";
-    private String doctorType = "";
+    private final String entryAdded = "false";
+    private final String callDoneFromTP = "false";
+    private final String doctorType = "";
 
     private LinearLayout llMain, llLoading, llNewCycle, llSave, llView, llSubmit, llEntry;
     private ImageView iv_leftDrawer;
+
+    private TextView tvSaveButton;
 
     private CheckBox cbNewCycle;
     private ImageView ivNewCycle;
@@ -174,8 +176,18 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     private View viewLine;
 
 
-    private String dbs = "", workWithCode = "", doctorCode = "", product = "", unit = "", reason = "", cycle = "", empId = "", empName = "", workWithString = "";
-    private boolean isDoctor = true, isCycle = true;
+    private String dbs = "";
+    private final String workWithCode = "";
+    private final String doctorCode = "";
+    private final String product = "";
+    private final String unit = "";
+    private final String reason = "";
+    private final String cycle = "";
+    private final String empId = "";
+    private final String empName = "";
+    private String workWithString = "";
+    private final boolean isDoctor = true;
+    private final boolean isCycle = true;
 
     private ArrayList<AddEntryGetSet> listEntry;
 
@@ -189,7 +201,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     private int pendingEntryCount = 0;
 
-    private String msg = "";
+    private final String msg = "";
 
     private ProductAdapter productAdapter;
     //private FocusedAdapter focusedAdapter;
@@ -211,34 +223,34 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     private ApiInterface apiService;
     private String selectedAreaId = "", selectedSpecialityId = "", selectedDoctorId = "", selectedReportCode = "", selectedEmployeeID = "";
     private int enable_focus = 0;
-    private ArrayList<AreaResponse.AreasBean> listArea = new ArrayList<>();
-    private ArrayList<AreaResponse.AreasBean> listAreaAll = new ArrayList<>();
-    private ArrayList<AreaResponse.AreasBean> listAreaForAdd = new ArrayList<>();
-    private ArrayList<AreaResponse.AreasBean> listAreaSearch = new ArrayList<>();
+    private final ArrayList<AreaResponse.AreasBean> listArea = new ArrayList<>();
+    private final ArrayList<AreaResponse.AreasBean> listAreaAll = new ArrayList<>();
+    private final ArrayList<AreaResponse.AreasBean> listAreaForAdd = new ArrayList<>();
+    private final ArrayList<AreaResponse.AreasBean> listAreaSearch = new ArrayList<>();
 
     private ArrayList<SpecialistBean.SpecialityBean> listSpeciality = new ArrayList<>();
-    private ArrayList<SpecialistBean.SpecialityBean> listSpecialitySearch = new ArrayList<>();
+    private final ArrayList<SpecialistBean.SpecialityBean> listSpecialitySearch = new ArrayList<>();
 
     private ArrayList<DoctorResponse.DoctorsBean> listDoctor = new ArrayList<>();
-    private ArrayList<DoctorResponse.DoctorsBean> listDoctorSearch = new ArrayList<>();
+    private final ArrayList<DoctorResponse.DoctorsBean> listDoctorSearch = new ArrayList<>();
 
-    private ArrayList<ReportResponse.ReportsBean> listReports = new ArrayList<>();
-    private ArrayList<ReportResponse.ReportsBean> listReportSearch = new ArrayList<>();
+    private final ArrayList<ReportResponse.ReportsBean> listReports = new ArrayList<>();
+    private final ArrayList<ReportResponse.ReportsBean> listReportSearch = new ArrayList<>();
 
     private ArrayList<WorkWithResponse.StaffBean> listWorkWith = new ArrayList<>();
-    private ArrayList<WorkWithResponse.StaffBean> listWorkWithSearch = new ArrayList<>();
+    private final ArrayList<WorkWithResponse.StaffBean> listWorkWithSearch = new ArrayList<>();
 
     public  ArrayList<VariationResponse.VariationsBean> listVariation = new ArrayList<>();
-    private ArrayList<VariationResponse.VariationsBean> listVariationSearch = new ArrayList<>();
+    private final ArrayList<VariationResponse.VariationsBean> listVariationSearch = new ArrayList<>();
 
     public  ArrayList<ReasonResponse.ReasonsBean> listReason = new ArrayList<>();
     public  ArrayList<VariationResponse.VariationsBean> listSelectedProducts = new ArrayList<>();
 
     private ArrayList<StaffResponse.StaffBean> listEmployee = new ArrayList<>();
-    private ArrayList<StaffResponse.StaffBean> listEmployeeSearch = new ArrayList<>();
+    private final ArrayList<StaffResponse.StaffBean> listEmployeeSearch = new ArrayList<>();
 
     private ArrayList<DBPlanner> listPlannedDoctor = new ArrayList<>();
-    private ArrayList<DBPlanner> listPlannedDoctorSearch = new ArrayList<>();
+    private final ArrayList<DBPlanner> listPlannedDoctorSearch = new ArrayList<>();
 
     private RecyclerView rvVariation;
     private VariationAdapter variationAdapter;
@@ -247,12 +259,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     private String NCRDrData = "";
 
-    private boolean isListReasonItemClicked = false;
+    private final boolean isListReasonItemClicked = false;
 
     //For SearchListing
     private CountDownTimer timer;
 
-    private ArrayList<DrDcrGetSet> listSubmitedEntryOfDr = new ArrayList<>();
+    private final ArrayList<DrDcrGetSet> listSubmitedEntryOfDr = new ArrayList<>();
 
     int apiCounts = 0;
 
@@ -289,280 +301,264 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
         onClickListeners();
 
-        handlerNCR1 = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                if (msg.what == 111) {
-                    NCRDrData = String.valueOf(msg.obj);
-                    isNCREntry = true;
-                }
-                return false;
+        handlerNCR1 = new Handler(msg -> {
+            if (msg.what == 111) {
+                NCRDrData = String.valueOf(msg.obj);
+                isNCREntry = true;
             }
+            return false;
         });
 
-        areaHandler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                if (msg.what == 111) {
-                    int size = (int) msg.obj;
-                    if (size > 0) {
-                        ActivityDailyCallReport.ivAddArea.setVisibility(View.VISIBLE);
-                    } else {
-                        ActivityDailyCallReport.ivAddArea.setVisibility(View.GONE);
-                    }
-                } else if (msg.what == 112) {
-                    if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)
-                            && listArea.size() > 0)//Working manager
-                    {
-                        Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
-                        dataCall.enqueue(new Callback<SubmittedResponse>() {
-                            @Override
-                            public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
-                                try {
-                                    if (response.body().getSuccess() == 1) {
-                                        List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
-                                        if (listData.size() > 0) {
-                                            if (listSubmitedEntryOfDr != null) {
-                                                sessionManager.setCallDoneFromTP("true");
-                                                for (int i = 0; i < listData.size(); i++) {
-                                                    DrDcrGetSet getSet = new DrDcrGetSet();
-                                                    getSet.setDrId(listData.get(i).getDoctor_id());
-                                                    getSet.setDrName(listData.get(i).getDoctor_name());
-                                                    getSet.setReportType(listData.get(i).getReport_type());
-                                                    listSubmitedEntryOfDr.add(getSet);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<SubmittedResponse> call, Throwable t) {
-                                isLoading = false;
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                            }
-                        });
-                    } else if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR)) {
-                        Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
-                        dataCall.enqueue(new Callback<SubmittedResponse>() {
-                            @Override
-                            public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
-                                try {
-                                    if (response.body().getSuccess() == 1) {
-                                        List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
-                                        if (listData.size() > 0) {
-                                            if (listSubmitedEntryOfDr != null) {
-                                                sessionManager.setCallDoneFromTP("true");
-                                                for (int i = 0; i < listData.size(); i++) {
-                                                    DrDcrGetSet getSet = new DrDcrGetSet();
-                                                    getSet.setDrId(listData.get(i).getDoctor_id());
-                                                    getSet.setDrName(listData.get(i).getDoctor_name());
-                                                    getSet.setReportType(listData.get(i).getReport_type());
-                                                    listSubmitedEntryOfDr.add(getSet);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<SubmittedResponse> call, Throwable t) {
-                                isLoading = false;
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                            }
-                        });
-                    }
-                } else if (msg.what == 113) {
-                    try {
-                        if (sessionManager.getDayEnd().equals("false")) {
-                            if (sessionManager.getCallDoneFromTP().equalsIgnoreCase("true")) {
-                                showListDialog(ADD_AREA);
-                            } else {
-                                AppUtils.showToast(activity, "To add area, You should have done atleast one call from your current tourplan.");
-                            }
-                        } else {
-                            AppUtils.showToast(activity, "Your day has been ended by you.Kindly try again tomorrow.");
-                        }
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        areaHandler = new Handler(msg -> {
+            if (msg.what == 111) {
+                int size = (int) msg.obj;
+                if (size > 0) {
+                    ActivityDailyCallReport.ivAddArea.setVisibility(View.VISIBLE);
+                } else {
+                    ActivityDailyCallReport.ivAddArea.setVisibility(View.GONE);
                 }
-                return false;
-            }
-        });
-
-        handlerNCR = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                if (msg.what == 111) {
-                    inputDoctor.setVisibility(View.VISIBLE);
-                    edtDoctor.setText((String) msg.obj);
-                    inputDoctor.setEnabled(false);
-                    edtDoctor.setEnabled(false);
-                    edtDBC.setText("NCR : New Doctor Call");
-                    dbs = "NCR";
-
-                    ActivityDailyCallReport.ncrDoctorName = (String) msg.obj;
-                    ActivityDailyCallReport.ncrDoctorId = "0";
-                } else if (msg.what == 101) {
-                    if (sessionManager.isNetworkAvailable()) {
-                        Call<VariationResponse> variationCall = apiService.getVarioationProducts(sessionManager.getUserId(), sessionManager.getUserId(), "false");
-                        variationCall.enqueue(new Callback<VariationResponse>() {
-                            @Override
-                            public void onResponse(Call<VariationResponse> call, Response<VariationResponse> response) {
-                                try {
-                                    if (response.body().getSuccess() == 1) {
-                                        listVariation = (ArrayList<VariationResponse.VariationsBean>) response.body().getVariations();
-                                        try {
-
-                                            DBVariation.deleteAll(DBVariation.class);
-                                            for (int i = 0; i < listVariation.size(); i++) {
-                                                VariationResponse.VariationsBean bean = listVariation.get(i);
-                                                DBVariation variation = new DBVariation(bean.getVariation_id(),
-                                                        bean.getProduct_id(),
-                                                        bean.getName(),
-                                                        bean.getItem_code(),
-                                                        bean.getReason(),
-                                                        bean.getReason_code(),
-                                                        bean.getStock(),
-                                                        bean.isChecked(),
-                                                        bean.getReason_id(),
-                                                        bean.getProduct_type(),
-                                                        bean.getItem_id_code());
-                                                variation.save();
-                                            }
-                                        }
-                                        catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else {
-                                        AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                                    }
-                                }
-                                catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<VariationResponse> call, Throwable t) {
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                            }
-                        });
-                    }
-                    /*else
-                    {
-                        listVariation.clear();
-                        List<DBVariation> listVariationFromDB = DBVariation.listAll(DBVariation.class);
-                        for (int i = 0; i < listVariationFromDB.size(); i++) {
+            } else if (msg.what == 112) {
+                if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)
+                        && listArea.size() > 0)//Working manager
+                {
+                    Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
+                    dataCall.enqueue(new Callback<SubmittedResponse>() {
+                        @Override
+                        public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
                             try {
-                                VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
-                                bean.setReason_id(listVariationFromDB.get(i).getReason_id());
-                                bean.setReason(listVariationFromDB.get(i).getReason());
-                                bean.setReason_code(listVariationFromDB.get(i).getReason_code());
-                                bean.setProduct_id(listVariationFromDB.get(i).getProduct_id());
-                                bean.setVariation_id(listVariationFromDB.get(i).getVariation_id());
-                                bean.setName(listVariationFromDB.get(i).getName());
-                                bean.setItem_code(listVariationFromDB.get(i).getItem_code());
-                                bean.setItem_id_code(listVariationFromDB.get(i).getItem_id_code());
-                                bean.setStock(listVariationFromDB.get(i).getStock());
-                                bean.setProduct_type(listVariationFromDB.get(i).getProduct_type());
-                                listVariation.add(bean);
-                            } catch (Exception e) {
+                                if (response.body().getSuccess() == 1) {
+                                    List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
+                                    if (listData.size() > 0) {
+                                        if (listSubmitedEntryOfDr != null) {
+                                            sessionManager.setCallDoneFromTP("true");
+                                            for (int i = 0; i < listData.size(); i++) {
+                                                DrDcrGetSet getSet = new DrDcrGetSet();
+                                                getSet.setDrId(listData.get(i).getDoctor_id());
+                                                getSet.setDrName(listData.get(i).getDoctor_name());
+                                                getSet.setReportType(listData.get(i).getReport_type());
+                                                listSubmitedEntryOfDr.add(getSet);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception e) {
                                 e.printStackTrace();
                             }
-
                         }
-                    }*/
+
+                        @Override
+                        public void onFailure(Call<SubmittedResponse> call, Throwable t) {
+                            isLoading = false;
+                            AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                        }
+                    });
+                } else if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR)) {
+                    Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
+                    dataCall.enqueue(new Callback<SubmittedResponse>() {
+                        @Override
+                        public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
+                            try {
+                                if (response.body().getSuccess() == 1) {
+                                    List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
+                                    if (listData.size() > 0) {
+                                        if (listSubmitedEntryOfDr != null) {
+                                            sessionManager.setCallDoneFromTP("true");
+                                            for (int i = 0; i < listData.size(); i++) {
+                                                DrDcrGetSet getSet = new DrDcrGetSet();
+                                                getSet.setDrId(listData.get(i).getDoctor_id());
+                                                getSet.setDrName(listData.get(i).getDoctor_name());
+                                                getSet.setReportType(listData.get(i).getReport_type());
+                                                listSubmitedEntryOfDr.add(getSet);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<SubmittedResponse> call, Throwable t) {
+                            isLoading = false;
+                            AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                        }
+                    });
                 }
-                return false;
+            } else if (msg.what == 113) {
+                try {
+                    if (sessionManager.getDayEnd().equals("false")) {
+                        if (sessionManager.getCallDoneFromTP().equalsIgnoreCase("true")) {
+                            showListDialog(ADD_AREA);
+                        } else {
+                            AppUtils.showToast(activity, "To add area, You should have done atleast one call from your current tourplan.");
+                        }
+                    } else {
+                        AppUtils.showToast(activity, "Your day has been ended by you.Kindly try again tomorrow.");
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+            return false;
         });
 
-        productUnit = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                if (msg.what == 666) {
-                    try {
-                        ArrayList<VariationResponse.VariationsBean> listSelected = (ArrayList<VariationResponse.VariationsBean>) msg.obj;
-                        int isSelected = msg.arg1;
-                        boolean isSelectAll = false;
-                        if(isSelected == 1)
-                        {
-                            isSelectAll = true;
-                        }
+        handlerNCR = new Handler(msg -> {
+            if (msg.what == 111) {
+                inputDoctor.setVisibility(View.VISIBLE);
+                edtDoctor.setText((String) msg.obj);
+                inputDoctor.setEnabled(false);
+                edtDoctor.setEnabled(false);
+                edtDBC.setText("NCR : New Doctor Call");
+                dbs = "NCR";
 
-                      //  Log.e("<><> listSelected : " ,listSelected.size() + " <><>");
-                        //AppUtils.hideKeyboardNew(activity);
-                        if (listSelected.size() > 0) {
-                            if (isSelectAll) {
-                                if (listSelectedProducts == null) {
-                                    listSelectedProducts = new ArrayList<>();
+                ActivityDailyCallReport.ncrDoctorName = (String) msg.obj;
+                ActivityDailyCallReport.ncrDoctorId = "0";
+            } else if (msg.what == 101) {
+                if (sessionManager.isNetworkAvailable()) {
+                    Call<VariationResponse> variationCall = apiService.getVarioationProducts(sessionManager.getUserId(), sessionManager.getUserId(), "false");
+                    variationCall.enqueue(new Callback<VariationResponse>() {
+                        @Override
+                        public void onResponse(Call<VariationResponse> call, Response<VariationResponse> response) {
+                            try {
+                                if (response.body().getSuccess() == 1) {
+                                    listVariation = (ArrayList<VariationResponse.VariationsBean>) response.body().getVariations();
+                                    try {
+
+                                        DBVariation.deleteAll(DBVariation.class);
+                                        for (int i = 0; i < listVariation.size(); i++) {
+                                            VariationResponse.VariationsBean bean = listVariation.get(i);
+                                            DBVariation variation = new DBVariation(bean.getVariation_id(),
+                                                    bean.getProduct_id(),
+                                                    bean.getName(),
+                                                    bean.getItem_code(),
+                                                    bean.getReason(),
+                                                    bean.getReason_code(),
+                                                    bean.getStock(),
+                                                    bean.isChecked(),
+                                                    bean.getReason_id(),
+                                                    bean.getProduct_type(),
+                                                    bean.getItem_id_code());
+                                            variation.save();
+                                        }
+                                    }
+                                    catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
                                 }
-
-                                listSelectedProducts.clear();
-
-                                for (int i = 0; i < listSelected.size(); i++) {
-                                    listSelectedProducts.add(listSelected.get(i));
-                                }
-
-                                txtAddCount.setText(String.valueOf(listSelectedProducts.size()));
-                                variationAdapter = new VariationAdapter(listSelectedProducts);
-                                rvVariation.setAdapter(variationAdapter);
-                            } else {
-                                AppUtils.showToast(activity, "Please enter unit for all samples.");
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
-                        else {
-                            AppUtils.showToast(activity, "Please Select atleast One sample.");
-                            txtAddCount.setText("1");
-                            listSelectedProducts = new ArrayList<>();
-                            ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
-                            VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
-                            bean.setStock("");
-                            bean.setItem_code("");
-                            bean.setItem_id_code("");
-                            bean.setProduct_id("0");
-                            bean.setReason("Regular Sample");
-                            bean.setReason_code("R");
-                            bean.setName("Product");
-                            listTemp.add(bean);
-                            variationAdapter = new VariationAdapter(listTemp);
-                            rvVariation.setAdapter(variationAdapter);
-                            for (int i = 0; i < listVariation.size(); i++) {
-                                VariationResponse.VariationsBean bean1 = listVariation.get(i);
-                                bean1.setStock("");
-                                bean1.setChecked(false);
-                                //Added for not take previous reason 7_3_19
-                                bean1.setReason("");
-                                bean1.setReason_code("R");
-                                listVariation.set(i, bean1);
-                            }
 
+                        @Override
+                        public void onFailure(Call<VariationResponse> call, Throwable t) {
+                            AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
                         }
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                    });
                 }
-                return false;
+                /*else
+                {
+                    listVariation.clear();
+                    List<DBVariation> listVariationFromDB = DBVariation.listAll(DBVariation.class);
+                    for (int i = 0; i < listVariationFromDB.size(); i++) {
+                        try {
+                            VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                            bean.setReason_id(listVariationFromDB.get(i).getReason_id());
+                            bean.setReason(listVariationFromDB.get(i).getReason());
+                            bean.setReason_code(listVariationFromDB.get(i).getReason_code());
+                            bean.setProduct_id(listVariationFromDB.get(i).getProduct_id());
+                            bean.setVariation_id(listVariationFromDB.get(i).getVariation_id());
+                            bean.setName(listVariationFromDB.get(i).getName());
+                            bean.setItem_code(listVariationFromDB.get(i).getItem_code());
+                            bean.setItem_id_code(listVariationFromDB.get(i).getItem_id_code());
+                            bean.setStock(listVariationFromDB.get(i).getStock());
+                            bean.setProduct_type(listVariationFromDB.get(i).getProduct_type());
+                            listVariation.add(bean);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }*/
             }
+            return false;
+        });
+
+        productUnit = new Handler(msg -> {
+            if (msg.what == 666) {
+                try {
+                    ArrayList<VariationResponse.VariationsBean> listSelected = (ArrayList<VariationResponse.VariationsBean>) msg.obj;
+                    int isSelected = msg.arg1;
+                    boolean isSelectAll = isSelected == 1;
+
+                    //  Log.e("<><> listSelected : " ,listSelected.size() + " <><>");
+                    //AppUtils.hideKeyboardNew(activity);
+                    if (listSelected.size() > 0) {
+                        if (isSelectAll) {
+                            if (listSelectedProducts == null) {
+                                listSelectedProducts = new ArrayList<>();
+                            }
+
+                            listSelectedProducts.clear();
+
+                            for (int i = 0; i < listSelected.size(); i++) {
+                                listSelectedProducts.add(listSelected.get(i));
+                            }
+
+                            txtAddCount.setText(String.valueOf(listSelectedProducts.size()));
+                            variationAdapter = new VariationAdapter(listSelectedProducts);
+                            rvVariation.setAdapter(variationAdapter);
+                        } else {
+                            AppUtils.showToast(activity, "Please enter unit for all samples.");
+                        }
+                    }
+                    else {
+                        AppUtils.showToast(activity, "Please Select atleast One sample.");
+                        txtAddCount.setText("1");
+                        listSelectedProducts = new ArrayList<>();
+                        ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                        VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                        bean.setStock("");
+                        bean.setItem_code("");
+                        bean.setItem_id_code("");
+                        bean.setProduct_id("0");
+                        bean.setReason("Regular Sample");
+                        bean.setReason_code("R");
+                        bean.setName("Product");
+                        listTemp.add(bean);
+                        variationAdapter = new VariationAdapter(listTemp);
+                        rvVariation.setAdapter(variationAdapter);
+                        for (int i = 0; i < listVariation.size(); i++) {
+                            VariationResponse.VariationsBean bean1 = listVariation.get(i);
+                            bean1.setStock("");
+                            bean1.setChecked(false);
+                            //Added for not take previous reason 7_3_19
+                            bean1.setReason("");
+                            bean1.setReason_code("R");
+                            listVariation.set(i, bean1);
+                        }
+
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return false;
         });
 
         return rootView;
     }
 
-    private void fillAllListFromDatabase()//For get All the list from databse
+    private void fillAllListFromDatabase() //For get All the list from database
     {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -650,9 +646,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         bean.setStaff_id(listEmployeeFromDb.get(i).getStaff_id());
                         bean.setDesignation(listEmployeeFromDb.get(i).getDesignation());
                         if (i == 0) {
-                            empName = listEmployeeFromDb.get(i).getName() + "" + listEmployeeFromDb.get(i).getStaff_id();
+                            empName = listEmployeeFromDb.get(i).getName() + listEmployeeFromDb.get(i).getStaff_id();
                         } else {
-                            empName = empName + "," + listEmployeeFromDb.get(i).getName() + "" + listEmployeeFromDb.get(i).getStaff_id();
+                            empName = empName + "," + listEmployeeFromDb.get(i).getName() + listEmployeeFromDb.get(i).getStaff_id();
                         }
 
                         if (!bean.getStaff_id().equalsIgnoreCase(sessionManager.getUserId())) {
@@ -676,9 +672,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     specialityBean.setSpeciality(listSpecialityFromDb.get(i).getSpeciality());
                     specialityBean.setSpeciality_id(listSpecialityFromDb.get(i).getSpeciality_id());
                     if (i == 0) {
-                        speciality = listSpecialityFromDb.get(i).getSpeciality_id() + "" + listSpecialityFromDb.get(i).getSpeciality();
+                        speciality = listSpecialityFromDb.get(i).getSpeciality_id() + listSpecialityFromDb.get(i).getSpeciality();
                     } else {
-                        speciality = speciality + "," + listSpecialityFromDb.get(i).getSpeciality_id() + "" + listSpecialityFromDb.get(i).getSpeciality();
+                        speciality = speciality + "," + listSpecialityFromDb.get(i).getSpeciality_id() + listSpecialityFromDb.get(i).getSpeciality();
                     }
                     listSpeciality.add(specialityBean);
                 }
@@ -778,7 +774,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 super.onPostExecute(aVoid);
 
                 if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
-                    if (listArea.size() == 0)//Manager and blank if condition for working manager because working manager can male field entry
+                    if (listArea.size() == 0)//Manager and blank if condition for working manager because working manager can make field entry
                     {
                         ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
                         for (int i = 0; i < listReports.size(); i++) {
@@ -797,6 +793,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         edtDBC.setText("ADV : Advice");
                         dbs = "ADV";
                         selectedReportCode = "ADV";
+                        tvSaveButton.setText("Upload Entry");
+
 
                         inputEmployee.setVisibility(View.VISIBLE);
                         inputDate.setVisibility(View.VISIBLE);
@@ -829,6 +827,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             edtDBC.setText("ADV : Advice");
                             dbs = "ADV";
                             selectedReportCode = "ADV";
+                            tvSaveButton.setText("Upload Entry");
 
                             inputEmployee.setVisibility(View.VISIBLE);
                             inputDate.setVisibility(View.VISIBLE);
@@ -889,344 +888,372 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     }
 
     private void getDataFromServer() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                isLoading = true;
-                Call<AreaResponse> loginCall = apiService.getAreaFromUserId("1000", sessionManager.getUserId(), sessionManager.getUserId(), "");
-                loginCall.enqueue(new Callback<AreaResponse>() {
-                    @Override
-                    public void onResponse(Call<AreaResponse> call, Response<AreaResponse> response) {
-                        try {
-                            if (response.body().getSuccess() == 1) {
-                                ArrayList<AreaResponse.AreasBean> list = (ArrayList<AreaResponse.AreasBean>) response.body().getAreas();
+        new Thread(() -> {
+            isLoading = true;
+            Call<AreaResponse> loginCall = apiService.getAreaFromUserId("1000", sessionManager.getUserId(), sessionManager.getUserId(), "");
+            loginCall.enqueue(new Callback<AreaResponse>() {
+                @Override
+                public void onResponse(Call<AreaResponse> call, Response<AreaResponse> response) {
+                    try {
+                        if (response.body().getSuccess() == 1) {
+                            ArrayList<AreaResponse.AreasBean> list = (ArrayList<AreaResponse.AreasBean>) response.body().getAreas();
 
-                                for (int i = 0; i < list.size(); i++) {
-                                    if (list.get(i).getIs_tour_plan().equalsIgnoreCase("1")) {
-                                        listArea.add(list.get(i));
-                                    } else {
-                                        listAreaForAdd.add(list.get(i));
-                                    }
-
-                                    listAreaAll.add(list.get(i));
+                            for (int i = 0; i < list.size(); i++) {
+                                if (list.get(i).getIs_tour_plan().equalsIgnoreCase("1")) {
+                                    listArea.add(list.get(i));
+                                } else {
+                                    listAreaForAdd.add(list.get(i));
                                 }
 
-                                try {
-                                    Message message = Message.obtain();
-                                    message.what = 111;
-                                    message.obj = listAreaForAdd.size();
-                                    areaHandler.sendMessage(message);
-                                }
-                                catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                            } else {
-                                //AppUtils.showToast(activity,"Area not found!");
+                                listAreaAll.add(list.get(i));
                             }
 
-                            isLoading = false;
+                            try {
+                                Message message = Message.obtain();
+                                message.what = 111;
+                                message.obj = listAreaForAdd.size();
+                                areaHandler.sendMessage(message);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                            apiCounts = apiCounts + 1;
-                            showLoader(apiCounts);
+                        } else {
+                            //AppUtils.showToast(activity,"Area not found!");
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<AreaResponse> call, Throwable t) {
                         isLoading = false;
-                        AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                        Log.e("getAreaFromUserId  ## ", "onResponse: 2");
-                        apiCounts = apiCounts - 1;
+
+                        apiCounts = apiCounts + 1;
                         showLoader(apiCounts);
                     }
-                });
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-                isLoading = true;
-                Call<ReportResponse> reportCall = apiService.getReportTypeList("", sessionManager.getUserId());
-                reportCall.enqueue(new Callback<ReportResponse>() {
-                    @Override
-                    public void onResponse(Call<ReportResponse> call, Response<ReportResponse> response) {
-                        try {
-                            if (response.body().getSuccess() == 1) {
-                                //listReports = (ArrayList<ReportResponse.ReportsBean>) response.body().getReports();
+                @Override
+                public void onFailure(Call<AreaResponse> call, Throwable t) {
+                    isLoading = false;
+                    AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                    Log.e("getAreaFromUserId  ## ", "onResponse: 2");
+                    apiCounts = apiCounts - 1;
+                    showLoader(apiCounts);
+                }
+            });
 
-                                List<ReportResponse.ReportsBean> list = response.body().getReports();
+            isLoading = true;
+            Call<ReportResponse> reportCall = apiService.getReportTypeList("", sessionManager.getUserId());
+            reportCall.enqueue(new Callback<ReportResponse>() {
+                @Override
+                public void onResponse(Call<ReportResponse> call, Response<ReportResponse> response) {
+                    try {
+                        if (response.body().getSuccess() == 1) {
+                            //listReports = (ArrayList<ReportResponse.ReportsBean>) response.body().getReports();
 
-                                for (int i = 0; i < list.size(); i++) {
-                                    ReportResponse.ReportsBean bean = list.get(i);
-                                    if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR)) {
-                                        if (!list.get(i).getReport_code().equalsIgnoreCase("ADV")) {
-                                            // If get is_lock_stk flag 0 in login than do not disply STK in list report
-                                            if (list.get(i).getReport_code().equalsIgnoreCase("STK")) {
-                                                if (sessionManager.getCanSTK().equalsIgnoreCase("1")) {
-                                                    listReports.add(bean);
-                                                }
+                            List<ReportResponse.ReportsBean> list = response.body().getReports();
 
-                                            } else {
-
-                                                listReports.add(bean);
-
-                                            }
-                                        }
-                                    } else if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
+                            for (int i = 0; i < list.size(); i++) {
+                                ReportResponse.ReportsBean bean = list.get(i);
+                                if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR)) {
+                                    if (!list.get(i).getReport_code().equalsIgnoreCase("ADV")) {
+                                        // If get is_lock_stk flag 0 in login than do not disply STK in list report
                                         if (list.get(i).getReport_code().equalsIgnoreCase("STK")) {
                                             if (sessionManager.getCanSTK().equalsIgnoreCase("1")) {
                                                 listReports.add(bean);
                                             }
+
                                         } else {
+
+                                            listReports.add(bean);
+
+                                        }
+                                    }
+                                } else if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
+                                    if (list.get(i).getReport_code().equalsIgnoreCase("STK")) {
+                                        if (sessionManager.getCanSTK().equalsIgnoreCase("1")) {
                                             listReports.add(bean);
                                         }
+                                    } else {
+                                        listReports.add(bean);
                                     }
-
-                                   // Log.e("<><> listReports", String.valueOf(listReports.size()));
                                 }
-                            } else {
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                            }
-                            isLoading = false;
-                            apiCounts = apiCounts + 1;
-                            showLoader(apiCounts);
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ReportResponse> call, Throwable t) {
+                               // Log.e("<><> listReports", String.valueOf(listReports.size()));
+                            }
+                        } else {
+                            AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                        }
                         isLoading = false;
-                        AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                        Log.e("getReportTypeList  ## ", "onResponse: 2");
-                        apiCounts = apiCounts - 1;
+                        apiCounts = apiCounts + 1;
                         showLoader(apiCounts);
                     }
-                });
-
-                isLoading = true;
-                Call<WorkWithResponse> workWithCall = apiService.getWorkWithList(sessionManager.getUserId(), sessionManager.getUserId(), "false");
-                workWithCall.enqueue(new Callback<WorkWithResponse>() {
-                    @Override
-                    public void onResponse(Call<WorkWithResponse> call, Response<WorkWithResponse> response) {
-                        try {
-                            if (response.body().getSuccess() == 1) {
-                                listWorkWith = (ArrayList<WorkWithResponse.StaffBean>) response.body().getStaff();
-                                /*WorkWithResponse.StaffBean bean = new WorkWithResponse.StaffBean();
-                                bean.setDesignation("");
-                                bean.setName("Self");
-                                bean.setStaff_id("0");
-                                listWorkWith.add(0,bean);*/
-                            } else {
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                                Log.e("getWorkWithList  ## ", "onResponse: 1");
-                            }
-                            apiCounts = apiCounts + 1;
-                            showLoader(apiCounts);
-                            isLoading = false;
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    catch (Exception e) {
+                        e.printStackTrace();
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<WorkWithResponse> call, Throwable t) {
-                        isLoading = false;
-                        AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                        Log.e("getWorkWithList  ## ", "onResponse: 2");
-                        apiCounts = apiCounts - 1;
+                @Override
+                public void onFailure(Call<ReportResponse> call, Throwable t) {
+                    isLoading = false;
+                    AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                    Log.e("getReportTypeList  ## ", "onResponse: 2");
+                    apiCounts = apiCounts - 1;
+                    showLoader(apiCounts);
+                }
+            });
+
+            isLoading = true;
+            Call<WorkWithResponse> workWithCall = apiService.getWorkWithList(sessionManager.getUserId(), sessionManager.getUserId(), "false");
+            workWithCall.enqueue(new Callback<WorkWithResponse>() {
+                @Override
+                public void onResponse(Call<WorkWithResponse> call, Response<WorkWithResponse> response) {
+                    try {
+                        if (response.body().getSuccess() == 1) {
+                            listWorkWith = (ArrayList<WorkWithResponse.StaffBean>) response.body().getStaff();
+                            /*WorkWithResponse.StaffBean bean = new WorkWithResponse.StaffBean();
+                            bean.setDesignation("");
+                            bean.setName("Self");
+                            bean.setStaff_id("0");
+                            listWorkWith.add(0,bean);*/
+                        } else {
+                            AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                            Log.e("getWorkWithList  ## ", "onResponse: 1");
+                        }
+                        apiCounts = apiCounts + 1;
                         showLoader(apiCounts);
-                    }
-                });
-
-                isLoading = true;
-                Call<VariationResponse> variationCall = apiService.getVarioationProducts(sessionManager.getUserId(), sessionManager.getUserId(), "false");
-                variationCall.enqueue(new Callback<VariationResponse>() {
-                    @Override
-                    public void onResponse(Call<VariationResponse> call, Response<VariationResponse> response) {
-                        try {
-                            if (response.body().getSuccess() == 1) {
-                                listVariation = (ArrayList<VariationResponse.VariationsBean>) response.body().getVariations();
-                            } else {
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                                Log.e("getVarioationProducts  ## ", "onResponse: 1");
-                            }
-                            apiCounts = apiCounts + 1;
-                            showLoader(apiCounts);
-                            isLoading = false;
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<VariationResponse> call, Throwable t) {
                         isLoading = false;
-                        AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                        Log.e("getVarioationProducts  ## ", "onResponse: 2");
-                        apiCounts = apiCounts - 1;
-                        showLoader(apiCounts);
                     }
-                });
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-                isLoading = true;
-                Call<ReasonResponse> reasonCall = apiService.getReasonList("", sessionManager.getUserId());
-                reasonCall.enqueue(new Callback<ReasonResponse>() {
-                    @Override
-                    public void onResponse(Call<ReasonResponse> call, Response<ReasonResponse> response) {
-                        try {
-                            if (response.body().getSuccess() == 1) {
-                                listReason = (ArrayList<ReasonResponse.ReasonsBean>) response.body().getReasons();
+                @Override
+                public void onFailure(Call<WorkWithResponse> call, Throwable t) {
+                    isLoading = false;
+                    AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                    Log.e("getWorkWithList  ## ", "onResponse: 2");
+                    apiCounts = apiCounts - 1;
+                    showLoader(apiCounts);
+                }
+            });
 
-                                try {
-                                    List<DBReason> books = DBReason.listAll(DBReason.class);
-                                    if (books.size() <= 0) {
-                                        for (int i = 0; i < listReason.size(); i++) {
-                                            if (listReason.get(i).getReason_code().equalsIgnoreCase("R") && listReason.get(i).getReason().equalsIgnoreCase("Regular Sample")) {
-                                                ApiClient.SAMPLE_REASON = listReason.get(i).getReason();
-                                                ApiClient.SAMPLE_REASON_CODE = listReason.get(i).getReason_code();
-                                                ApiClient.SAMPLE_REASON_ID = listReason.get(i).getReason_id();
-                                            }
+            isLoading = true;
+            Call<VariationResponse> variationCall = apiService.getVarioationProducts(sessionManager.getUserId(), sessionManager.getUserId(), "false");
+            variationCall.enqueue(new Callback<VariationResponse>() {
+                @Override
+                public void onResponse(Call<VariationResponse> call, Response<VariationResponse> response) {
+                    try {
+                        if (response.body().getSuccess() == 1) {
+                            listVariation = (ArrayList<VariationResponse.VariationsBean>) response.body().getVariations();
+                        } else {
+                            AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                            Log.e("getVarioationProducts  ## ", "onResponse: 1");
+                        }
+                        apiCounts = apiCounts + 1;
+                        showLoader(apiCounts);
+                        isLoading = false;
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-                                            ReasonResponse.ReasonsBean bean = listReason.get(i);
-                                            DBReason reason = new DBReason(bean.getReason_id(),
-                                                    bean.getReason(),
-                                                    bean.getReason_code(),
-                                                    bean.getComment(),
-                                                    bean.getTimestamp());
-                                            reason.save();
+                @Override
+                public void onFailure(Call<VariationResponse> call, Throwable t) {
+                    isLoading = false;
+                    AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                    Log.e("getVarioationProducts  ## ", "onResponse: 2");
+                    apiCounts = apiCounts - 1;
+                    showLoader(apiCounts);
+                }
+            });
+
+            isLoading = true;
+            Call<ReasonResponse> reasonCall = apiService.getReasonList("", sessionManager.getUserId());
+            reasonCall.enqueue(new Callback<ReasonResponse>() {
+                @Override
+                public void onResponse(Call<ReasonResponse> call, Response<ReasonResponse> response) {
+                    try {
+                        if (response.body().getSuccess() == 1) {
+                            listReason = (ArrayList<ReasonResponse.ReasonsBean>) response.body().getReasons();
+
+                            try {
+                                List<DBReason> books = DBReason.listAll(DBReason.class);
+                                if (books.size() <= 0) {
+                                    for (int i = 0; i < listReason.size(); i++) {
+                                        if (listReason.get(i).getReason_code().equalsIgnoreCase("R") && listReason.get(i).getReason().equalsIgnoreCase("Regular Sample")) {
+                                            ApiClient.SAMPLE_REASON = listReason.get(i).getReason();
+                                            ApiClient.SAMPLE_REASON_CODE = listReason.get(i).getReason_code();
+                                            ApiClient.SAMPLE_REASON_ID = listReason.get(i).getReason_id();
                                         }
-                                    }
-                                }
-                                catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                                Log.e("getReasonList  ## ", "onResponse: 1");
-                            }
-                            isLoading = false;
-                            apiCounts = apiCounts + 1;
-                            showLoader(apiCounts);
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ReasonResponse> call, Throwable t) {
-                        isLoading = false;
-                        AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                        Log.e("getReasonList  ## ", "onResponse: 2");
-                        apiCounts = apiCounts - 1;
-                        showLoader(apiCounts);
-                    }
-                });
-                isLoading = true;
-                Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
-                dataCall.enqueue(new Callback<SubmittedResponse>() {
-                    @Override
-                    public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
-                        try {
-                            if (response.body().getSuccess() == 1) {
-                                List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
-                                if (listData.size() > 0) {
-                                    if (listSubmitedEntryOfDr != null) {
-                                        sessionManager.setCallDoneFromTP("true");
-                                        for (int i = 0; i < listData.size(); i++) {
-                                            DrDcrGetSet getSet = new DrDcrGetSet();
-                                            getSet.setDrId(listData.get(i).getDoctor_id());
-                                            getSet.setDrName(listData.get(i).getDoctor_name());
-                                            getSet.setReportType(listData.get(i).getReport_type());
-                                            listSubmitedEntryOfDr.add(getSet);
-                                        }
+                                        ReasonResponse.ReasonsBean bean = listReason.get(i);
+                                        DBReason reason = new DBReason(bean.getReason_id(),
+                                                bean.getReason(),
+                                                bean.getReason_code(),
+                                                bean.getComment(),
+                                                bean.getTimestamp());
+                                        reason.save();
                                     }
                                 }
                             }
-                            isLoading = false;
-                            apiCounts = apiCounts + 1;
-                            showLoader(apiCounts);
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                            Log.e("getReasonList  ## ", "onResponse: 1");
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<SubmittedResponse> call, Throwable t) {
                         isLoading = false;
-                        AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
-                        Log.e("getSubmittedEntry  ## ", "onResponse: 2");
-                        apiCounts = apiCounts - 1;
+                        apiCounts = apiCounts + 1;
                         showLoader(apiCounts);
                     }
-                });
-                isLoading = true;
-                Call<StaffResponse> empCall = apiService.getStaffMembers(sessionManager.getUserId(), sessionManager.getUserId());
-                empCall.enqueue(new Callback<StaffResponse>() {
-                    @Override
-                    public void onResponse(Call<StaffResponse> call, Response<StaffResponse> response) {
-                        try {
-                            if (response.body().getSuccess() == 1) {
-                                listEmployee = new ArrayList<>();
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-                                listEmployee = (ArrayList<StaffResponse.StaffBean>) response.body().getStaff();
-
-                                if (listEmployee.size() > 0) {
-                                    for (int i = 0; i < listEmployee.size(); i++) {
-                                        if (listEmployee.get(i).getStaff_id().equalsIgnoreCase(sessionManager.getUserId())) {
-                                            listEmployee.remove(i);
-                                        }
+                @Override
+                public void onFailure(Call<ReasonResponse> call, Throwable t) {
+                    isLoading = false;
+                    AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                    Log.e("getReasonList  ## ", "onResponse: 2");
+                    apiCounts = apiCounts - 1;
+                    showLoader(apiCounts);
+                }
+            });
+            isLoading = true;
+            Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
+            dataCall.enqueue(new Callback<SubmittedResponse>() {
+                @Override
+                public void onResponse(Call<SubmittedResponse> call, Response<SubmittedResponse> response) {
+                    try {
+                        if (response.body().getSuccess() == 1) {
+                            List<SubmittedResponse.ReportBean.DataBean> listData = response.body().getReport().getData();
+                            if (listData.size() > 0) {
+                                if (listSubmitedEntryOfDr != null) {
+                                    sessionManager.setCallDoneFromTP("true");
+                                    for (int i = 0; i < listData.size(); i++) {
+                                        DrDcrGetSet getSet = new DrDcrGetSet();
+                                        getSet.setDrId(listData.get(i).getDoctor_id());
+                                        getSet.setDrName(listData.get(i).getDoctor_name());
+                                        getSet.setReportType(listData.get(i).getReport_type());
+                                        listSubmitedEntryOfDr.add(getSet);
                                     }
                                 }
-
-                                if (listEmployee.size() == 1) {
-                                    selectedEmployeeID = listEmployee.get(0).getStaff_id();
-                                    edtEmployee.setText(listEmployee.get(0).getName());
-                                }
-
-                            } else {
-                                AppUtils.showToast(activity, "Could not get employee list.");
-                                Log.e("getStaffMembers  ## ", "onResponse: 1");
                             }
-                            isLoading = false;
-                            apiCounts = apiCounts + 1;
-                            showLoader(apiCounts);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<StaffResponse> call, Throwable t) {
                         isLoading = false;
-                        AppUtils.showToast(activity, "Could not get employee list.");
-                        Log.e("getStaffMembers  ## ", "onResponse: 2");
-                        apiCounts = apiCounts - 1;
+                        apiCounts = apiCounts + 1;
                         showLoader(apiCounts);
                     }
-                });
-            }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SubmittedResponse> call, Throwable t) {
+                    isLoading = false;
+                    AppUtils.showToast(activity, activity.getString(R.string.api_failed_message));
+                    Log.e("getSubmittedEntry  ## ", "onResponse: 2");
+                    apiCounts = apiCounts - 1;
+                    showLoader(apiCounts);
+                }
+            });
+            isLoading = true;
+            Call<StaffResponse> empCall = apiService.getStaffMembers(sessionManager.getUserId(), sessionManager.getUserId());
+            empCall.enqueue(new Callback<StaffResponse>() {
+                @Override
+                public void onResponse(Call<StaffResponse> call, Response<StaffResponse> response) {
+                    try {
+                        if (response.body().getSuccess() == 1) {
+                            listEmployee = new ArrayList<>();
+
+                            listEmployee = (ArrayList<StaffResponse.StaffBean>) response.body().getStaff();
+
+                            if (listEmployee.size() > 0) {
+                                for (int i = 0; i < listEmployee.size(); i++) {
+                                    if (listEmployee.get(i).getStaff_id().equalsIgnoreCase(sessionManager.getUserId())) {
+                                        listEmployee.remove(i);
+                                    }
+                                }
+                            }
+
+                            if (listEmployee.size() == 1) {
+                                selectedEmployeeID = listEmployee.get(0).getStaff_id();
+                                edtEmployee.setText(listEmployee.get(0).getName());
+                            }
+
+                        } else {
+                            AppUtils.showToast(activity, "Could not get employee list.");
+                            Log.e("getStaffMembers  ## ", "onResponse: 1");
+                        }
+                        isLoading = false;
+                        apiCounts = apiCounts + 1;
+                        showLoader(apiCounts);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<StaffResponse> call, Throwable t) {
+                    isLoading = false;
+                    AppUtils.showToast(activity, "Could not get employee list.");
+                    Log.e("getStaffMembers  ## ", "onResponse: 2");
+                    apiCounts = apiCounts - 1;
+                    showLoader(apiCounts);
+                }
+            });
         }).start();
     }
 
     private void showLoader(final int counts) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.e("RUN----------------------------------------- ", "run: " + counts);
+        activity.runOnUiThread(() -> {
+            Log.e("RUN----------------------------------------- ", "run: " + counts);
 
-                if (counts == 7) {
-                    llLoading.setVisibility(View.GONE);
-                    if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
+            if (counts == 7) {
+                llLoading.setVisibility(View.GONE);
+                if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
 
-                        if (listAreaAll.size() == 0) {
+                    if (listAreaAll.size() == 0) {
+                        ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
+                        for (int i = 0; i < listReports.size(); i++) {
+                            ReportResponse.ReportsBean bean = listReports.get(i);
+                            listTemp.add(bean);
+                        }
+
+                        for (int i = 0; i < listTemp.size(); i++) {
+                            if (listTemp.get(i).getReport_code().equalsIgnoreCase("ADV")) {
+                                listReports.clear();
+                                ReportResponse.ReportsBean bean = listTemp.get(i);
+                                listReports.add(bean);
+                            }
+                        }
+
+                        edtDBC.setText("ADV : Advice");
+                        dbs = "ADV";
+                        selectedReportCode = "ADV";
+                        tvSaveButton.setText("Upload Entry");
+
+                        inputEmployee.setVisibility(View.VISIBLE);
+                        inputDate.setVisibility(View.VISIBLE);
+                        llAdvice.setVisibility(View.VISIBLE);
+
+                        inputArea.setVisibility(View.GONE);
+                        inputSpeciality.setVisibility(View.GONE);
+                        llWorkWith.setVisibility(View.GONE);
+                        inputDoctor.setVisibility(View.GONE);
+                        llNewCycle.setVisibility(View.GONE);
+                        llSampleDetails.setVisibility(View.GONE);
+                        rvVariation.setVisibility(View.GONE);
+                    } else//for add manager
+                    {
+                        if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
                             ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
                             for (int i = 0; i < listReports.size(); i++) {
                                 ReportResponse.ReportsBean bean = listReports.get(i);
@@ -1244,6 +1271,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             edtDBC.setText("ADV : Advice");
                             dbs = "ADV";
                             selectedReportCode = "ADV";
+                            tvSaveButton.setText("Upload Entry");
 
                             inputEmployee.setVisibility(View.VISIBLE);
                             inputDate.setVisibility(View.VISIBLE);
@@ -1256,45 +1284,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             llNewCycle.setVisibility(View.GONE);
                             llSampleDetails.setVisibility(View.GONE);
                             rvVariation.setVisibility(View.GONE);
-                        } else//for add manager
-                        {
-                            if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
-                                ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
-                                for (int i = 0; i < listReports.size(); i++) {
-                                    ReportResponse.ReportsBean bean = listReports.get(i);
-                                    listTemp.add(bean);
-                                }
-
-                                for (int i = 0; i < listTemp.size(); i++) {
-                                    if (listTemp.get(i).getReport_code().equalsIgnoreCase("ADV")) {
-                                        listReports.clear();
-                                        ReportResponse.ReportsBean bean = listTemp.get(i);
-                                        listReports.add(bean);
-                                    }
-                                }
-
-                                edtDBC.setText("ADV : Advice");
-                                dbs = "ADV";
-                                selectedReportCode = "ADV";
-
-                                inputEmployee.setVisibility(View.VISIBLE);
-                                inputDate.setVisibility(View.VISIBLE);
-                                llAdvice.setVisibility(View.VISIBLE);
-
-                                inputArea.setVisibility(View.GONE);
-                                inputSpeciality.setVisibility(View.GONE);
-                                llWorkWith.setVisibility(View.GONE);
-                                inputDoctor.setVisibility(View.GONE);
-                                llNewCycle.setVisibility(View.GONE);
-                                llSampleDetails.setVisibility(View.GONE);
-                                rvVariation.setVisibility(View.GONE);
-                            }
                         }
-
                     }
-                } else {
-                    llLoading.setVisibility(View.VISIBLE);
+
                 }
+            } else {
+                llLoading.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -1359,16 +1354,16 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 String speciality = "";
                 if (listTempSpec.size() > 0) {
                     for (int i = 0; i < listTempSpec.size(); i++) {
-                        if (speciality.contains(listTempSpec.get(i).getSpeciality_id() + "" + listTempSpec.get(i).getSpeciality())) {
+                        if (speciality.contains(listTempSpec.get(i).getSpeciality_id() + listTempSpec.get(i).getSpeciality())) {
                             continue;
                         }
                         SpecialistBean.SpecialityBean specialityBean = new SpecialistBean.SpecialityBean();
                         specialityBean.setSpeciality(listTempSpec.get(i).getSpeciality());
                         specialityBean.setSpeciality_id(listTempSpec.get(i).getSpeciality_id());
                         if (i == 0) {
-                            speciality = listTempSpec.get(i).getSpeciality_id() + "" + listTempSpec.get(i).getSpeciality();
+                            speciality = listTempSpec.get(i).getSpeciality_id() + listTempSpec.get(i).getSpeciality();
                         } else {
-                            speciality = speciality + " , " + listTempSpec.get(i).getSpeciality_id() + "" + listTempSpec.get(i).getSpeciality();
+                            speciality = speciality + " , " + listTempSpec.get(i).getSpeciality_id() + listTempSpec.get(i).getSpeciality();
                         }
 
                         listSpeciality.add(specialityBean);
@@ -1678,12 +1673,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         });
 
 
-        edtSpeciality.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickSpeciality();
-            }
-        });
+        edtSpeciality.setOnClickListener(v -> clickSpeciality());
 
         edtDBC.setOnClickListener(new OnClickListener() {
             @Override
@@ -1693,195 +1683,218 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         });
 
 
-        edtDate.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    datePicker(edtDate);
+        edtDate.setOnClickListener(v -> {
+            try {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                //datePicker(edtDate);
+                showDatePicker(activity);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-        edtDoctor.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickDoctor();
+        edtDoctor.setOnClickListener(v -> clickDoctor());
+
+        edtWorkWith.setOnClickListener(v -> clickWorkWith());
+
+        llSubmit.setOnClickListener(v -> {
+            try {
+                checkStoragePermission();
+            }
+            catch (Exception e2) {
+                e2.printStackTrace();
             }
         });
 
-        edtWorkWith.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickWorkWith();
-            }
-        });
-
-        llSubmit.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    checkStoragePermission();
+        llSave.setOnClickListener(v -> {
+            try {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
                 }
-                catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-            }
-        });
+                mLastClickTime = SystemClock.elapsedRealtime();
+                if (sessionManager.getDayEnd().equals("false"))
+                    {
+                        if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER) && selectedReportCode.equalsIgnoreCase("ADV"))
+                        {
+                           if (validatePrimaryData())
+                           {
+                               NewEntryGetSet getSet = new NewEntryGetSet(
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       false,
+                                       String.valueOf(System.currentTimeMillis() / 1000),
+                                       NCRDrData,
+                                       selectedEmployeeID,
+                                       edtEmployee.getText().toString().trim(),
+                                       edtDate.getText().toString().trim(),
+                                       edtAdvice.getText().toString().trim(),
+                                       sessionManager.getUserId());
 
-        llSave.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (sessionManager.getDayEnd().equals("false")) {
-                        if (validatePrimaryData()) {
-                            Gson gson = new Gson();
-                            String productJson = gson.toJson(listSelectedProducts);
+                               Gson gson = new Gson();
+                               String jsonified = gson.toJson(getSet);
 
-                            boolean isWorkWith = true;
-                            if (cbWorkWith.isChecked())
+                               Log.e("GetSet Data === ",jsonified);
+
+                               List<NewEntryGetSet> books = new ArrayList<>();
+
+                               books.add(getSet);
+
+                               pendingEntryCount = books.size();
+                               showConfirmationDialog(true);
+                           }
+                        }
+                        else
+                        {
+                            if (validatePrimaryData())
                             {
-                                isWorkWith = true;
-                            }
-                            else
-                            {
-                                isWorkWith = false;
-                            }
+                                Gson gson = new Gson();
+                                String productJson = gson.toJson(listSelectedProducts);
 
-                            if (selectedReportCode.equalsIgnoreCase("INT") ||
-                                    selectedReportCode.equalsIgnoreCase("ROR") ||
-                                    selectedReportCode.equalsIgnoreCase("ROA")) {
-                                focusForString = "";
-                            }
+                                boolean isWorkWith = true;
+                                isWorkWith = cbWorkWith.isChecked();
 
-                            NewEntryGetSet getSet = new NewEntryGetSet(edtArea.getText().toString().trim(),
-                                    selectedAreaId,
-                                    edtSpeciality.getText().toString().trim(),
-                                    selectedSpecialityId,
-                                    selectedReportCode,
-                                    edtWorkWith.getText().toString().trim(),
-                                    workWithString,
-                                    edtDoctor.getText().toString().trim(),
-                                    selectedDoctorId,
-                                    newCycle ? "1" : "0",
-                                    edtRemarks.getText().toString().trim(),
-                                    "",
-                                    edtInternee.getText().toString().trim(),
-                                    AppUtils.getStringFromArrayListVariations(listSelectedProducts),
-                                    focusForString,
-                                    isWorkWith,
-                                    String.valueOf(System.currentTimeMillis() / 1000),
-                                    NCRDrData,
-                                    selectedEmployeeID,
-                                    edtEmployee.getText().toString().trim(),
-                                    edtDate.getText().toString().trim(),
-                                    edtAdvice.getText().toString().trim(),
-                                    sessionManager.getUserId());
+                                if (selectedReportCode.equalsIgnoreCase("INT") ||
+                                        selectedReportCode.equalsIgnoreCase("ROR") ||
+                                        selectedReportCode.equalsIgnoreCase("ROA")) {
+                                    focusForString = "";
+                                }
 
-                            getSet.save();
+                                NewEntryGetSet getSet = new NewEntryGetSet(edtArea.getText().toString().trim(),
+                                        selectedAreaId,
+                                        edtSpeciality.getText().toString().trim(),
+                                        selectedSpecialityId,
+                                        selectedReportCode,
+                                        edtWorkWith.getText().toString().trim(),
+                                        workWithString,
+                                        edtDoctor.getText().toString().trim(),
+                                        selectedDoctorId,
+                                        newCycle ? "1" : "0",
+                                        edtRemarks.getText().toString().trim(),
+                                        "",
+                                        edtInternee.getText().toString().trim(),
+                                        AppUtils.getStringFromArrayListVariations(listSelectedProducts),
+                                        focusForString,
+                                        isWorkWith,
+                                        String.valueOf(System.currentTimeMillis() / 1000),
+                                        NCRDrData,
+                                        selectedEmployeeID,
+                                        edtEmployee.getText().toString().trim(),
+                                        edtDate.getText().toString().trim(),
+                                        edtAdvice.getText().toString().trim(),
+                                        sessionManager.getUserId());
 
-                            //Beacsue when came from planned entry, the speciality AND area  may not available as regular dcr
-                            if (isPlannerClicked) {
-                                edtSpeciality.setText("");
-                                selectedSpecialityId = "";
+                                getSet.save();
 
-                                edtArea.setText("");
-                                selectedAreaId = "";
-                            }
+                                //Beacsue when came from planned entry, the speciality AND area  may not available as regular dcr
+                                if (isPlannerClicked) {
+                                    edtSpeciality.setText("");
+                                    selectedSpecialityId = "";
 
-                            isPlannerClicked = false;
+                                    edtArea.setText("");
+                                    selectedAreaId = "";
+                                }
 
-                            isNCREntry = false;
+                                isPlannerClicked = false;
 
-                            AppUtils.showToast(activity, "Entry Saved!");
-                            int result;
-                            result = ContextCompat.checkSelfPermission(activity,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                            if (result == PackageManager.PERMISSION_GRANTED)
-                            {
-                                AppUtils.storeJsonResponse(new Gson().toJson(getSet), selectedReportCode + "_Call");
-                            }
-                            else
-                            {
-                                ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },12);
-                            }
+                                isNCREntry = false;
 
-                            if (selectedReportCode.equalsIgnoreCase("STK")) {
-                                sessionManager.setIsSTKDone(true);
-                            }
+                                AppUtils.showToast(activity, "Entry Saved!");
+                                int result;
+                                result = ContextCompat.checkSelfPermission(activity,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                                if (result == PackageManager.PERMISSION_GRANTED)
+                                {
+                                    AppUtils.storeJsonResponse(new Gson().toJson(getSet), selectedReportCode + "_Call");
+                                }
+                                else
+                                {
+                                    ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },12);
+                                }
+
+                                if (selectedReportCode.equalsIgnoreCase("STK")) {
+                                    sessionManager.setIsSTKDone(true);
+                                }
 
 
-                            if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)
-                                    && listArea.size() == 0)//for manager
-                            {
-                                selectedEmployeeID = "";
-                                edtEmployee.setText("");
-                                edtDate.setText("");
-                                edtAdvice.setText("");
-                            } else//for working manager and MR
-                            {
+                                if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)
+                                        && listArea.size() == 0)//for manager
+                                {
+                                    selectedEmployeeID = "";
+                                    edtEmployee.setText("");
+                                    edtDate.setText("");
+                                    edtAdvice.setText("");
+                                }
+                                else//for working manager and MR
+                                {
 
-                                if (listWorkWith != null && listWorkWith.size() > 0) {
-                                    for (int i = 0; i < listWorkWith.size(); i++) {
-                                        WorkWithResponse.StaffBean staffBean = listWorkWith.get(i);
-                                        staffBean.setSelected(false);
-                                        listWorkWith.set(i, staffBean);
+                                    if (listWorkWith != null && listWorkWith.size() > 0) {
+                                        for (int i = 0; i < listWorkWith.size(); i++) {
+                                            WorkWithResponse.StaffBean staffBean = listWorkWith.get(i);
+                                            staffBean.setSelected(false);
+                                            listWorkWith.set(i, staffBean);
+                                        }
                                     }
-                                }
 
-                                workWithString = "";
-                                NCRDrData = "";
-                                txtAddCount.setText("1");
+                                    workWithString = "";
+                                    NCRDrData = "";
+                                    txtAddCount.setText("1");
 
-                                //edtSpeciality.setText("");
-                                edtInternee.setText("");
-                                edtRemarks.setText("");
-                                dbs = "DCR";
-                                selectedReportCode = "DCR";
-                                edtDBC.setText("DCR : Daily Call Report");
-                                edtWorkWith.setText("");
-                                selectedDoctorId = "";
-                                enable_focus = 0;
-                                edtDoctor.setText("");
-                                cbNewCycle.setChecked(false);
+                                    //edtSpeciality.setText("");
+                                    edtInternee.setText("");
+                                    edtRemarks.setText("");
+                                    dbs = "DCR";
+                                    selectedReportCode = "DCR";
+                                    edtDBC.setText("DCR : Daily Call Report");
+                                    edtWorkWith.setText("");
+                                    selectedDoctorId = "";
+                                    enable_focus = 0;
+                                    edtDoctor.setText("");
+                                    cbNewCycle.setChecked(false);
 
-                                selectedEmployeeID = "";
-                                edtEmployee.setText("");
-                                edtDate.setText("");
-                                edtAdvice.setText("");
+                                    selectedEmployeeID = "";
+                                    edtEmployee.setText("");
+                                    edtDate.setText("");
+                                    edtAdvice.setText("");
 
-                                inputArea.setVisibility(View.VISIBLE);
-                                inputDoctor.setVisibility(View.VISIBLE);
+                                    inputArea.setVisibility(View.VISIBLE);
+                                    inputDoctor.setVisibility(View.VISIBLE);
 
-                                llWorkWith.setVisibility(View.VISIBLE);
+                                    llWorkWith.setVisibility(View.VISIBLE);
 
-                                if (cbWorkWith.isChecked()) {
-                                    inputWorkWith.setVisibility(View.GONE);
-                                } else {
-                                    inputWorkWith.setVisibility(View.VISIBLE);
-                                }
+                                    if (cbWorkWith.isChecked()) {
+                                        inputWorkWith.setVisibility(View.GONE);
+                                    } else {
+                                        inputWorkWith.setVisibility(View.VISIBLE);
+                                    }
 
-                                inputInternee.setVisibility(View.GONE);
-                                edtDoctor.setText("");
-                                inputDoctor.setEnabled(true);
-                                inputRMK.setVisibility(View.GONE);
-                                llAdvice.setVisibility(View.GONE);
-                                inputSpeciality.setVisibility(View.VISIBLE);
-                                llNewCycle.setVisibility(View.VISIBLE);
+                                    inputInternee.setVisibility(View.GONE);
+                                    edtDoctor.setText("");
+                                    inputDoctor.setEnabled(true);
+                                    inputRMK.setVisibility(View.GONE);
+                                    llAdvice.setVisibility(View.GONE);
+                                    inputSpeciality.setVisibility(View.VISIBLE);
+                                    llNewCycle.setVisibility(View.VISIBLE);
 
-                                rvVariation.setVisibility(View.VISIBLE);
-                                viewLine.setVisibility(View.GONE);
-                                llSampleDetails.setVisibility(View.VISIBLE);
+                                    rvVariation.setVisibility(View.VISIBLE);
+                                    viewLine.setVisibility(View.GONE);
+                                    llSampleDetails.setVisibility(View.VISIBLE);
 
                                 /*listSelectedProducts.clear();
                                 listVariation.clear();
@@ -1899,102 +1912,99 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 rvVariation.setAdapter(variationAdapter);*/
 
 
-                                listSelectedProducts = new ArrayList<>();
-                                ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
-                                VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
-                                bean.setStock("");
-                                bean.setItem_code("");
-                                bean.setItem_id_code("");
-                                bean.setProduct_id("0");
-                                bean.setReason("Regular Sample");
-                                bean.setReason_code("R");
-                                bean.setName("Product");
-                                listTemp.add(bean);
-                                variationAdapter = new VariationAdapter(listTemp);
-                                rvVariation.setAdapter(variationAdapter);
+                                    listSelectedProducts = new ArrayList<>();
+                                    ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                                    VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                                    bean.setStock("");
+                                    bean.setItem_code("");
+                                    bean.setItem_id_code("");
+                                    bean.setProduct_id("0");
+                                    bean.setReason("Regular Sample");
+                                    bean.setReason_code("R");
+                                    bean.setName("Product");
+                                    listTemp.add(bean);
+                                    variationAdapter = new VariationAdapter(listTemp);
+                                    rvVariation.setAdapter(variationAdapter);
 
-                                for (int i = 0; i < listVariation.size(); i++) {
-                                    VariationResponse.VariationsBean bean1 = listVariation.get(i);
-                                    bean1.setStock("");
-                                    bean1.setChecked(false);
-                                    //Added for not take previous reason 7_3_19
-                                    bean1.setReason("");
-                                    bean1.setReason_code("R");
-                                    listVariation.set(i, bean1);
+                                    for (int i = 0; i < listVariation.size(); i++) {
+                                        VariationResponse.VariationsBean bean1 = listVariation.get(i);
+                                        bean1.setStock("");
+                                        bean1.setChecked(false);
+                                        //Added for not take previous reason 7_3_19
+                                        bean1.setReason("");
+                                        bean1.setReason_code("R");
+                                        listVariation.set(i, bean1);
+                                    }
+
+                                    Log.i("************* ", "onClick: " + listVariation.size());
                                 }
 
-                                Log.i("************* ", "onClick: " + listVariation.size());
-                            }
-
-                            if (handlerNCR != null) {
-                                Message message = Message.obtain();
-                                message.what = 101;
-                                handlerNCR.sendMessage(message);
+                                if (handlerNCR != null) {
+                                    Message message = Message.obtain();
+                                    message.what = 101;
+                                    handlerNCR.sendMessage(message);
+                                }
                             }
                         }
-                    } else {
+
+                    }
+                else
+                    {
                         AppUtils.showToast(activity, "Your day has been ended by you.Kindly try again tomorrow.");
                     }
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-        llEntry.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
+        llEntry.setOnClickListener(v -> {
+            try {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                List<NewEntryGetSet> listOffline = NewEntryGetSet.listAll(NewEntryGetSet.class);
+                ArrayList<NewEntryGetSet> listEntry = (ArrayList<NewEntryGetSet>) listOffline;
+                ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
+                for (int i = 0; i < listEntry.size(); i++) {
+                    if (listEntry.get(i).getUser_id().equals(sessionManager.getUserId())) {
+                        listUserEntry.add(listEntry.get(i));
                     }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    List<NewEntryGetSet> listOffline = NewEntryGetSet.listAll(NewEntryGetSet.class);
-                    ArrayList<NewEntryGetSet> listEntry = (ArrayList<NewEntryGetSet>) listOffline;
-                    ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
-                    for (int i = 0; i < listEntry.size(); i++) {
-                        if (listEntry.get(i).getUser_id().equals(sessionManager.getUserId())) {
-                            listUserEntry.add(listEntry.get(i));
-                        }
-                    }
+                }
 
-                    if (listUserEntry.size() > 0) {
-                        //sessionManager.setCallDoneFromTP("true");
-                        Intent intent = new Intent(activity, ActivityPendingEntry.class);
-                        startActivity(intent);
-                        AppUtils.startActivityAnimation(activity);
-                    } else {
-                        AppUtils.showToast(activity, "No Pending Entry For Submission.");
-                    }
+                if (listUserEntry.size() > 0) {
+                    //sessionManager.setCallDoneFromTP("true");
+                    Intent intent = new Intent(activity, ActivityPendingEntry.class);
+                    startActivity(intent);
+                    AppUtils.startActivityAnimation(activity);
+                } else {
+                    AppUtils.showToast(activity, "No Pending Entry For Submission.");
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-        llView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-
-                    if (sessionManager.isNetworkAvailable()) {
-                        Intent intent = new Intent(activity, ViewSubmittedEntryActivity.class);
-                        activity.startActivity(intent);
-                        AppUtils.startActivityAnimation(activity);
-                    } else {
-                        AppUtils.showToast(activity, activity.getString(R.string.network_failed_message));
-                    }
-
+        llView.setOnClickListener(v -> {
+            try {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                if (sessionManager.isNetworkAvailable()) {
+                    Intent intent = new Intent(activity, ViewSubmittedEntryActivity.class);
+                    activity.startActivity(intent);
+                    AppUtils.startActivityAnimation(activity);
+                } else {
+                    AppUtils.showToast(activity, activity.getString(R.string.network_failed_message));
                 }
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -2021,7 +2031,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
         if (edtTaskName.getText().toString().trim().length() > 0) {
             try {
-                String date = AppUtils.universalDateConvert(edtTaskName.getText().toString().trim().toString(), "yyyy-MM-dd", "dd/MM/yyyy");
+                String date = AppUtils.universalDateConvert(edtTaskName.getText().toString().trim(), "yyyy-MM-dd", "dd/MM/yyyy");
                 String[] datearr = date.split("/");
                 mDay = Integer.parseInt(datearr[0]);
                 mMonth = Integer.parseInt(datearr[1]);
@@ -2043,32 +2053,72 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         }
         // Get Current Date
-        DatePickerDialog datePickerDialog = new DatePickerDialog(activity, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                view.setMinDate(new Date().getTime());
+        DatePickerDialog datePickerDialog = new DatePickerDialog(activity, (view, year, monthOfYear, dayOfMonth) -> {
+            view.setMinDate(new Date().getTime());
 
-                date_time = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+            date_time = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                Date convertedDate2 = new Date();
-                try {
-                    convertedDate2 = dateFormat.parse(date_time);
-                    String showDate = df.format(convertedDate2);
-                    Log.e("showDate", showDate.toString());
-                    selectedDate = showDate;
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                edtTaskName.setText(selectedDate);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Date convertedDate2 = new Date();
+            try {
+                convertedDate2 = dateFormat.parse(date_time);
+                String showDate = df.format(convertedDate2);
+                Log.e("showDate", showDate);
+                selectedDate = showDate;
             }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            edtTaskName.setText(selectedDate);
         }, mYear, mMonth, mDay);
         datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -2); // Set minimum date to two days ago
+        Calendar minDate = calendar;
+        datePickerDialog.getDatePicker().setMinDate(minDate.getTimeInMillis());
         datePickerDialog.show();
     }
+
+    private void showDatePicker(Context context) {
+        final Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                context,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Calendar selectedDate = Calendar.getInstance();
+                        selectedDate.set(Calendar.YEAR, year);
+                        selectedDate.set(Calendar.MONTH, monthOfYear);
+                        selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                        if (selectedDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                            Toast.makeText(context, "Sundays are disabled. Please select another date.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Do something with the selected date
+                            // For example: pass the selected date to another method
+
+                            Log.e("Selected Date",selectedDate.toString());
+                        }
+                    }
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+
+        // Disable Sundays and set minimum date to Monday if today is Sunday
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Set minimum date to Monday
+        }
+        datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+        // Set the maximum date to today
+        datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+
+        datePickerDialog.show();
+    }
+
 
     private void clickSpeciality() {
         try {
@@ -2214,7 +2264,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         }
     }
 
-    private void showConfirmationDialog() {
+    private void showConfirmationDialog(boolean isForAdvice) {
         try {
             final BottomSheetDialog dialog = new BottomSheetDialog(activity, R.style.BottomSheetDialogThemeLogout);
 
@@ -2238,23 +2288,46 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             // For log purpose
 
-            btnNo.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            btnNo.setOnClickListener(v -> {
+                dialog.dismiss();
+                dialog.cancel();
+            });
+
+            btnYes.setOnClickListener(v -> {
+                if (dialog != null) {
                     dialog.dismiss();
                     dialog.cancel();
                 }
-            });
 
-            btnYes.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (dialog != null) {
-                        dialog.dismiss();
-                        dialog.cancel();
+                if (isForAdvice)
+                {
+
+
+                    JSONObject jsonObject = new JSONObject();
+                    JSONArray jsonArray = new JSONArray();
+
+                    try {
+                        jsonObject.put("timeStamp",String.valueOf(System.currentTimeMillis() / 1000));
+                        jsonObject.put("ncrDrData",NCRDrData);
+                        jsonObject.put("report_type",selectedReportCode);
+                        jsonObject.put("empId",selectedEmployeeID);
+                        jsonObject.put("empName",edtEmployee.getText().toString().trim());
+                        jsonObject.put("advDate",edtDate.getText().toString().trim());
+                        jsonObject.put("advice",edtAdvice.getText().toString().trim());
+                        jsonObject.put("user_id",sessionManager.getUserId());
+                        jsonObject.put("adv_employee",selectedEmployeeID);
+                        jsonObject.put("staff_id",sessionManager.getUserId());
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
+                    jsonArray.put(jsonObject);
 
-                    if (sessionManager.isNetworkAvailable()) {
+                    submitPendingEntries(jsonArray.toString(), false);
+                }
+                else
+                {
+                    if (sessionManager.isNetworkAvailable())
+                    {
                         //apiTaskToken();
                         List<NewEntryGetSet> books = NewEntryGetSet.listAll(NewEntryGetSet.class);
 
@@ -2269,7 +2342,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         if (listUserEntry.size() > 0) {
                             submitPendingEntries(DataUtils.getJsonStringFromPendingEntry(sessionManager, listUserEntry), false);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         AppUtils.showToast(activity, "Please check your internet connection.");
                         // For log purpose
                         try {
@@ -2306,7 +2381,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("field_entry", stringToPass);
                     hashMap.put("login_user_id", sessionManager.getUserId());
-                    Log.e("Submit String Request >>> ", "doInBackground: " + hashMap.toString());
+                    Log.e("Submit String Request >>> ", "doInBackground: " + hashMap);
 
                     AppUtils.storeJsonResponse(hashMap.toString(), "SubmitRequest");
 
@@ -2563,83 +2638,78 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     }
 
     public void setUpViews() {
-        llMain = (LinearLayout) rootView.findViewById(R.id.llMain);
-        llLoading = (LinearLayout) rootView.findViewById(R.id.llLoading);
-        llLoading.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        llMain = rootView.findViewById(R.id.llMain);
+        llLoading = rootView.findViewById(R.id.llLoading);
+        tvSaveButton = rootView.findViewById(R.id.tvSaveButton);
+        llLoading.setOnClickListener(v -> {
 
-            }
         });
-        llOffDay = (LinearLayout) rootView.findViewById(R.id.llOffDay);
-        llOffDay.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        llOffDay = rootView.findViewById(R.id.llOffDay);
+        llOffDay.setOnClickListener(v -> {
 
-            }
         });
 
-        scrollview = (ScrollView) rootView.findViewById(R.id.scrollView);
+        scrollview = rootView.findViewById(R.id.scrollView);
 
-        llNewCycle = (LinearLayout) rootView.findViewById(R.id.llNewCycle);
+        llNewCycle = rootView.findViewById(R.id.llNewCycle);
 
-        llAdvice = (LinearLayout) rootView.findViewById(R.id.llAdvice);
+        llAdvice = rootView.findViewById(R.id.llAdvice);
 
-        inputDoctor = (TextInputLayout) rootView.findViewById(R.id.inputDoctor);
-        inputAdvice = (TextInputLayout) rootView.findViewById(R.id.inputAdvice);
-        inputDate = (TextInputLayout) rootView.findViewById(R.id.inputDate);
-        inputEmployee = (TextInputLayout) rootView.findViewById(R.id.inputEmployee);
+        inputDoctor = rootView.findViewById(R.id.inputDoctor);
+        inputAdvice = rootView.findViewById(R.id.inputAdvice);
+        inputDate = rootView.findViewById(R.id.inputDate);
+        inputEmployee = rootView.findViewById(R.id.inputEmployee);
 
-        inputWorkWith = (TextInputLayout) rootView.findViewById(R.id.inputWorkWith);
-        inputArea = (TextInputLayout) rootView.findViewById(R.id.inputArea);
-        inputRMK = (TextInputLayout) rootView.findViewById(R.id.inputRMK);
-        inputDBC = (TextInputLayout) rootView.findViewById(R.id.inputDBC);
-        inputWorkWith = (TextInputLayout) rootView.findViewById(R.id.inputWorkWith);
-        llSampleDetails = (LinearLayout) rootView.findViewById(R.id.llSampleDetails);
+        inputWorkWith = rootView.findViewById(R.id.inputWorkWith);
+        inputArea = rootView.findViewById(R.id.inputArea);
+        inputRMK = rootView.findViewById(R.id.inputRMK);
+        inputDBC = rootView.findViewById(R.id.inputDBC);
+        inputWorkWith = rootView.findViewById(R.id.inputWorkWith);
+        llSampleDetails = rootView.findViewById(R.id.llSampleDetails);
 
-        llSave = (LinearLayout) rootView.findViewById(R.id.llSave);
-        llSubmit = (LinearLayout) rootView.findViewById(R.id.llSubmit);
-        llView = (LinearLayout) rootView.findViewById(R.id.llView);
-        llEntry = (LinearLayout) rootView.findViewById(R.id.llAdd);
-        inputSpeciality = (TextInputLayout) rootView.findViewById(R.id.inputSpeciality);
+        llSave = rootView.findViewById(R.id.llSave);
+        llSubmit = rootView.findViewById(R.id.llSubmit);
+        llView = rootView.findViewById(R.id.llView);
+        llEntry = rootView.findViewById(R.id.llAdd);
+        inputSpeciality = rootView.findViewById(R.id.inputSpeciality);
 
-        cbWorkWith = (CheckBox) rootView.findViewById(R.id.cbWorkWith);
-        ivEmployee = (ImageView) rootView.findViewById(R.id.ivEmployee);
+        cbWorkWith = rootView.findViewById(R.id.cbWorkWith);
+        ivEmployee = rootView.findViewById(R.id.ivEmployee);
         ivEmployee.setSelected(true);
         cbWorkWith.setTypeface(AppUtils.getTypefaceRegular(activity));
-        llWorkWith = (LinearLayout) rootView.findViewById(R.id.llWorkWith);
+        llWorkWith = rootView.findViewById(R.id.llWorkWith);
 
-        viewLine = (View) rootView.findViewById(R.id.view_line);
+        viewLine = rootView.findViewById(R.id.view_line);
 
-        txtAddCount = (TextView) rootView.findViewById(R.id.txtAddCount);
+        txtAddCount = rootView.findViewById(R.id.txtAddCount);
 
-        cbNewCycle = (CheckBox) rootView.findViewById(R.id.cbNewCycle);
+        cbNewCycle = rootView.findViewById(R.id.cbNewCycle);
 
-        ivNewCycle = (ImageView) rootView.findViewById(R.id.ivNewCycle);
+        ivNewCycle = rootView.findViewById(R.id.ivNewCycle);
 
         // New
-        edtDBC = (EditText) rootView.findViewById(R.id.edtDBC);
+        edtDBC = rootView.findViewById(R.id.edtDBC);
         edtDBC.setText("DCR : Daily Call Report");
         selectedReportCode = "DCR";
-        edtDoctor = (EditText) rootView.findViewById(R.id.edtDoctor);
-        edtWorkWith = (EditText) rootView.findViewById(R.id.edtWorkWith);
+        edtDoctor = rootView.findViewById(R.id.edtDoctor);
+        edtWorkWith = rootView.findViewById(R.id.edtWorkWith);
         edtWorkWith.setText("");
-        edtArea = (EditText) rootView.findViewById(R.id.edtArea);
-        edtRemarks = (RegularEditText) rootView.findViewById(R.id.edtRemark);
-        edtInternee = (EditText) rootView.findViewById(R.id.edtInternee);
-        inputInternee = (TextInputLayout) rootView.findViewById(R.id.inputInternee);
-        edtSpeciality = (EditText) rootView.findViewById(R.id.edtDoctorSpeciality);
-        edtAdvice = (EditText) rootView.findViewById(R.id.edtAdvice);
-        edtDate = (EditText) rootView.findViewById(R.id.edtDate);
-        edtEmployee = (EditText) rootView.findViewById(R.id.edtEmployee);
+        edtArea = rootView.findViewById(R.id.edtArea);
+        edtRemarks = rootView.findViewById(R.id.edtRemark);
+        edtInternee = rootView.findViewById(R.id.edtInternee);
+        inputInternee = rootView.findViewById(R.id.inputInternee);
+        edtSpeciality = rootView.findViewById(R.id.edtDoctorSpeciality);
+        edtAdvice = rootView.findViewById(R.id.edtAdvice);
+        edtDate = rootView.findViewById(R.id.edtDate);
+        edtEmployee = rootView.findViewById(R.id.edtEmployee);
 
-        ivAdd = (ImageView) rootView.findViewById(R.id.ivAdd);
+        ivAdd = rootView.findViewById(R.id.ivAdd);
 
-        rvVariation = (RecyclerView) rootView.findViewById(R.id.rvVariation);
+        rvVariation = rootView.findViewById(R.id.rvVariation);
         rvVariation.setLayoutManager(new LinearLayoutManager(activity));
 
-        llPlannedEntry = (LinearLayout) rootView.findViewById(R.id.llPlannedEntry);
-        viewPlanner = (View) rootView.findViewById(R.id.viewPlanner);
+        llPlannedEntry = rootView.findViewById(R.id.llPlannedEntry);
+        viewPlanner = rootView.findViewById(R.id.viewPlanner);
 
         VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
         bean.setStock("");
@@ -2774,10 +2844,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             View sheetView = activity.getLayoutInflater().inflate(R.layout.bttom_layout_logout, null);
             dialog.setContentView(sheetView);
 
-            TextView txt_Dialog_Delete = (TextView) dialog.findViewById(R.id.tvDescription);
-            TextView txtHeader = (TextView) dialog.findViewById(R.id.tvHeader);
-            TextView btnNo = (TextView) dialog.findViewById(R.id.tvCancel);
-            TextView btnYes = (TextView) dialog.findViewById(R.id.tvConfirm);
+            TextView txt_Dialog_Delete = dialog.findViewById(R.id.tvDescription);
+            TextView txtHeader = dialog.findViewById(R.id.tvHeader);
+            TextView btnNo = dialog.findViewById(R.id.tvCancel);
+            TextView btnYes = dialog.findViewById(R.id.tvConfirm);
 
 
             txt_Dialog_Delete.setText("Are you sure you want to end the day?");
@@ -2826,311 +2896,270 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    AppUtils.hideKeyboard(sheetView, activity);
-                }
-            });
+            dialog.setOnDismissListener(dialog1 -> AppUtils.hideKeyboard(sheetView, activity));
             dialog.findViewById(R.id.ivBack).setVisibility(View.GONE);
 
-            final EditText edttext1 = (EditText) dialog.findViewById(R.id.edtProduct1);
-            final EditText edttext2 = (EditText) dialog.findViewById(R.id.edtProduct2);
-            final EditText edttext3 = (EditText) dialog.findViewById(R.id.edtProduct3);
-            final EditText edttext4 = (EditText) dialog.findViewById(R.id.edtProduct4);
+            final EditText edttext1 = dialog.findViewById(R.id.edtProduct1);
+            final EditText edttext2 = dialog.findViewById(R.id.edtProduct2);
+            final EditText edttext3 = dialog.findViewById(R.id.edtProduct3);
+            final EditText edttext4 = dialog.findViewById(R.id.edtProduct4);
 
             edttext3.setVisibility(View.GONE);
             edttext4.setVisibility(View.GONE);
 
-            final EditText edtReason1 = (EditText) dialog.findViewById(R.id.edtReason1);
-            final EditText edtReason2 = (EditText) dialog.findViewById(R.id.edtReason2);
-            final EditText edtReason3 = (EditText) dialog.findViewById(R.id.edtReason3);
-            final EditText edtReason4 = (EditText) dialog.findViewById(R.id.edtReason4);
+            final EditText edtReason1 = dialog.findViewById(R.id.edtReason1);
+            final EditText edtReason2 = dialog.findViewById(R.id.edtReason2);
+            final EditText edtReason3 = dialog.findViewById(R.id.edtReason3);
+            final EditText edtReason4 = dialog.findViewById(R.id.edtReason4);
 
             edtReason3.setVisibility(View.GONE);
             edtReason4.setVisibility(View.GONE);
 
-            MitsAutoHeightListView listview = (MitsAutoHeightListView) dialog.findViewById(R.id.lvFocusedFor);
-            TextView txtTitle = (TextView) dialog.findViewById(R.id.txtTitle);
-            LinearLayout llsubmit = (LinearLayout) dialog.findViewById(R.id.llSubmit);
-            LinearLayout llcancel = (LinearLayout) dialog.findViewById(R.id.llcancel);
-            llcancel.setVisibility(View.GONE);
+            MitsAutoHeightListView listview = dialog.findViewById(R.id.lvFocusedFor);
+            TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+            LinearLayout llSubmit = dialog.findViewById(R.id.llSubmit);
+            LinearLayout llCancel = dialog.findViewById(R.id.llcancel);
+            llCancel.setVisibility(View.GONE);
 
 
             listview.setVisibility(View.VISIBLE);
             txtTitle.setVisibility(View.GONE);
 
-            edttext1.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            edttext1.setOnClickListener(v -> {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                if (listVariation != null && listVariation.size() > 1) {
+                    try {
+                        showFocusedDialog(edttext1, "Product", "1");
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    AppUtils.showToast(activity, "Products Not Found.");
+                }
+            });
+
+            edttext2.setOnClickListener(v -> {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                if (listVariation != null && listVariation.size() > 1) {
+                    try {
+                        showFocusedDialog(edttext2, "Product", "2");
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    AppUtils.showToast(activity, "Products Not Found.");
+                }
+            });
+
+            edttext3.setOnClickListener(view -> {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                if (listVariation != null && listVariation.size() > 0) {
+                    try {
+                        showFocusedDialog(edttext3, "Product", "3");
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            edttext4.setOnClickListener(view -> {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                if (listVariation != null && listVariation.size() > 0) {
+                    try {
+                        showFocusedDialog(edttext4, "Product", "4");
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            edtReason1.setOnClickListener(v -> {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                try {
+                    showFocusedDialog(edtReason1, "Reason", "");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            });
+
+            edtReason2.setOnClickListener(v -> {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                try {
+                    showFocusedDialog(edtReason2, "Reason", "");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            });
+
+            edtReason3.setOnClickListener(view -> {
+                try {
                     if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
                         return;
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
-                    if (listVariation != null && listVariation.size() > 1) {
-                        try {
-                            showFocusedDialog(edttext1, "Product", "1");
+                    showFocusedDialog(edtReason3, "Reason", "");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            edtReason4.setOnClickListener(view -> {
+                try {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+                    showFocusedDialog(edtReason4, "Reason", "");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            llSubmit.setOnClickListener(v -> {
+
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                listRestriction = new ArrayList<String>();
+
+                /*int countNew=0;
+                int countEnhance=0;*/
+
+                if (product1.isEmpty() && product2.isEmpty()) {
+                    AppUtils.showToast(activity, "Please select product.");
+
+                }
+                /*else if (edtReason1.getText().toString().trim().equalsIgnoreCase("") && edtReason2.getText().toString().trim().equalsIgnoreCase(""))
+                {
+                    Toast toast = Toast.makeText(activity, "Please select product.", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                }*/
+                else if (!product1.isEmpty() && edtReason1.getText().toString().equalsIgnoreCase("")) {
+                    AppUtils.showToast(activity, "Please select type.");
+
+                } else if (!product2.isEmpty() && edtReason2.getText().toString().equalsIgnoreCase("")) {
+                    AppUtils.showToast(activity, "Please select type.");
+                } else if (!edtReason1.getText().toString().equalsIgnoreCase("") && product1.isEmpty()) {
+                    AppUtils.showToast(activity, "Please select product.");
+                } else if (!edtReason2.getText().toString().equalsIgnoreCase("") && product2.isEmpty()) {
+                    AppUtils.showToast(activity, "Please select product.");
+                } else {
+                    listRestriction.add(edtReason1.getText().toString().trim());
+                    listRestriction.add(edtReason2.getText().toString().trim());
+                    listRestriction.add(edtReason3.getText().toString().trim());
+                    listRestriction.add(edtReason4.getText().toString().trim());
+
+                    countNew = 0;
+                    countEnhance = 0;
+
+                    for (int i = 0; i < listRestriction.size(); i++) {
+                        if (listRestriction.get(i).equalsIgnoreCase("New")) {
+                            countNew = countNew + 1;
+                        } else if (listRestriction.get(i).equalsIgnoreCase("Enhance")) {
+                            countEnhance = countEnhance + 1;
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    }
+
+                    if (countNew > 2) {
+                        AppUtils.showToast(activity, "You can enter only 2 product as new.");
+                    } else if (countEnhance > 2) {
+                        AppUtils.showToast(activity, "You can enter only 2 product as enhance.");
                     } else {
-                        AppUtils.showToast(activity, "Products Not Found.");
-                    }
-                }
-            });
+                        //Toast.makeText(activity, "Slection is Okay", Toast.LENGTH_SHORT).show();
 
-            edttext2.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (listVariation != null && listVariation.size() > 1) {
-                        try {
-                            showFocusedDialog(edttext2, "Product", "2");
+                        ArrayList<String> listString = new ArrayList<String>();
+
+                        String tempProduct1 = "", tempProduct2 = "", tempProduct3 = "", tempProduct4 = "";
+
+                        if (!product1.isEmpty()) {
+                            tempProduct1 = doctorId + "#" + edttext1.getText().toString().trim() + "---" + edtReason1.getText().toString().trim();
+                            listString.add(tempProduct1);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
+                        if (!product2.isEmpty()) {
+                            tempProduct2 = doctorId + "#" + edttext2.getText().toString().trim() + "---" + edtReason2.getText().toString().trim();
+                            listString.add(tempProduct2);
                         }
-                    } else {
-                        AppUtils.showToast(activity, "Products Not Found.");
-                    }
-                }
-            });
-
-            edttext3.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (listVariation != null && listVariation.size() > 0) {
-                        try {
-                            showFocusedDialog(edttext3, "Product", "3");
+                        if (!edttext3.getText().toString().equalsIgnoreCase("")) {
+                            tempProduct3 = doctorId + "#" + edttext3.getText().toString().trim() + "---" + edtReason3.getText().toString().trim();
+                            listString.add(tempProduct3);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
+                        if (!edttext4.getText().toString().equalsIgnoreCase("")) {
+                            tempProduct4 = doctorId + "#" + edttext4.getText().toString().trim() + "---" + edtReason4.getText().toString().trim();
+                            listString.add(tempProduct4);
                         }
-                    }
-                }
-            });
 
-            edttext4.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (listVariation != null && listVariation.size() > 0) {
-                        try {
-                            showFocusedDialog(edttext4, "Product", "4");
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
 
-            edtReason1.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    try {
-                        showFocusedDialog(edtReason1, "Reason", "");
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-
-            edtReason2.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    try {
-                        showFocusedDialog(edtReason2, "Reason", "");
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-
-            edtReason3.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                            return;
-                        }
-                        mLastClickTime = SystemClock.elapsedRealtime();
-                        showFocusedDialog(edtReason3, "Reason", "");
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            edtReason4.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                            return;
-                        }
-                        mLastClickTime = SystemClock.elapsedRealtime();
-                        showFocusedDialog(edtReason4, "Reason", "");
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            llsubmit.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-
-                    listRestriction = new ArrayList<String>();
-
-					/*int countNew=0;
-					int countEnhance=0;*/
-
-                    if (product1.isEmpty() && product2.isEmpty()) {
-                        AppUtils.showToast(activity, "Please select product.");
-
-                    }
-					/*else if (edtReason1.getText().toString().trim().equalsIgnoreCase("") && edtReason2.getText().toString().trim().equalsIgnoreCase(""))
-					{
-						Toast toast = Toast.makeText(activity, "Please select product.", Toast.LENGTH_SHORT);
-						toast.setGravity(Gravity.CENTER, 0, 0);
-						toast.show();
-					}*/
-                    else if (!product1.isEmpty() && edtReason1.getText().toString().equalsIgnoreCase("")) {
-                        AppUtils.showToast(activity, "Please select type.");
-
-                    } else if (!product2.isEmpty() && edtReason2.getText().toString().equalsIgnoreCase("")) {
-                        AppUtils.showToast(activity, "Please select type.");
-                    } else if (!edtReason1.getText().toString().equalsIgnoreCase("") && product1.isEmpty()) {
-                        AppUtils.showToast(activity, "Please select product.");
-                    } else if (!edtReason2.getText().toString().equalsIgnoreCase("") && product2.isEmpty()) {
-                        AppUtils.showToast(activity, "Please select product.");
-                    } else {
-                        listRestriction.add(edtReason1.getText().toString().trim());
-                        listRestriction.add(edtReason2.getText().toString().trim());
-                        listRestriction.add(edtReason3.getText().toString().trim());
-                        listRestriction.add(edtReason4.getText().toString().trim());
-
-                        countNew = 0;
-                        countEnhance = 0;
-
-                        for (int i = 0; i < listRestriction.size(); i++) {
-                            if (listRestriction.get(i).equalsIgnoreCase("New")) {
-                                countNew = countNew + 1;
-                            } else if (listRestriction.get(i).equalsIgnoreCase("Enhance")) {
-                                countEnhance = countEnhance + 1;
+                        String finalString = "";
+                        for (int i = 0; i < listString.size(); i++) {
+                            if (finalString.length() == 0) {
+                                finalString = listString.get(i);
+                            } else {
+                                finalString = finalString + "," + listString.get(i);
                             }
                         }
 
-                        if (countNew > 2) {
-                            AppUtils.showToast(activity, "You can enter only 2 product as new.");
-                        } else if (countEnhance > 2) {
-                            AppUtils.showToast(activity, "You can enter only 2 product as enhance.");
-                        } else {
-                            //Toast.makeText(activity, "Slection is Okay", Toast.LENGTH_SHORT).show();
+                        focusForString = finalString;
 
-                            ArrayList<String> listString = new ArrayList<String>();
+                        Log.e("FINAL STRING  ------>>>>", "onClick: " + finalString);
 
-                            String tempProduct1 = "", tempProduct2 = "", tempProduct3 = "", tempProduct4 = "";
-
-                            if (!product1.isEmpty()) {
-                                tempProduct1 = doctorId + "#" + edttext1.getText().toString().trim() + "---" + edtReason1.getText().toString().trim();
-                                listString.add(tempProduct1);
-                            }
-                            if (!product2.isEmpty()) {
-                                tempProduct2 = doctorId + "#" + edttext2.getText().toString().trim() + "---" + edtReason2.getText().toString().trim();
-                                listString.add(tempProduct2);
-                            }
-                            if (!edttext3.getText().toString().equalsIgnoreCase("")) {
-                                tempProduct3 = doctorId + "#" + edttext3.getText().toString().trim() + "---" + edtReason3.getText().toString().trim();
-                                listString.add(tempProduct3);
-                            }
-                            if (!edttext4.getText().toString().equalsIgnoreCase("")) {
-                                tempProduct4 = doctorId + "#" + edttext4.getText().toString().trim() + "---" + edtReason4.getText().toString().trim();
-                                listString.add(tempProduct4);
-                            }
-
-
-                            String finalString = "";
-                            for (int i = 0; i < listString.size(); i++) {
-                                if (finalString.length() == 0) {
-                                    finalString = listString.get(i);
-                                } else {
-                                    finalString = finalString + "," + listString.get(i);
-                                }
-                            }
-
-                            focusForString = finalString;
-
-                            Log.e("FINAL STRING  ------>>>>", "onClick: " + finalString);
-
-                            dialog.dismiss();
-
-                        }
-                    }
-                }
-            });
-
-            llcancel.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
                         dialog.dismiss();
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
+
                     }
                 }
             });
 
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                    product1 = "";
-                    product2 = "";
-                    product3 = "";
-                    product4 = "";
+            llCancel.setOnClickListener(v -> {
+                try {
+                    dialog.dismiss();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
-            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialogInterface) {
-                    product1 = "";
-                    product2 = "";
-                    product3 = "";
-                    product4 = "";
-                }
+            dialog.setOnDismissListener(dialogInterface -> {
+                product1 = "";
+                product2 = "";
+                product3 = "";
+                product4 = "";
+            });
+
+            dialog.setOnCancelListener(dialogInterface -> {
+                product1 = "";
+                product2 = "";
+                product3 = "";
+                product4 = "";
             });
 
             dialog.show();
@@ -3148,10 +3177,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             View sheetView = activity.getLayoutInflater().inflate(R.layout.bttom_layout_logout, null);
             dialog.setContentView(sheetView);
 
-            TextView txt_Dialog_Delete = (TextView) dialog.findViewById(R.id.tvDescription);
-            TextView txtHeader = (TextView) dialog.findViewById(R.id.tvHeader);
-            TextView btnNo = (TextView) dialog.findViewById(R.id.tvCancel);
-            TextView btnYes = (TextView) dialog.findViewById(R.id.tvConfirm);
+            TextView txt_Dialog_Delete = dialog.findViewById(R.id.tvDescription);
+            TextView txtHeader = dialog.findViewById(R.id.tvHeader);
+            TextView btnNo = dialog.findViewById(R.id.tvCancel);
+            TextView btnYes = dialog.findViewById(R.id.tvConfirm);
 
 
             txt_Dialog_Delete.setText("Please confirm again.");
@@ -3325,11 +3354,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     AppUtils.hideKeyboard(sheetView, activity);
                 }
             });
-            final BottomSheetListView listView = (BottomSheetListView) dialog.findViewById(R.id.lv_Dialog);
-            TextView txtHeader = (TextView) dialog.findViewById(R.id.txtHeader_Dialog_ListView);
+            final BottomSheetListView listView = dialog.findViewById(R.id.lv_Dialog);
+            TextView txtHeader = dialog.findViewById(R.id.txtHeader_Dialog_ListView);
 
-            final TextInputLayout inputSearch = (TextInputLayout) dialog.findViewById(R.id.inputSearch);
-            final EditText edtSearch = (EditText) dialog.findViewById(R.id.edtSearch_Dialog_ListView);
+            final TextInputLayout inputSearch = dialog.findViewById(R.id.inputSearch);
+            final EditText edtSearch = dialog.findViewById(R.id.edtSearch_Dialog_ListView);
 
             final List<String> array = new ArrayList<String>();
             array.add("New");
@@ -3416,12 +3445,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     }
 
     private class ProductAdapter extends BaseAdapter {
-        private Activity activity;
+        private final Activity activity;
         private LayoutInflater inflater = null;
         ArrayList<VariationResponse.VariationsBean> items;
         String spinnerRef;
         int pos = 0;
-        private EditText view;
+        private final EditText view;
         Dialog dialog;
         String focusPosition = "";
         boolean isForSearch = false;
@@ -3482,7 +3511,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                     holder = new ViewHolder();
 
-                    holder.txtmktCode = (TextView) rowView.findViewById(R.id.txtName);
+                    holder.txtmktCode = rowView.findViewById(R.id.txtName);
 
                     rowView.setTag(holder);
                 }
@@ -3574,7 +3603,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
         private class ViewHolder {
             TextView txtmktCode;
-            ;
         }
     }
 
@@ -3595,8 +3623,18 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     private void checkStoragePermission() {
         try {
             int result;
-            result = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            if (result == PackageManager.PERMISSION_GRANTED) {
+            if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+            {
+                result = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            else
+            {
+                result = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_IMAGES);
+            }
+
+
+            if (result == PackageManager.PERMISSION_GRANTED)
+            {
                 List<NewEntryGetSet> books = NewEntryGetSet.listAll(NewEntryGetSet.class);
 
                 ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
@@ -3609,14 +3647,21 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                 if (listUserEntry.size() > 0) {
                     pendingEntryCount = listUserEntry.size();
-                    showConfirmationDialog();
+                    showConfirmationDialog(false);
                 } else {
                     AppUtils.showToast(activity, "No Pending Entry For Submission.");
                 }
 
             } else {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        PERMISSION_REQUEST_CODE_STORAGE);
+                if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+                {
+                    ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },PERMISSION_REQUEST_CODE_STORAGE);
+                }
+                else
+                {
+                    ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.READ_MEDIA_IMAGES },PERMISSION_REQUEST_CODE_STORAGE);
+                }
+
             }
         }
         catch (Exception e) {
@@ -3625,34 +3670,31 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE_STORAGE:
-                try {
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        List<NewEntryGetSet> books = NewEntryGetSet.listAll(NewEntryGetSet.class);
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE_STORAGE) {
+            try {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    List<NewEntryGetSet> books = NewEntryGetSet.listAll(NewEntryGetSet.class);
 
-                        ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
-                        for (int i = 0; i < books.size(); i++) {
-                            if (books.get(i).getUser_id().equals(sessionManager.getUserId())) {
-                                listUserEntry.add(books.get(i));
-                            }
+                    ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
+                    for (int i = 0; i < books.size(); i++) {
+                        if (books.get(i).getUser_id().equals(sessionManager.getUserId())) {
+                            listUserEntry.add(books.get(i));
                         }
-
-                        if (listUserEntry.size() > 0) {
-                            pendingEntryCount = listUserEntry.size();
-                            showConfirmationDialog();
-                        } else {
-                            AppUtils.showToast(activity, "No Pending Entry For Submission.");
-                        }
-                    } else {
-                        AppUtils.showToast(activity, "Permissions Denied!");
                     }
+
+                    if (listUserEntry.size() > 0) {
+                        pendingEntryCount = listUserEntry.size();
+                        showConfirmationDialog(false);
+                    } else {
+                        AppUtils.showToast(activity, "No Pending Entry For Submission.");
+                    }
+                } else {
+                    AppUtils.showToast(activity, "Permissions Denied!");
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -3676,12 +3718,12 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         });
 
-        final LinearLayout btnNo = (LinearLayout) listDialog.findViewById(R.id.btnNo);
+        final LinearLayout btnNo = listDialog.findViewById(R.id.btnNo);
 
-        TextView tvTitle = (TextView) listDialog.findViewById(R.id.tvTitle);
+        TextView tvTitle = listDialog.findViewById(R.id.tvTitle);
         tvTitle.setText("Select " + isFor);
 
-        final TextView tvDone = (TextView) listDialog.findViewById(R.id.tvDone);
+        final TextView tvDone = listDialog.findViewById(R.id.tvDone);
 
         if (isFor.equalsIgnoreCase(WORKWITH)) {
             tvDone.setVisibility(View.VISIBLE);
@@ -3691,7 +3733,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             tvDone.setVisibility(View.GONE);
         }
 
-        final RecyclerView rvListDialog = (RecyclerView) listDialog.findViewById(R.id.rvDialog);
+        final RecyclerView rvListDialog = listDialog.findViewById(R.id.rvDialog);
 
         areaAdapter = new AreaAdapter(listDialog, isFor, false, "", rvListDialog);
         rvListDialog.setLayoutManager(new LinearLayoutManager(activity));
@@ -3729,7 +3771,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         });
 
-        final EditText edtSearchDialog = (EditText) listDialog.findViewById(R.id.edtSearchDialog);
+        final EditText edtSearchDialog = listDialog.findViewById(R.id.edtSearchDialog);
 
         edtSearchDialog.setVisibility(View.VISIBLE);
 
@@ -3888,7 +3930,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 holder.viewLine.setVisibility(View.VISIBLE);
             }
 
-            if (isFor.equalsIgnoreCase(AREA)) {
+            if (isFor.equalsIgnoreCase(AREA))
+            {
                 final AreaResponse.AreasBean getSet;
 
                 if (isForSearch) {
@@ -3907,63 +3950,62 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
 
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        try {
-                            dialog.dismiss();
-                            edtArea.setText(getSet.getArea().toUpperCase());
-                            selectedAreaId = getSet.getArea_id();
+                holder.itemView.setOnClickListener(view -> {
+                    try {
+                        dialog.dismiss();
+                        edtArea.setText(getSet.getArea().toUpperCase());
+                        selectedAreaId = getSet.getArea_id();
 
-                            //For Recet whole form
-                            workWithString = "";
-                            NCRDrData = "";
-                            txtAddCount.setText("1");
+                        //For Recet whole form
+                        workWithString = "";
+                        NCRDrData = "";
+                        txtAddCount.setText("1");
 
-                            edtSpeciality.setText("");
-                            edtInternee.setText("");
-                            edtRemarks.setText("");
-                            dbs = "DCR";
-                            edtDBC.setText("DCR : Daily Call Report");
-                            edtWorkWith.setText("");
-                            edtDoctor.setText("");
-                            cbNewCycle.setChecked(false);
+                        edtSpeciality.setText("");
+                        edtInternee.setText("");
+                        edtRemarks.setText("");
+                        dbs = "DCR";
+                        edtDBC.setText("DCR : Daily Call Report");
+                        edtWorkWith.setText("");
+                        edtDoctor.setText("");
+                        cbNewCycle.setChecked(false);
 
-                            inputArea.setVisibility(View.VISIBLE);
-                            inputDoctor.setVisibility(View.VISIBLE);
+                        inputArea.setVisibility(View.VISIBLE);
+                        inputDoctor.setVisibility(View.VISIBLE);
 
-                            if (cbWorkWith.isChecked()) {
-                                inputWorkWith.setVisibility(View.GONE);
-                            } else {
-                                inputWorkWith.setVisibility(View.VISIBLE);
-                            }
-
-                            inputInternee.setVisibility(View.GONE);
-                            edtDoctor.setText("");
-                            inputDoctor.setEnabled(true);
-                            inputRMK.setVisibility(View.GONE);
-                            llAdvice.setVisibility(View.GONE);
-
-                            inputSpeciality.setVisibility(View.VISIBLE);
-                            llNewCycle.setVisibility(View.VISIBLE);
-
-                            rvVariation.setVisibility(View.VISIBLE);
-                            viewLine.setVisibility(View.GONE);
-                            llSampleDetails.setVisibility(View.VISIBLE);
-
-                            //For get speciality
-                            if (sessionManager.isNetworkAvailable()) {
-                                getSpecialityFromArea(getSet.getArea_id());
-                            } else {
-                                getFilteredSpeciality(getSet.getArea_id());
-                            }
+                        if (cbWorkWith.isChecked()) {
+                            inputWorkWith.setVisibility(View.GONE);
+                        } else {
+                            inputWorkWith.setVisibility(View.VISIBLE);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
+
+                        inputInternee.setVisibility(View.GONE);
+                        edtDoctor.setText("");
+                        inputDoctor.setEnabled(true);
+                        inputRMK.setVisibility(View.GONE);
+                        llAdvice.setVisibility(View.GONE);
+
+                        inputSpeciality.setVisibility(View.VISIBLE);
+                        llNewCycle.setVisibility(View.VISIBLE);
+
+                        rvVariation.setVisibility(View.VISIBLE);
+                        viewLine.setVisibility(View.GONE);
+                        llSampleDetails.setVisibility(View.VISIBLE);
+
+                        //For get speciality
+                        if (sessionManager.isNetworkAvailable()) {
+                            getSpecialityFromArea(getSet.getArea_id());
+                        } else {
+                            getFilteredSpeciality(getSet.getArea_id());
                         }
                     }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
-            } else if (isFor.equalsIgnoreCase(ADD_AREA)) {
+            }
+            else if (isFor.equalsIgnoreCase(ADD_AREA))
+            {
                 final AreaResponse.AreasBean getSet;
 
                 if (isForSearch) {
@@ -4037,7 +4079,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                     }
                 });
-            } else if (isFor.equalsIgnoreCase(EMPLOYEE)) {
+            }
+            else if (isFor.equalsIgnoreCase(EMPLOYEE))
+            {
                 final StaffResponse.StaffBean getSet;
 
                 if (isForSearch) {
@@ -4067,7 +4111,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 });
 
 
-            } else if (isFor.equalsIgnoreCase(SPECIALITY)) {
+            }
+            else if (isFor.equalsIgnoreCase(SPECIALITY))
+            {
                 final SpecialistBean.SpecialityBean getSet;
                 if (isForSearch) {
                     getSet = listSpecialitySearch.get(position);
@@ -4150,7 +4196,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                     }
                 });
-            } else if (isFor.equalsIgnoreCase("DBC")) {
+            }
+            else if (isFor.equalsIgnoreCase("DBC"))
+            {
                 final ReportResponse.ReportsBean getSet;
 
                 if (isForSearch) {
@@ -4174,6 +4222,15 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                             selectedReportCode = getSet.getReport_code();
                             edtDBC.setText(getSet.getReport_code() + " : " + getSet.getReport_name());
+
+                            if (selectedReportCode.equals("ADV"))
+                            {
+                                tvSaveButton.setText("Upload Entry");
+                            }
+                            else
+                            {
+                                tvSaveButton.setText("Save Entry");
+                            }
 
                             if (isPlannerClicked) {
                                 txtAddCount.setText("1");
@@ -4241,7 +4298,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         }
                     }
                 });
-            } else if (isFor.equalsIgnoreCase(DOCTOR)) {
+            }
+            else if (isFor.equalsIgnoreCase(DOCTOR)) {
                 final DoctorResponse.DoctorsBean getSet;
                 if (isForSearch) {
                     getSet = listDoctorSearch.get(position);
@@ -4257,52 +4315,49 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
                 holder.tvId.setText(getSet.getDoctor_id());
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        try {
-                            cbNewCycle.setChecked(false);
+                holder.itemView.setOnClickListener(view -> {
+                    try {
+                        cbNewCycle.setChecked(false);
 
-                            focusForString = "";
+                        focusForString = "";
 
-                            txtAddCount.setText("1");
-                            listSelectedProducts = new ArrayList<>();
-                            ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
-                            VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
-                            bean.setStock("");
-                            bean.setItem_code("");
-                            bean.setItem_id_code("");
-                            bean.setProduct_id("0");
-                            bean.setReason("Regular Sample");
-                            bean.setReason_code("R");
-                            bean.setName("Product");
-                            listTemp.add(bean);
-                            variationAdapter = new VariationAdapter(listTemp);
-                            rvVariation.setAdapter(variationAdapter);
+                        txtAddCount.setText("1");
+                        listSelectedProducts = new ArrayList<>();
+                        ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                        VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                        bean.setStock("");
+                        bean.setItem_code("");
+                        bean.setItem_id_code("");
+                        bean.setProduct_id("0");
+                        bean.setReason("Regular Sample");
+                        bean.setReason_code("R");
+                        bean.setName("Product");
+                        listTemp.add(bean);
+                        variationAdapter = new VariationAdapter(listTemp);
+                        rvVariation.setAdapter(variationAdapter);
 
-                            for (int i = 0; i < listVariation.size(); i++) {
-                                VariationResponse.VariationsBean getSet = listVariation.get(i);
-                                getSet.setStock("");
-                                getSet.setChecked(false);
-                                //Added for not take previous reason 7_3_19
-                                getSet.setReason("");
-                                getSet.setReason_code("R");
-                                listVariation.set(i, getSet);
-                            }
-
-                            if (isDoctorUsed(getSet.getDoctor_id(), selectedReportCode)) {
-                                AppUtils.showToast(activity, "You already have submitted DCR entry with this doctor.");
-                            } else {
-                                dialog.dismiss();
-                                edtDoctor.setText(getSet.getDoctor().toUpperCase());
-                                selectedDoctorId = getSet.getDoctor_id();
-                                enable_focus = getSet.getEnable_focus();
-                                clickOfDBC("doctor");
-                            }
+                        for (int i = 0; i < listVariation.size(); i++) {
+                            VariationResponse.VariationsBean getSet1 = listVariation.get(i);
+                            getSet1.setStock("");
+                            getSet1.setChecked(false);
+                            //Added for not take previous reason 7_3_19
+                            getSet1.setReason("");
+                            getSet1.setReason_code("R");
+                            listVariation.set(i, getSet1);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
+
+                        if (isDoctorUsed(getSet.getDoctor_id(), selectedReportCode)) {
+                            AppUtils.showToast(activity, "You already have submitted DCR entry with this doctor.");
+                        } else {
+                            dialog.dismiss();
+                            edtDoctor.setText(getSet.getDoctor().toUpperCase());
+                            selectedDoctorId = getSet.getDoctor_id();
+                            enable_focus = getSet.getEnable_focus();
+                            clickOfDBC("doctor");
                         }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
             } else if (isFor.equalsIgnoreCase(WORKWITH)) {
@@ -4443,11 +4498,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
             String str = getAllReportTypeForDoctor(listUserEntry, drId);
             if (!str.equals("")) {
-                if (str.contains(reportType)) {
-                    b = true;
-                } else {
-                    b = false;
-                    /*if(str.contains("DCR") ||
+                /*if(str.contains("DCR") ||
                             str.contains("LCR") ||
                             str.contains("NCR") ||
                             str.contains("SRD") ||
@@ -4460,7 +4511,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     {
                         b = false;
                     }*/
-                }
+                b = str.contains(reportType);
             }
 
             return b;
@@ -4698,16 +4749,17 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            private TextView tvValue, tvId;
-            private CheckBox cb;
-            private View viewLine;
+            private final TextView tvValue;
+            private final TextView tvId;
+            private final CheckBox cb;
+            private final View viewLine;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                tvValue = (TextView) itemView.findViewById(R.id.tvValue);
-                tvId = (TextView) itemView.findViewById(R.id.tvId);
+                tvValue = itemView.findViewById(R.id.tvValue);
+                tvId = itemView.findViewById(R.id.tvId);
                 viewLine = itemView.findViewById(R.id.viewLine);
-                cb = (CheckBox) itemView.findViewById(R.id.cb);
+                cb = itemView.findViewById(R.id.cb);
                 cb.setTypeface(AppUtils.getTypefaceRegular(activity));
             }
         }
@@ -4717,7 +4769,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         try {
             dbs = dbsFromAdapter;
 
-            if (isPlannerClicked) {
+            if (isPlannerClicked)
+            {
                 if (dbsFromAdapter.equals("DCR") ||
                         dbsFromAdapter.equals("LCR") ||
                         dbsFromAdapter.equals("ACR") ||
@@ -4897,7 +4950,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         AppUtils.showToast(activity, "You already done STK entry.");
                         dbs = "DCR";
                         edtDBC.setText("DCR : Daily Call Report");
-                        return;
                     } else {
                         inputArea.setVisibility(View.GONE);
                         inputRMK.setVisibility(View.GONE);
@@ -4936,12 +4988,14 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             !selectedReportCode.equalsIgnoreCase("ROR") &&
                             !selectedReportCode.equalsIgnoreCase("ROA")) {
                         if (enable_focus == 1) {
-                            showDialogForFocused(selectedDoctorId);
+                            //showDialogForFocused(selectedDoctorId);
                         }
                     }
 
                 }
-            } else {
+            }
+            else
+            {
                 if (dbsFromAdapter.equals("DCR") ||
                         dbsFromAdapter.equals("LCR") ||
                         dbsFromAdapter.equals("ACR") ||
@@ -5138,7 +5192,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         AppUtils.showToast(activity, "You already done STK entry.");
                         dbs = "DCR";
                         edtDBC.setText("DCR : Daily Call Report");
-                        return;
                     } else {
                         inputArea.setVisibility(View.GONE);
                         inputRMK.setVisibility(View.GONE);
@@ -5174,7 +5227,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             !selectedReportCode.equalsIgnoreCase("ROR") &&
                             !selectedReportCode.equalsIgnoreCase("ROA")) {
                         if (enable_focus == 1) {
-                            showDialogForFocused(selectedDoctorId);
+                            //showDialogForFocused(selectedDoctorId);
                         }
                     }
                 }
@@ -5436,12 +5489,14 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            private EditText edtProduct, edtUnit, edtReason;
+            private final EditText edtProduct;
+            private final EditText edtUnit;
+            private final EditText edtReason;
             ViewHolder(View convertView) {
                 super(convertView);
-                edtProduct = (EditText) convertView.findViewById(R.id.edtProduct);
-                edtUnit = (EditText) convertView.findViewById(R.id.edtUnit);
-                edtReason = (EditText) convertView.findViewById(R.id.edtReason);
+                edtProduct = convertView.findViewById(R.id.edtProduct);
+                edtUnit = convertView.findViewById(R.id.edtUnit);
+                edtReason = convertView.findViewById(R.id.edtReason);
             }
         }
     }
@@ -5520,19 +5575,19 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
 
                 dialog.setCanceledOnTouchOutside(false);
-                LinearLayout llMainListLinear = (LinearLayout) dialog.findViewById(R.id.llMainListLinear);
+                LinearLayout llMainListLinear = dialog.findViewById(R.id.llMainListLinear);
                 llMainListLinear.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                     }
                 });
 
-                final EditText edtSearch = (EditText) dialog.findViewById(R.id.edtSearch_Dialog_ListView);
-                TextInputLayout inputSearch = (TextInputLayout) dialog.findViewById(R.id.inputSearch);
+                final EditText edtSearch = dialog.findViewById(R.id.edtSearch_Dialog_ListView);
+                TextInputLayout inputSearch = dialog.findViewById(R.id.inputSearch);
 
-                final RecyclerView listView = (RecyclerView) dialog.findViewById(R.id.lv_Dialog);
-                TextView txtHeader = (TextView) dialog.findViewById(R.id.txtHeader_Dialog_ListView);
-                final TextView btnSubmit = (TextView) dialog.findViewById(R.id.txtSubmitDialog);
+                final RecyclerView listView = dialog.findViewById(R.id.lv_Dialog);
+                TextView txtHeader = dialog.findViewById(R.id.txtHeader_Dialog_ListView);
+                final TextView btnSubmit = dialog.findViewById(R.id.txtSubmitDialog);
 
                 dialog.findViewById(R.id.ivBack).setVisibility(View.VISIBLE);
                 inputSearch.setVisibility(View.GONE);
@@ -5623,7 +5678,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         });
 
-        final EditText edtUnit = (EditText) dialog.findViewById(R.id.edtUnit);
+        final EditText edtUnit = dialog.findViewById(R.id.edtUnit);
 
         final VariationResponse.VariationsBean data = list.get(adapterPosition);
 
@@ -5641,11 +5696,11 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             @Override
             public void onClick(View v) {
                 String s = edtUnit.getText().toString().trim();
-                if (!s.toString().trim().equals("")) {
+                if (!s.trim().equals("")) {
                     //Changed by kiran, Change given by Riteshbhai
                     final VariationResponse.VariationsBean bean = data;
-                    bean.setStock(s.toString().trim());
-                    if (Integer.parseInt(s.toString()) == 0) {
+                    bean.setStock(s.trim());
+                    if (Integer.parseInt(s) == 0) {
                         Log.e("****>>>", "onBindViewHolder:                3  ");
                         bean.setReason("Refuse Sample");
                         bean.setReason_code("F");
@@ -5693,10 +5748,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
     public class ProductUnitAdapter extends RecyclerView.Adapter<ProductUnitAdapter.ViewHolder>
     {
-        private ArrayList<VariationResponse.VariationsBean> listProducAdapter;
-        private ArrayList<ReasonResponse.ReasonsBean> listReasonAdapter;
+        private final ArrayList<VariationResponse.VariationsBean> listProducAdapter;
+        private final ArrayList<ReasonResponse.ReasonsBean> listReasonAdapter;
         private int mainListPos = 0;
-        private Dialog dialog;
+        private final Dialog dialog;
 
         ProductUnitAdapter(int mainListPos, Dialog dialog,ArrayList<VariationResponse.VariationsBean> productList)
         {
@@ -5822,10 +5877,10 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             public ViewHolder(View itemView)
             {
                 super(itemView);
-                txtProduct = (TextView) itemView.findViewById(R.id.txtProduct);
-                txtProductCode = (TextView) itemView.findViewById(R.id.txtProductCode);
-                cbProduct = (CheckBox) itemView.findViewById(R.id.cb);
-                edtUnit = (AppCompatEditText) itemView.findViewById(R.id.edtUnit);
+                txtProduct = itemView.findViewById(R.id.txtProduct);
+                txtProductCode = itemView.findViewById(R.id.txtProductCode);
+                cbProduct = itemView.findViewById(R.id.cb);
+                edtUnit = itemView.findViewById(R.id.edtUnit);
             }
         }
     }
@@ -5944,7 +5999,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                     for (int k = 0; k < listWithVariationCode.size(); k++) {
                         String[] arrColon = listWithVariationCode.get(k).split(":");
-                        listWithVariationCode.set(k, arrColon[0].toString().trim());
+                        listWithVariationCode.set(k, arrColon[0].trim());
                     }
 
                     try {

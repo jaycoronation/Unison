@@ -19,6 +19,8 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.unisonpharmaceuticals.R;
@@ -27,6 +29,7 @@ import com.unisonpharmaceuticals.activity.LoginActivity;
 import com.unisonpharmaceuticals.activity.NotificationActivity;
 import com.unisonpharmaceuticals.classes.SessionManager;
 import com.unisonpharmaceuticals.model.PushNotificationGetSet;
+import com.unisonpharmaceuticals.utils.AppUtils;
 
 import org.json.JSONObject;
 
@@ -99,13 +102,19 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    @Override
+    public void onNewToken(String fcmToken) {
+        Log.e("NEW_TOKEN", fcmToken);
+        sessionManager = new SessionManager(this);
+        sessionManager.saveTokenId(fcmToken);
+    }
+
     @SuppressLint("WrongConstant")
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setupChannelsForNormal(PushNotificationGetSet pushNotificationGetSet)
     {
         try
         {
-
             Random generator = new Random();
             int notifRandomId = 1000 - generator.nextInt(1000);
             Intent intent;
@@ -126,7 +135,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
             }
             intent.putExtra("type","NOTIFICATIONS");
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pIntent = PendingIntent.getActivity(this, notifRandomId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pIntent = PendingIntent.getActivity(this, notifRandomId, intent, PendingIntent.FLAG_MUTABLE);
             CharSequence boldTitle = Html.fromHtml("<b>" + contentTitle + "</b> ");
             CharSequence adminChannelName = getString(R.string.notifications_admin_channel_name);
             String adminChannelDescription = getString(R.string.notifications_admin_channel_description);
@@ -163,8 +172,6 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
                         .setAutoCancel(true).setContentIntent(pIntent).build();
 
                 notificationManager.notify(notifRandomId, notification);
-
-
             }
         }
         catch (Exception e)
@@ -205,7 +212,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
 
             CharSequence boldTitle = Html.fromHtml("<b>" + contentTitle + "</b> ");
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this).setAutoCancel(true)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,ADMIN_CHANNEL_ID)
+                    .setAutoCancel(true)
                     .setColor(Color.parseColor("#019ce4"))
                     .setContentTitle(boldTitle)
                     .setContentText(pushNotificationGetSet.getMessage())
@@ -235,8 +243,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         }
         catch (IOException e)
         {

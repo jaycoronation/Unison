@@ -98,6 +98,7 @@ public class DataUtils
                         variationsBean.setChecked(mainProductList.get(j).isChecked());
                         variationsBean.setStock(String.valueOf(mainProductList.get(j).getStock()));
                         variationsBean.setReason_id(mainProductList.get(j).getReason_id());
+
                         for (int k = 0; k < listProducts.size(); k++)
                         {
                             if(listProducts.get(k).getVariation_id().equalsIgnoreCase(mainProductList.get(j).getVariation_id()))

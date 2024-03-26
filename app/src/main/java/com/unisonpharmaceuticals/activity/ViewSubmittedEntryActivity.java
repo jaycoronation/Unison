@@ -85,21 +85,18 @@ public class ViewSubmittedEntryActivity extends BaseClass
     @Override
     public void initViews()
     {
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
+        toolbar = findViewById(R.id.toolbar);
+        TextView txtTitle = findViewById(R.id.txtTitle);
         txtTitle.setText("View Submitted Entry");
         findViewById(R.id.llLogout).setVisibility(View.GONE);
         findViewById(R.id.llNotification).setVisibility(View.GONE);
-        findViewById(R.id.llBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.finish();
-                finishActivityAnimation(activity);
-            }
+        findViewById(R.id.llBack).setOnClickListener(v -> {
+            activity.finish();
+            finishActivityAnimation(activity);
         });
         tvNoData.setText("No Submitted entry found for today!");
 
-        rvPending = (RecyclerView) findViewById(R.id.rvPending);
+        rvPending = findViewById(R.id.rvPending);
         rvPending.setLayoutManager(new LinearLayoutManager(activity));
     }
 
@@ -255,7 +252,6 @@ public class ViewSubmittedEntryActivity extends BaseClass
                     holder.tvVerify.setVisibility(View.VISIBLE);
                 }
 
-
                 holder.txtDBC.setText(bean.getReport_type());
                 if (bean.getReport_type().equals("DCR") ||
                         bean.getReport_type().equals("LCR") ||
@@ -266,7 +262,7 @@ public class ViewSubmittedEntryActivity extends BaseClass
                         bean.getReport_type().equals("NCR") ||
                         bean.getReport_type().equals("ROR") ||
                         bean.getReport_type().equals("ROA") ||
-                        bean.getReport_type().equals("ZCR")||
+                        bean.getReport_type().equals("ZCR") ||
                         bean.getReport_type().equals("XCR"))
                 {
                     holder.txtWorkWith.setVisibility(View.VISIBLE);
@@ -292,14 +288,13 @@ public class ViewSubmittedEntryActivity extends BaseClass
                 {
                     holder.txtWorkWith.setVisibility(View.GONE);
                     holder.txtDoctor.setVisibility(View.GONE);
-
                 }
 
                 //holder.txtDoctor.setText(bean.getDoctor_name()+" ("+bean.getDegree()+")");
 
                 if(bean.getDoctor_id().length() >0)
                 {
-                    holder.txtDoctor.setText(bean.getDoctor_name()+ " - "+bean.getDoctor_id());
+                    holder.txtDoctor.setText(bean.getDoctor_name()+ " - " + bean.getDoctor_id());
                 }
                 else
                 {
@@ -351,24 +346,28 @@ public class ViewSubmittedEntryActivity extends BaseClass
         @SuppressWarnings("unused")
         public class ViewHolder extends RecyclerView.ViewHolder
         {
-            private TextView txtDBC,txtDoctor,txtWorkWith,tvVerify;
-            private RecyclerView rvProducts,rvFocus;
-            private LinearLayout llFocusFor;
+            private final TextView txtDBC;
+            private final TextView txtDoctor;
+            private final TextView txtWorkWith;
+            private final TextView tvVerify;
+            private final RecyclerView rvProducts;
+            private final RecyclerView rvFocus;
+            private final LinearLayout llFocusFor;
 
             ViewHolder(View convertView)
             {
                 super(convertView);
 
-                txtDBC = (TextView) convertView.findViewById(R.id.txtDBC);
-                txtDoctor = (TextView) convertView.findViewById(R.id.txtDoctor);
-                txtWorkWith = (TextView) convertView.findViewById(R.id.txtWorkWith);
-                tvVerify = (TextView) convertView.findViewById(R.id.tvVerify);
+                txtDBC = convertView.findViewById(R.id.txtDBC);
+                txtDoctor = convertView.findViewById(R.id.txtDoctor);
+                txtWorkWith = convertView.findViewById(R.id.txtWorkWith);
+                tvVerify = convertView.findViewById(R.id.tvVerify);
 
-                rvProducts = (RecyclerView) convertView.findViewById(R.id.rvProducts);
+                rvProducts = convertView.findViewById(R.id.rvProducts);
                 rvProducts.setLayoutManager(new LinearLayoutManager(activity));
-                rvFocus = (RecyclerView) convertView.findViewById(R.id.rvFocus);
+                rvFocus = convertView.findViewById(R.id.rvFocus);
                 rvFocus.setLayoutManager(new LinearLayoutManager(activity));
-                llFocusFor = (LinearLayout) convertView.findViewById(R.id.llFocusFor);
+                llFocusFor = convertView.findViewById(R.id.llFocusFor);
             }
         }
     }
@@ -383,10 +382,10 @@ public class ViewSubmittedEntryActivity extends BaseClass
             View sheetView = activity.getLayoutInflater().inflate(R.layout.bttom_layout_logout, null);
             dialog.setContentView(sheetView);
 
-            TextView txt_Dialog_Delete = (TextView)dialog.findViewById(R.id.tvDescription);
-            TextView txtHeader = (TextView)dialog.findViewById(R.id.tvHeader);
-            TextView btnNo = (TextView) dialog.findViewById(R.id.tvCancel);
-            TextView btnYes = (TextView) dialog.findViewById(R.id.tvConfirm);
+            TextView txt_Dialog_Delete = dialog.findViewById(R.id.tvDescription);
+            TextView txtHeader = dialog.findViewById(R.id.tvHeader);
+            TextView btnNo = dialog.findViewById(R.id.tvCancel);
+            TextView btnYes = dialog.findViewById(R.id.tvConfirm);
             btnYes.setText("Verify");
 
 
@@ -498,23 +497,25 @@ public class ViewSubmittedEntryActivity extends BaseClass
         @SuppressWarnings("unused")
         public class ViewHolder extends RecyclerView.ViewHolder
         {
-            private LinearLayout llTitle;
-            private View view1;
-            private ImageView img_delete;
-            private EditText edtProduct,edtQty,edtReason;
+            private final LinearLayout llTitle;
+            private final View view1;
+            private final ImageView img_delete;
+            private final EditText edtProduct;
+            private final EditText edtQty;
+            private final EditText edtReason;
             ViewHolder(View convertView)
             {
                 super(convertView);
 
-                llTitle = (LinearLayout) convertView.findViewById(R.id.llTitle);
+                llTitle = convertView.findViewById(R.id.llTitle);
                 view1 = convertView.findViewById(R.id.view1);
                 view1.setVisibility(View.GONE);
-                img_delete = (ImageView) convertView.findViewById(R.id.img_delete);
+                img_delete = convertView.findViewById(R.id.img_delete);
                 img_delete.setVisibility(View.GONE);
 
-                edtProduct = (EditText) convertView.findViewById(R.id.edtProduct_Rowview_Child);
-                edtQty = (EditText) convertView.findViewById(R.id.edtQuality_Rowview_Child);
-                edtReason = (EditText) convertView.findViewById(R.id.edtReason_Rowview_Child);
+                edtProduct = convertView.findViewById(R.id.edtProduct_Rowview_Child);
+                edtQty = convertView.findViewById(R.id.edtQuality_Rowview_Child);
+                edtReason = convertView.findViewById(R.id.edtReason_Rowview_Child);
 
             }
         }
@@ -554,13 +555,14 @@ public class ViewSubmittedEntryActivity extends BaseClass
         @SuppressWarnings("unused")
         public class ViewHolder extends RecyclerView.ViewHolder
         {
-            private TextView tvProduct,tvReason;
+            private final TextView tvProduct;
+            private final TextView tvReason;
             ViewHolder(View convertView)
             {
                 super(convertView);
 
-                tvProduct = (TextView) convertView.findViewById(R.id.tvProduct);
-                tvReason = (TextView) convertView.findViewById(R.id.tvReason);
+                tvProduct = convertView.findViewById(R.id.tvProduct);
+                tvReason = convertView.findViewById(R.id.tvReason);
             }
         }
 

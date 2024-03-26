@@ -7,12 +7,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -133,7 +135,7 @@ public class LoginActivity extends BaseClass
     @Override
     public void viewClick()
     {
-        tvManageText.setOnClickListener(new View.OnClickListener()
+        tvManageText.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -159,7 +161,7 @@ public class LoginActivity extends BaseClass
         });
 
 
-        btnLogin.setOnClickListener(new View.OnClickListener()
+        btnLogin.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -320,17 +322,12 @@ public class LoginActivity extends BaseClass
 
             txtConfirmation.setText(message);
 
-            btnNo.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    dialog.dismiss();
-                    dialog.cancel();
-                }
+            btnNo.setOnClickListener(v -> {
+                dialog.dismiss();
+                dialog.cancel();
             });
 
-            btnYes.setOnClickListener(new View.OnClickListener()
+            btnYes.setOnClickListener(new OnClickListener()
             {
                 @Override
                 public void onClick(View v)
@@ -393,7 +390,6 @@ public class LoginActivity extends BaseClass
     {
         isClickedManage = false;
         llManagerLogin.setVisibility(View.VISIBLE);
-
     }
 
     @Override
@@ -568,7 +564,17 @@ public class LoginActivity extends BaseClass
         try
         {
             int result;
-            result = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+            {
+                result = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            else
+            {
+                result = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_IMAGES);
+            }
+
+
             if (result == PackageManager.PERMISSION_GRANTED)
             {
                 if(llManagerLogin.getVisibility() == View.VISIBLE)
@@ -582,7 +588,15 @@ public class LoginActivity extends BaseClass
             }
             else
             {
-                ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },PERMISSION_REQUEST_CODE_STORAGE);
+                if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+                {
+                    ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },PERMISSION_REQUEST_CODE_STORAGE);
+                }
+                else
+                {
+                    ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.READ_MEDIA_IMAGES },PERMISSION_REQUEST_CODE_STORAGE);
+                }
+
             }
         }
         catch (Exception e)
@@ -600,7 +614,9 @@ public class LoginActivity extends BaseClass
                     {
                         if (llManagerLogin.getVisibility() == View.VISIBLE) {
                             apiTaskLogin(edtManageCode.getText().toString().trim(), edtManagerPassword.getText().toString(), edtEmployeeCode.getText().toString().trim());
-                        } else {
+                        }
+                        else
+                        {
                             apiTaskLogin(edtUserId.getText().toString().trim(), edtPassword.getText().toString(), "");
                         }
                     }

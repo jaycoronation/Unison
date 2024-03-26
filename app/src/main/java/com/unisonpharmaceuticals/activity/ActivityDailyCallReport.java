@@ -115,8 +115,8 @@ public class ActivityDailyCallReport extends FragmentActivity
         }
         else
 		{
-			if (sessionManager.getSamplePermission().equalsIgnoreCase("1") &&
-					sessionManager.getSalesPermission().equalsIgnoreCase("0"))
+			if (sessionManager.getSamplePermission().equalsIgnoreCase("1")
+					&& sessionManager.getSalesPermission().equalsIgnoreCase("0"))
 			{
 				tabsIcon = new int[] {R.drawable.tab_entry_selector, R.drawable.tab_dcr_report_selector, R.drawable.tab_sample_update_selector,R.drawable.tab_planner_entry_selector,R.drawable.tab_planner_report_selector,R.drawable.tab_planner_report_selector};
 				tabsTitle = new String[] {"Make Entry", "DCR Report","Sample Update" ,"Planner Entry","Planner Report"};

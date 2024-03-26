@@ -169,23 +169,19 @@ public class DashboardActivity extends BaseClass
             AppUtils.showVersionMismatchDialog(activity,SplashActivity.isForcefulUpdate);
         }
 
-        handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg)
+        handler = new Handler(msg -> {
+            if(msg.what==111)
             {
-                if(msg.what==111)
+                if(sessionManager.isNetworkAvailable())
                 {
-                    if(sessionManager.isNetworkAvailable())
-                    {
-                        getAllBasicDashBoardData();
-                    }
-                    else
-                    {
-                        AppUtils.showToast(activity,activity.getString(R.string.network_failed_message));
-                    }
+                    getAllBasicDashBoardData();
                 }
-                return false;
+                else
+                {
+                    AppUtils.showToast(activity,activity.getString(R.string.network_failed_message));
+                }
             }
+            return false;
         });
 
     }
@@ -199,18 +195,15 @@ public class DashboardActivity extends BaseClass
     @Override
     public void viewClick()
     {
-        fabGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
+        fabGo.setOnClickListener(v -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD)
             {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                Intent intent = new Intent(activity, MainActivity.class);
-                startActivity(intent);
-                startActivityAnimation(activity);
+                return;
             }
+            mLastClickTime = SystemClock.elapsedRealtime();
+            Intent intent = new Intent(activity, MainActivity.class);
+            startActivity(intent);
+            startActivityAnimation(activity);
         });
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override

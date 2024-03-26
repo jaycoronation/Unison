@@ -1284,7 +1284,6 @@ public class AppUtils
 	{
 		try
 		{
-
 			String folderName = "Unison";
 			String time = convertDateToString(System.currentTimeMillis());
 			String fileName = filename+"_"+System.currentTimeMillis()+".txt";
@@ -1319,9 +1318,6 @@ public class AppUtils
 				System.out.println("Exception: " + ex.getMessage());
 				ex.printStackTrace();
 			}
-
-
-
 
 			/*String folderName = AppUtils.getCurrentDateString().replace(" ", "");
 			File f1 = null;//Make directory like : Unison -> 07 Dec, 2018
@@ -1380,6 +1376,9 @@ public class AppUtils
 
 	public static String removeLastComma(String str)
 	{
+
+
+
 		if(str.equalsIgnoreCase(""))
 		{
 			return  "";

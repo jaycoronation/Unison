@@ -39,7 +39,6 @@ public class ApiClient
     public static String DR_SUMMARY_REPORT = MAIN_URL + "reports/summaryOfDoctor.php?from_app=true&";
     public static String DR_LIST_REPORT = MAIN_URL + "reports/doctorList.php?from_app=true&";
     public static String SAMPLE_SUMMARY_REPORT = MAIN_URL + "reports/sample_summary.php?from_app=true&";
-
     public static String SUBMIT_ENTRIES = BASE_URL + "dailycall/multiple";
     public static String SALES_UPDATE = BASE_URL + "sales_update/update";
     public static String SAMPLE_UPDATE = BASE_URL + "sample_update/update";
@@ -66,23 +65,24 @@ public class ApiClient
     public static Retrofit getClient()
     {
         if (retrofit==null)
-        {
-            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(interceptor)
-                    .connectTimeout(100, TimeUnit.SECONDS)
-                    .readTimeout(100,TimeUnit.SECONDS)
-                    .build();
+            {
+                HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+                interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .addInterceptor(interceptor)
+                        .connectTimeout(100, TimeUnit.SECONDS)
+                        .readTimeout(100,TimeUnit.SECONDS)
+                        .build();
 
 
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(client)
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
+                retrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .client(client)
+                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+            }
+
         return retrofit;
     }
 

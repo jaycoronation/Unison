@@ -73,7 +73,6 @@ public class FragmentWebsite extends Fragment
         webView.setThirdPartyCookiesEnabled(true);
         webView.setMixedContentAllowed(true);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(false);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setSaveFormData(true);
         webView.loadUrl(report_url);

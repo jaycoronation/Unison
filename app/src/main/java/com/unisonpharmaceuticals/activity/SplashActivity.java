@@ -1,14 +1,31 @@
 package com.unisonpharmaceuticals.activity;
 
+import static com.unisonpharmaceuticals.utils.AppUtils.showToast;
+
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.unisonpharmaceuticals.R;
 import com.unisonpharmaceuticals.classes.OneTimeSession;
 import com.unisonpharmaceuticals.classes.SessionManager;
@@ -55,24 +72,81 @@ public class SplashActivity extends Activity
 
 		PACKAGE_NAME = getApplicationContext().getPackageName();
 
+		checkNotificationPermission();
+
 		try
 		{
 			sm.setDeviceName(android.os.Build.MODEL);
 
 			String token = AppUtils.getValidAPIStringResponse(FirebaseInstanceId.getInstance().getToken());
 
+			FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+				String token1 = AppUtils.getValidAPIStringResponse(task.getResult());
+				Log.e("FIREBASE TOKEN", token1);
+			});
+
 			sm.saveTokenId(token);
+
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 
-		goThrough();
-
 		if(sm.isNetworkAvailable())
 		{
 			checkForVersionUpdate();
+		}
+	}
+
+	private void checkNotificationPermission()
+	{
+		try
+		{
+			int result;
+
+			result = ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS);
+
+			if (NotificationManagerCompat.from(activity).areNotificationsEnabled())
+			{
+				goThrough();
+			}
+			else
+			{
+				ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.POST_NOTIFICATIONS },1);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == 1) {
+			try {
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+				{
+					nextScreenIntent();
+				}
+				else if (grantResults[0] == PackageManager.PERMISSION_DENIED)
+				{
+					showToast(activity,"Please allow notification permission first.");
+					Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+					Uri uri = Uri.fromParts("package", getPackageName(), null);
+					intent.setData(uri);
+					startActivity(intent);
+					nextScreenIntent();
+				}
+				else
+				{
+					showToast(activity, "Permissions Denied!");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -123,7 +197,7 @@ public class SplashActivity extends Activity
 				}
 				else
 				{
-					AppUtils.showToast(activity,activity.getString(R.string.api_failed_message));
+					showToast(activity,activity.getString(R.string.api_failed_message));
 				}
 			}
 
@@ -147,61 +221,62 @@ public class SplashActivity extends Activity
 			@Override
 			public void onFinish()
 			{
-				finish();
-
-				if(sm.isSpecialLogin())
-				{
-					Intent intent = new Intent(activity,SpecialActivity.class);
-					startActivity(intent);
-					AppUtils.startActivityAnimation(activity);
-				}
-				else
-				{
-					if(oneTimeSession.isAuthenticate())
-					{
-						//New Added this If Condition
-						if(sm.isLogoutOnDestroy())
-						{
-							Intent intent = new Intent(activity, LoginActivity.class);
-							startActivity(intent);
-						}
-						else
-						{
-							if(sm.isLoggedIn())
-							{
-								if(sm.isOnLeave()==1)
-								{
-									Intent intent = new Intent(activity,PendingLeaveActivity.class);
-									intent.putExtra("isFor","login");
-									startActivity(intent);
-								}
-								else
-								{
-									Intent intent = new Intent(activity,DashboardActivity.class);
-									//Intent intent = new Intent(activity,TempActivity.class);
-									startActivity(intent);
-								}
-							}
-							else
-							{
-								Intent intent = new Intent(activity,LoginActivity.class);
-								startActivity(intent);
-							}
-						}
-					}
-					else
-					{
-						//intent = new Intent(activity,AuthenticateActivity.class);
-						Intent intent = new Intent(activity,MobileNumberActivity.class);
-						startActivity(intent);
-					}
-					AppUtils.startActivityAnimation(activity);
-				}
-
+				nextScreenIntent();
 			}
 		};
 		timer.start();
 	}
-	
+
+	private void nextScreenIntent(){
+		finish();
+		if(sm.isSpecialLogin())
+		{
+			Intent intent = new Intent(activity,SpecialActivity.class);
+			startActivity(intent);
+			AppUtils.startActivityAnimation(activity);
+		}
+		else
+		{
+			if(oneTimeSession.isAuthenticate())
+			{
+				//New Added this If Condition
+				if(sm.isLogoutOnDestroy())
+				{
+					Intent intent = new Intent(activity, LoginActivity.class);
+					startActivity(intent);
+				}
+				else
+				{
+					if(sm.isLoggedIn())
+					{
+						if(sm.isOnLeave()==1)
+						{
+							Intent intent = new Intent(activity,PendingLeaveActivity.class);
+							intent.putExtra("isFor","login");
+							startActivity(intent);
+						}
+						else
+						{
+							Intent intent = new Intent(activity,DashboardActivity.class);
+							//Intent intent = new Intent(activity,TempActivity.class);
+							startActivity(intent);
+						}
+					}
+					else
+					{
+						Intent intent = new Intent(activity,LoginActivity.class);
+						startActivity(intent);
+					}
+				}
+			}
+			else
+			{
+				//intent = new Intent(activity,AuthenticateActivity.class);
+				Intent intent = new Intent(activity,MobileNumberActivity.class);
+				startActivity(intent);
+			}
+			AppUtils.startActivityAnimation(activity);
+		}
+	}
 
 }

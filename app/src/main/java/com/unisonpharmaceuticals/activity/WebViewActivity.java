@@ -91,7 +91,6 @@ public class WebViewActivity extends BaseClass
         webView.setThirdPartyCookiesEnabled(true);
         webView.setMixedContentAllowed(true);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setSaveFormData(true);
         webView.loadUrl(report_url);

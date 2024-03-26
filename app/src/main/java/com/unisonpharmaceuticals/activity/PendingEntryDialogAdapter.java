@@ -1810,46 +1810,43 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                 e.printStackTrace();
             }
 
-            rowView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
+            rowView.setOnClickListener(v -> {
+                try {
 
-                        if (focusPosition.equalsIgnoreCase("1"))
+                    if (focusPosition.equalsIgnoreCase("1"))
+                    {
+                        Log.e("PRODUCT 2  ", "onClick: " + product2);
+                        Log.e("COMPARE   ", "onClick: " + getSet.getItem_id_code());
+
+                        if (product2.trim().equalsIgnoreCase(getSet.getItem_id_code()))
                         {
-                            Log.e("PRODUCT 2  ", "onClick: " + product2);
-                            Log.e("COMPARE   ", "onClick: " + getSet.getItem_id_code());
-
-                            if (product2.trim().equalsIgnoreCase(getSet.getItem_id_code()))
-                            {
-                                AppUtils.showToast(activity, "Please select another product.");
-                            }
-                            else
-                                {
-                                product1 = getSet.getItem_id_code();
-                                edttext1.setText(getSet.getItem_id_code() + " : "+getSet.getName());
-                            }
+                            AppUtils.showToast(activity, "Please select another product.");
                         }
-                        else if (focusPosition.equalsIgnoreCase("2"))
-                        {
-                            Log.e("PRODUCT 1  ", "onClick: " + product1);
-                            Log.e("COMPARE   ", "onClick: " + getSet.getItem_id_code());
-
-                            if (product1.trim().equalsIgnoreCase(getSet.getItem_id_code()))
+                        else
                             {
-                                AppUtils.showToast(activity, "Please select another product.");
-
-                            } else {
-                                product2 = getSet.getItem_id_code();
-                                edttext2.setText(getSet.getItem_id_code() + " : "+getSet.getName());
-                            }
+                            product1 = getSet.getItem_id_code();
+                            edttext1.setText(getSet.getItem_id_code() + " : "+getSet.getName());
                         }
-
-                        dialog.dismiss();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                    else if (focusPosition.equalsIgnoreCase("2"))
+                    {
+                        Log.e("PRODUCT 1  ", "onClick: " + product1);
+                        Log.e("COMPARE   ", "onClick: " + getSet.getItem_id_code());
+
+                        if (product1.trim().equalsIgnoreCase(getSet.getItem_id_code()))
+                        {
+                            AppUtils.showToast(activity, "Please select another product.");
+
+                        } else {
+                            product2 = getSet.getItem_id_code();
+                            edttext2.setText(getSet.getItem_id_code() + " : "+getSet.getName());
+                        }
+                    }
+
+                    dialog.dismiss();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
