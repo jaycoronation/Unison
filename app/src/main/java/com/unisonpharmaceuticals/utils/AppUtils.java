@@ -65,6 +65,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
@@ -1280,6 +1281,26 @@ public class AppUtils
 		}
 	}
 
+	public static void writeFileOnInternalStorage(Context mcoContext, String sFileName, String sBody){
+		//File dir = new File(mcoContext.getFilesDir(), "mydir");
+		String folderName = "Unison";
+		String fileName = "TA"+"_"+System.currentTimeMillis()+".pdf";
+		File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), folderName);
+		if(!dir.exists()){
+			dir.mkdir();
+		}
+
+		try {
+			File gpxfile = new File(dir, fileName);
+			FileWriter writer = new FileWriter(gpxfile);
+			writer.append(sBody);
+			writer.flush();
+			writer.close();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
 	public static void storeJsonResponse(String response , String filename)
 	{
 		try
@@ -1376,8 +1397,6 @@ public class AppUtils
 
 	public static String removeLastComma(String str)
 	{
-
-
 
 		if(str.equalsIgnoreCase(""))
 		{

@@ -115,12 +115,7 @@ public class SpecialActivity extends BaseClass implements View.OnClickListener
     public void initViews() {
         findViewById(R.id.llNotification).setVisibility(View.GONE);
         findViewById(R.id.llLogout).setVisibility(View.VISIBLE);
-        findViewById(R.id.llLogout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBottomSheetLogoutDialog();
-            }
-        });
+        findViewById(R.id.llLogout).setOnClickListener(v -> showBottomSheetLogoutDialog());
         findViewById(R.id.llBack).setVisibility(View.GONE);
         TextView txtTitle = findViewById(R.id.txtTitle);
         txtTitle.setText("Search Doctor");

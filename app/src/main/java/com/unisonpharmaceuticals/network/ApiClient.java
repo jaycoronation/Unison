@@ -16,7 +16,7 @@ public class ApiClient
     public static final String WEBSITE_URL = "http://www.unisonpharmaceuticals.com/";
 
     //public static final String MAIN_URL = "http://192.168.50.62/unison/";
-    public static final String MAIN_URL = "http://reporting.unisonpharmaceuticals.com/"; //for live
+    public static final String MAIN_URL = "https://reporting.unisonpharmaceuticals.com/"; //for live
 
     public static final String BASE_URL = MAIN_URL +"api/services/"; // for live
     //public static final String BASE_URL = MAIN_URL +"api/services_v3/"; // for demo
@@ -36,6 +36,7 @@ public class ApiClient
     public static String NOT_SEEN_REPORT = MAIN_URL + "reports/not_seen.php?from_app=true&";
     public static String GIFT_REPORT = MAIN_URL + "reports/gift_report.php?from_app=true&";
     public static String TRAVELLING_REPORT = MAIN_URL + "reports/travelling_report.php?from_app=true&";
+    public static String TRAVELLING_REPORT_DOWNLOAD = MAIN_URL + "reports/travelling_report_pdf.php?from_app=true&";
     public static String DR_SUMMARY_REPORT = MAIN_URL + "reports/summaryOfDoctor.php?from_app=true&";
     public static String DR_LIST_REPORT = MAIN_URL + "reports/doctorList.php?from_app=true&";
     public static String SAMPLE_SUMMARY_REPORT = MAIN_URL + "reports/sample_summary.php?from_app=true&";

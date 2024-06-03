@@ -491,6 +491,9 @@ public class FragmentLeaveApplication extends Fragment
 							Date minDate = sdf.parse(strStartDate);
 							datepicker.getDatePicker().setMinDate(minDate.getTime());
 
+							Log.e("DATE ===", strStartDate);
+							Log.e("DATE Min ===", String.valueOf(minDate.getTime()));
+
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -547,7 +550,7 @@ public class FragmentLeaveApplication extends Fragment
 							Date date2 = myFormat.parse(strEndDate);
 							long diffLong = date2.getTime() - date1.getTime();
 							int diffInt = Integer.parseInt(String.valueOf(TimeUnit.DAYS.convert(diffLong, TimeUnit.MILLISECONDS)));
-							if(diffInt>2)
+							if(diffInt > 2)
 							{
 								edtLeaveType.setText("Privilege Leave");
 								strLeaveType = "privilege_leave";

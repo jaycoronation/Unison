@@ -244,6 +244,9 @@ public class NCRActivity extends BaseClass implements View.OnClickListener
                         message.obj = edtDoctor.getText().toString().trim();
                         FragmentMakeEntry.handlerNCR.sendMessage(message);
                     }
+
+                    Log.e("JSON OBJECT =====" , jsonObject.toString());
+
                     showToast(activity,"Doctor Added !");
                     activity.finish();
                 }

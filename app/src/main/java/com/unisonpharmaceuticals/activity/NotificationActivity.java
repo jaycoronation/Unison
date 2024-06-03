@@ -94,7 +94,7 @@ public class NotificationActivity extends BaseClass
         });
         TextView txtTitle = findViewById(R.id.txtTitle);
 
-        if(type.equalsIgnoreCase(ApiClient.NOTIF_TP))
+        if( type.equalsIgnoreCase(ApiClient.NOTIF_TP))
         {
             txtTitle.setText("Tour Plan");
         }
@@ -275,39 +275,35 @@ public class NotificationActivity extends BaseClass
 
     private void updateReadStatus(final NotificationResponse.NotificationsBean getSet, final int pos)
     {
-        new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                Call<CommonResponse> notifResponse = apiService.readNotifStatusUpdate(sessionManager.getUserId(), getSet.getNotification_id(),sessionManager.getUserId());
-                notifResponse.enqueue(new Callback<CommonResponse>() {
-                    @Override
-                    public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response)
+        new Thread(() -> {
+            Call<CommonResponse> notifResponse = apiService.readNotifStatusUpdate(sessionManager.getUserId(), getSet.getNotification_id(),sessionManager.getUserId());
+            notifResponse.enqueue(new Callback<CommonResponse>() {
+                @Override
+                public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response)
+                {
+                    if(response.body().getSuccess()==1)
                     {
-                        if(response.body().getSuccess()==1)
+                        try
                         {
-                            try
-                            {
-                                getSet.setIs_read("true");
-                                listNotification.set(pos,getSet);
-                                notificationAdapter.notifyItemChanged(pos);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        else
-                        {
-                            showToast(activity,response.body().getMessage());
+                            getSet.setIs_read("true");
+                            listNotification.set(pos,getSet);
+                            notificationAdapter.notifyItemChanged(pos);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
+                    else
+                    {
+                        showToast(activity,response.body().getMessage());
+                    }
+                }
 
-                    @Override
-                    public void onFailure(Call<CommonResponse> call, Throwable t)
-                    {
-                        showToast(activity,"Something went wrong!");
-                    }
-                });
-            }
+                @Override
+                public void onFailure(Call<CommonResponse> call, Throwable t)
+                {
+                    showToast(activity,"Something went wrong!");
+                }
+            });
         }).start();
     }
 
@@ -347,22 +343,17 @@ public class NotificationActivity extends BaseClass
                 viewHolder.ivNotification.setVisibility(View.VISIBLE);
             }*/
 
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
+            viewHolder.itemView.setOnClickListener(v -> {
+                if (sessionManager.isNetworkAvailable())
                 {
-                    if (sessionManager.isNetworkAvailable())
+                    if (getSet.getIs_read().equals("false"))
                     {
-                        if (getSet.getIs_read().equals("false"))
-                        {
-                            updateReadStatus(getSet,i);
-                        }
+                        updateReadStatus(getSet,i);
                     }
-                    else
-                    {
-                        Toast.makeText(activity, "Please check your internet connection.", Toast.LENGTH_LONG).show();
-                    }
+                }
+                else
+                {
+                    Toast.makeText(activity, "Please check your internet connection.", Toast.LENGTH_LONG).show();
                 }
             });
         }

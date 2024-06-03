@@ -3,7 +3,9 @@ package com.unisonpharmaceuticals.fragment;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
@@ -27,6 +29,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.unisonpharmaceuticals.R;
+import com.unisonpharmaceuticals.activity.ViewSampleActivity;
+import com.unisonpharmaceuticals.activity.WebViewActivity;
 import com.unisonpharmaceuticals.classes.SessionManager;
 import com.unisonpharmaceuticals.model.CommonResponse;
 import com.unisonpharmaceuticals.model.MonthResponse;
@@ -67,6 +71,8 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
     TextView tvCancel;
     @BindView(R.id.tvGenerateReport)
     TextView tvGenerateReport;
+    @BindView(R.id.tvDownload)
+    TextView tvDownload;
     @BindView(R.id.tvSave)
     TextView tvSave;
     @BindView(R.id.tvConfirm)
@@ -161,6 +167,8 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
 
     private String TAStatus = "";
 
+    private boolean isDownloadBeforeApprove = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -179,6 +187,8 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
     }
 
     private void initViews() {
+
+
         edtAdjustment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -210,6 +220,7 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
         edtMonth.setOnClickListener(this);
         edtYear.setOnClickListener(this);
         tvGenerateReport.setOnClickListener(this);
+        tvDownload.setOnClickListener(this);
         tvCancel.setOnClickListener(this);
         tvSave.setOnClickListener(this);
         tvConfirm.setOnClickListener(this);
@@ -221,6 +232,12 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
             }
         });
         tvApproveTA.setOnClickListener(this);
+
+        if (selectedStaffId.equals(sessionManager.getStaffId()))
+        {
+            tvDownload.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -265,6 +282,28 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
                 } else {
                     if (sessionManager.isNetworkAvailable()) {
                         getTravellingAllowance();
+                    } else {
+                        AppUtils.showToast(activity, activity.getString(R.string.network_failed_message));
+                    }
+                }
+                break;
+            case R.id.tvDownload:
+                if (selectedStaffId.equals("")) {
+                    AppUtils.showToast(activity, "Please select employee");
+                } else if (selectedYear.equals("")) {
+                    AppUtils.showToast(activity, "Please select year");
+                } else if (selectedMonth.equals("")) {
+                    AppUtils.showToast(activity, "Please select month");
+                } else {
+                    if (sessionManager.isNetworkAvailable()) {
+                        String url = ApiClient.TRAVELLING_REPORT_DOWNLOAD + "staff_id="+selectedStaffId+"&month="+selectedMonth+"&year="+selectedYear+"&session_id="+sessionManager.getUserId();
+
+                        /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(browserIntent);*/
+
+                        Intent intent = new Intent(activity, WebViewActivity.class);
+                        intent.putExtra("report_url",url);
+                        startActivity(intent);
                     } else {
                         AppUtils.showToast(activity, activity.getString(R.string.network_failed_message));
                     }
@@ -324,7 +363,8 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
                 } else if (selectedMonth.equals("")) {
                     AppUtils.showToast(activity, "Please select month");
                 } else {
-                    if (sessionManager.isNetworkAvailable()) {
+                    if (sessionManager.isNetworkAvailable())
+                    {
                         if (TAStatus.equalsIgnoreCase("Confirmed")) {
                             approveTravellingAllowance();
                         } else if (TAStatus.equalsIgnoreCase("Approved")) {
@@ -332,7 +372,9 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
                         } else {
                             AppUtils.showToast(activity, "TA is not confirmed");
                         }
-                    } else {
+                    }
+                    else
+                    {
                         AppUtils.showToast(activity, activity.getString(R.string.network_failed_message));
                     }
                 }
@@ -470,6 +512,7 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
                             }
 
                             listPlan.set(i, bean);
+
                         }
 
                         planAdapter = new PlanAdapter(listPlan);
@@ -641,7 +684,8 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
                 for (int i = 0; i < listPlan.size(); i++) {
                     try {
                         JSONObject subObj = new JSONObject();
-                        if (listPlan.get(i).getDay_options().size() > 0) {
+                        if (listPlan.get(i).getDay_options().size() > 0)
+                        {
                             for (int j = 0; j < listPlan.get(i).getDay_options().size(); j++) {
                                 try {
                                     if (listPlan.get(i).getDay_options().get(j).getIs_default().equalsIgnoreCase("1")) {
@@ -913,6 +957,15 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
                         edtEmployee.setText(getSet.getName());
                         selectedStaffId = getSet.getStaff_id();
 
+                        if (selectedStaffId.equals(sessionManager.getUserId()))
+                        {
+                            tvDownload.setVisibility(View.GONE);
+                        }
+                        else
+                        {
+                            tvDownload.setVisibility(View.VISIBLE);
+                        }
+
                         dialog.dismiss();
                         dialog.cancel();
 
@@ -1066,7 +1119,8 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
 
             TAResponse.DaysBean.DayOptionsBean dayOptionsBean = new TAResponse.DaysBean.DayOptionsBean();
 
-            if (getSet.getDay_options().size() > 0) {
+            if (getSet.getDay_options().size() > 0)
+            {
                 for (int i = 0; i < getSet.getDay_options().size(); i++) {
                     if (getSet.getDay_options().get(i).getIs_default().equals("1")) {
                         dayOptionsBean = getSet.getDay_options().get(i);
@@ -1084,13 +1138,18 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
             if (getSet.getDay_name().equalsIgnoreCase("sun") ||
                     getSet.getDay_name().equalsIgnoreCase("sunday") ||
                     getSet.getLeave().equalsIgnoreCase("true") ||
-                    getSet.getHoliday().equalsIgnoreCase("true")) {
-
+                    getSet.getHoliday().equalsIgnoreCase("true"))
+            {
                 holder.llValue.setBackgroundColor(ContextCompat.getColor(activity, R.color.bg_sunday));
-            } else {
-                if (getSet.getWork_miss_match().equalsIgnoreCase("1")) {
+            }
+            else
+            {
+                if (getSet.getWork_miss_match().equalsIgnoreCase("1"))
+                {
                     holder.llValue.setBackgroundColor(ContextCompat.getColor(activity, R.color.yellow));
-                } else {
+                }
+                else
+                {
                     holder.llValue.setBackgroundColor(ContextCompat.getColor(activity, R.color.white));
                 }
             }
@@ -1115,7 +1174,6 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
             {
                 holder.edtRemarkReason.setText(getSet.getRemark());
             }*/
-
 
             holder.tvTotal.setText(String.valueOf(getSet.getTotal()));
             holder.tvDist.setText(dayOptionsBean.getDistance());

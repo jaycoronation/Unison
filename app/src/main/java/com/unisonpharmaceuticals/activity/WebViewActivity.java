@@ -2,11 +2,17 @@ package com.unisonpharmaceuticals.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.webkit.DownloadListener;
+import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -38,7 +44,8 @@ public class WebViewActivity extends BaseClass
     private myWebViewClient mWebViewClient;
     private LinearLayout llLoading ;
 
-    String report_url = "" , cameFrom = "";
+    static String report_url = "";
+    String cameFrom = "";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -95,6 +102,16 @@ public class WebViewActivity extends BaseClass
         webView.getSettings().setSaveFormData(true);
         webView.loadUrl(report_url);
 
+        webView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+//            AppUtils.writeFileOnInternalStorage(activity,"TA_",contentDisposition);
+            Log.e("contentDisposition",contentDisposition);
+            Log.e("contentLength", String.valueOf(contentLength));
+            Log.e("url", String.valueOf(url));
+            Log.e("userAgent", String.valueOf(userAgent));
+
+            startDownload(activity,url,contentDisposition,mimetype);
+        });
+
         webView.setWebChromeClient(new WebChromeClient()
         {
             public void onProgressChanged(WebView view, int progress)
@@ -112,6 +129,20 @@ public class WebViewActivity extends BaseClass
                 }
             }
         });
+    }
+
+    private static void startDownload(Context context, String url, String contentDisposition, String mimetype) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(report_url));
+        request.setTitle("Downloading file");
+        request.setDescription("Downloading file...");
+        request.setMimeType(mimetype);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.allowScanningByMediaScanner();
+        String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request);
     }
 
     @Override

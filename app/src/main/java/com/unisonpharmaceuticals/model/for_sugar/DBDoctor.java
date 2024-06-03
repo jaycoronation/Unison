@@ -21,6 +21,8 @@ public class DBDoctor extends SugarRecord<DBDoctor> {
     public DBDoctor() {
     }
 
+
+
     public DBDoctor(String doctor, String doctor_id, String speciality_code,String area_id,String speciality_id,String speciality,int enable_focus) {
         this.doctor = doctor;
         this.doctor_id = doctor_id;

@@ -609,8 +609,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
 
 
-
-
                 /*dsdsd
                 for (int i = 0; i < listArea.size(); i++)
                 {
@@ -775,41 +773,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                 if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)) {
                     if (listArea.size() == 0)//Manager and blank if condition for working manager because working manager can make field entry
-                    {
-                        ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
-                        for (int i = 0; i < listReports.size(); i++) {
-                            ReportResponse.ReportsBean bean = listReports.get(i);
-                            listTemp.add(bean);
-                        }
-
-                        for (int i = 0; i < listTemp.size(); i++) {
-                            if (listTemp.get(i).getReport_code().equalsIgnoreCase("ADV")) {
-                                listReports.clear();
-                                ReportResponse.ReportsBean bean = listTemp.get(i);
-                                listReports.add(bean);
-                            }
-                        }
-
-                        edtDBC.setText("ADV : Advice");
-                        dbs = "ADV";
-                        selectedReportCode = "ADV";
-                        tvSaveButton.setText("Upload Entry");
-
-
-                        inputEmployee.setVisibility(View.VISIBLE);
-                        inputDate.setVisibility(View.VISIBLE);
-                        llAdvice.setVisibility(View.VISIBLE);
-
-                        inputArea.setVisibility(View.GONE);
-                        inputSpeciality.setVisibility(View.GONE);
-                        llWorkWith.setVisibility(View.GONE);
-                        inputDoctor.setVisibility(View.GONE);
-                        llNewCycle.setVisibility(View.GONE);
-                        llSampleDetails.setVisibility(View.GONE);
-                        rvVariation.setVisibility(View.GONE);
-                    }//for off day
-                    else {
-                        if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
+                        {
                             ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
                             for (int i = 0; i < listReports.size(); i++) {
                                 ReportResponse.ReportsBean bean = listReports.get(i);
@@ -829,6 +793,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             selectedReportCode = "ADV";
                             tvSaveButton.setText("Upload Entry");
 
+
                             inputEmployee.setVisibility(View.VISIBLE);
                             inputDate.setVisibility(View.VISIBLE);
                             llAdvice.setVisibility(View.VISIBLE);
@@ -840,8 +805,42 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             llNewCycle.setVisibility(View.GONE);
                             llSampleDetails.setVisibility(View.GONE);
                             rvVariation.setVisibility(View.GONE);
+                        }//for off day
+                    else
+                        {
+                            if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
+                                ArrayList<ReportResponse.ReportsBean> listTemp = new ArrayList<>();
+                                for (int i = 0; i < listReports.size(); i++) {
+                                    ReportResponse.ReportsBean bean = listReports.get(i);
+                                    listTemp.add(bean);
+                                }
+
+                                for (int i = 0; i < listTemp.size(); i++) {
+                                    if (listTemp.get(i).getReport_code().equalsIgnoreCase("ADV")) {
+                                        listReports.clear();
+                                        ReportResponse.ReportsBean bean = listTemp.get(i);
+                                        listReports.add(bean);
+                                    }
+                                }
+
+                                edtDBC.setText("ADV : Advice");
+                                dbs = "ADV";
+                                selectedReportCode = "ADV";
+                                tvSaveButton.setText("Upload Entry");
+
+                                inputEmployee.setVisibility(View.VISIBLE);
+                                inputDate.setVisibility(View.VISIBLE);
+                                llAdvice.setVisibility(View.VISIBLE);
+
+                                inputArea.setVisibility(View.GONE);
+                                inputSpeciality.setVisibility(View.GONE);
+                                llWorkWith.setVisibility(View.GONE);
+                                inputDoctor.setVisibility(View.GONE);
+                                llNewCycle.setVisibility(View.GONE);
+                                llSampleDetails.setVisibility(View.GONE);
+                                rvVariation.setVisibility(View.GONE);
+                            }
                         }
-                    }
                 }
 
                 /*if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER))
@@ -1647,28 +1646,25 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
             }
         });
 
-        edtEmployee.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                        return;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (isLoading) {
-                        AppUtils.showLoadingToast(activity);
+        edtEmployee.setOnClickListener(v -> {
+            try {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                if (isLoading) {
+                    AppUtils.showLoadingToast(activity);
+                } else {
+                    if (listEmployee.size() > 0) {
+                        showListDialog(EMPLOYEE);
                     } else {
-                        if (listEmployee.size() > 0) {
-                            showListDialog(EMPLOYEE);
-                        } else {
-                            AppUtils.showToast(activity, "Employee not found");
-                        }
+                        AppUtils.showToast(activity, "Employee not found");
                     }
+                }
 
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -1896,20 +1892,20 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     viewLine.setVisibility(View.GONE);
                                     llSampleDetails.setVisibility(View.VISIBLE);
 
-                                /*listSelectedProducts.clear();
-                                listVariation.clear();
-                                ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
-                                VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
-                                bean.setStock("");
-                                bean.setItem_code("");
-                                bean.setItem_id_code("");
-                                bean.setProduct_id("0");
-                                bean.setReason("Regular Sample");
-                                bean.setReason_code("R");
-                                bean.setName("Product");
-                                listVariation.add(bean);
-                                variationAdapter = new VariationAdapter(listVariation);
-                                rvVariation.setAdapter(variationAdapter);*/
+                                    /*listSelectedProducts.clear();
+                                    listVariation.clear();
+                                    ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                                    VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                                    bean.setStock("");
+                                    bean.setItem_code("");
+                                    bean.setItem_id_code("");
+                                    bean.setProduct_id("0");
+                                    bean.setReason("Regular Sample");
+                                    bean.setReason_code("R");
+                                    bean.setName("Product");
+                                    listVariation.add(bean);
+                                    variationAdapter = new VariationAdapter(listVariation);
+                                    rvVariation.setAdapter(variationAdapter);*/
 
 
                                     listSelectedProducts = new ArrayList<>();
@@ -2302,7 +2298,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 if (isForAdvice)
                 {
 
-
                     JSONObject jsonObject = new JSONObject();
                     JSONArray jsonArray = new JSONArray();
 
@@ -2408,7 +2403,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 llLoading.setVisibility(View.GONE);
                 AppUtils.showToast(activity, message);
                 if (success == 1) {
-                    if (!isForDayEnd) {
+                    if (!isForDayEnd)
+                    {
                         Call<SubmittedResponse> dataCall = apiService.getSubmittedEntry(AppUtils.currentDateForApi(), sessionManager.getUserId(), sessionManager.getUserId());
                         dataCall.enqueue(new Callback<SubmittedResponse>() {
                             @Override
@@ -2441,7 +2437,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                         sessionManager.setCallDoneFromTP("true");
                         NewEntryGetSet.deleteAll(NewEntryGetSet.class);
-                    } else {
+                    }
+                    else
+                    {
                         NewEntryGetSet.deleteAll(NewEntryGetSet.class);
                         sessionManager.logoutWithoutDialog();
                     }
@@ -2723,11 +2721,52 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
         variationAdapter = new VariationAdapter(listVariation);
         rvVariation.setAdapter(variationAdapter);
 
-        if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR)) {
-            if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
-                llOffDay.setVisibility(View.VISIBLE);
-            } else {
-                llOffDay.setVisibility(View.GONE);
+        if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MR))
+            {
+                if (sessionManager.getOffDayOrAdminDay().equalsIgnoreCase("1")) {
+                    llOffDay.setVisibility(View.VISIBLE);
+                } else {
+                    llOffDay.setVisibility(View.GONE);
+
+                    try {
+                        listPlannedDoctor = (ArrayList<DBPlanner>) DBPlanner.listAll(DBPlanner.class);
+
+                        if (listPlannedDoctor.size() > 0) {
+                            llPlannedEntry.setVisibility(View.VISIBLE);
+                            viewPlanner.setVisibility(View.VISIBLE);
+                        } else {
+                            llPlannedEntry.setVisibility(View.GONE);
+                            viewPlanner.setVisibility(View.GONE);
+                        }
+
+                        Log.e("PLanner List >> ", "setUpViews: " + listPlannedDoctor.size());
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    //Check Internet and set data accordingly
+                    if (sessionManager.isNetworkAvailable()) {
+                        getDataFromServer();
+                    } else {
+                        timer = new CountDownTimer(1000, 10000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                fillAllListFromDatabase();
+                            }
+                        };
+                        timer.start();
+
+                    }
+                }
+            }
+        else
+            {
 
                 try {
                     listPlannedDoctor = (ArrayList<DBPlanner>) DBPlanner.listAll(DBPlanner.class);
@@ -2765,44 +2804,6 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                 }
             }
-        } else {
-
-            try {
-                listPlannedDoctor = (ArrayList<DBPlanner>) DBPlanner.listAll(DBPlanner.class);
-
-                if (listPlannedDoctor.size() > 0) {
-                    llPlannedEntry.setVisibility(View.VISIBLE);
-                    viewPlanner.setVisibility(View.VISIBLE);
-                } else {
-                    llPlannedEntry.setVisibility(View.GONE);
-                    viewPlanner.setVisibility(View.GONE);
-                }
-
-                Log.e("PLanner List >> ", "setUpViews: " + listPlannedDoctor.size());
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //Check Internet and set data accordingly
-            if (sessionManager.isNetworkAvailable()) {
-                getDataFromServer();
-            } else {
-                timer = new CountDownTimer(1000, 10000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        fillAllListFromDatabase();
-                    }
-                };
-                timer.start();
-
-            }
-        }
     }
 
     private void initVariationAdapter() {
@@ -4299,7 +4300,8 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                 });
             }
-            else if (isFor.equalsIgnoreCase(DOCTOR)) {
+            else if (isFor.equalsIgnoreCase(DOCTOR))
+            {
                 final DoctorResponse.DoctorsBean getSet;
                 if (isForSearch) {
                     getSet = listDoctorSearch.get(position);
@@ -4360,7 +4362,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         e.printStackTrace();
                     }
                 });
-            } else if (isFor.equalsIgnoreCase(WORKWITH)) {
+            }
+            else if (isFor.equalsIgnoreCase(WORKWITH))
+            {
                 holder.cb.setVisibility(View.VISIBLE);
 
                 final WorkWithResponse.StaffBean getSet;
@@ -4391,7 +4395,9 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                     }
                 });
 
-            } else if (isFor.equalsIgnoreCase(DOCTOR_PLANNER)) {
+            }
+            else if (isFor.equalsIgnoreCase(DOCTOR_PLANNER))
+            {
                 final DBPlanner getSet;
                 if (isForSearch) {
                     getSet = listPlannedDoctorSearch.get(position);
@@ -4402,28 +4408,25 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 holder.tvValue.setText(getSet.getDoctor() + "(" + getSet.getDoctor_id() + ")");
                 holder.tvValue.setAllCaps(true);
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        try {
-                            if (isDoctorUsed(getSet.getDoctor_id(), selectedReportCode)) {
-                                AppUtils.showToast(activity, "You already have submitted DCR entry with this doctor.");
-                            } else {
-                                dialog.dismiss();
+                holder.itemView.setOnClickListener(view -> {
+                    try {
+                        if (isDoctorUsed(getSet.getDoctor_id(), selectedReportCode)) {
+                            AppUtils.showToast(activity, "You already have submitted DCR entry with this doctor.");
+                        } else {
+                            dialog.dismiss();
 
-                                isPlannerClicked = true;
+                            isPlannerClicked = true;
 
-                                plannerDoctorClicked(getSet);
+                            plannerDoctorClicked(getSet);
 
-                                //edtDoctor.setText(getSet.getDoctor().toUpperCase());
-                                //selectedDoctorId = getSet.getDoctor_id();
-                                //clickOfDBC("doctor");
-                            }
-
+                            //edtDoctor.setText(getSet.getDoctor().toUpperCase());
+                            //selectedDoctorId = getSet.getDoctor_id();
+                            //clickOfDBC("doctor");
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
             }

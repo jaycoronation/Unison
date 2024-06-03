@@ -840,7 +840,7 @@ public class FragmentGiftEntry extends Fragment implements View.OnClickListener
                 if(response.body().getSuccess()==1)
                 {
                     listDoctor = (ArrayList<DoctorResponse.DoctorsBean>) response.body().getDoctors();
-                    if(listDoctor.size()>0)
+                    if(!listDoctor.isEmpty())
                     {
                         inputDoctor.setVisibility(View.VISIBLE);
                         tvSaveGift.setVisibility(View.VISIBLE);
@@ -1168,7 +1168,7 @@ public class FragmentGiftEntry extends Fragment implements View.OnClickListener
                 if(isFor.equalsIgnoreCase(AREA)&&areaAdapter !=null)
                 {
                     areaString = areaAdapter.getSelectedAreaIds();
-                    if(areaString.length()==0)
+                    if(areaString.isEmpty())
                     {
                         AppUtils.showToast(activity,"Please select at least one area.");
                     }
@@ -2050,109 +2050,101 @@ public class FragmentGiftEntry extends Fragment implements View.OnClickListener
                 }
             });
 
-            btnYes.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
+            btnYes.setOnClickListener(v -> {
+                try
                 {
-                    try
-                    {
-                        dialog.dismiss();
-                        dialog.cancel();
+                    dialog.dismiss();
+                    dialog.cancel();
 
-                        llLoading.setVisibility(View.VISIBLE);
-                        Call<CommonResponse> getPlanner = apiService.deleteGiftPlan(getSet.getMap_id(),sessionManager.getUserId());
-                        getPlanner.enqueue(new Callback<CommonResponse>() {
-                            @Override
-                            public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response)
+                    llLoading.setVisibility(View.VISIBLE);
+                    Call<CommonResponse> getPlanner = apiService.deleteGiftPlan(getSet.getMap_id(),sessionManager.getUserId());
+                    getPlanner.enqueue(new Callback<CommonResponse>() {
+                        @Override
+                        public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response)
+                        {
+                            if(response.body().getSuccess()==1)
                             {
-                                if(response.body().getSuccess()==1)
+                                listPlan.remove(getSet);
+                                if(listPlan.size()==0)
                                 {
-                                    listPlan.remove(getSet);
-                                    if(listPlan.size()==0)
-                                    {
-                                        tvNoPlan.setVisibility(View.VISIBLE);
-                                        tvConfirmGift.setVisibility(View.GONE);
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                try
+                                    tvNoPlan.setVisibility(View.VISIBLE);
+                                    tvConfirmGift.setVisibility(View.GONE);
+                                    new Thread(() -> {
+                                        try
+                                        {
+                                            for (int j = 0; j < listDoctor.size(); j++)
+                                            {
+                                                DoctorResponse.DoctorsBean bean = listDoctor.get(j);
+                                                bean.setSelected(false);
+                                                listDoctor.set(j,bean);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }).start();
+                                }
+                                else
+                                {
+                                    tvNoPlan.setVisibility(View.GONE);
+                                    tvConfirmGift.setVisibility(View.VISIBLE);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try
+                                            {
+                                                for (int i = 0; i < listPlan.size(); i++)
                                                 {
                                                     for (int j = 0; j < listDoctor.size(); j++)
                                                     {
                                                         DoctorResponse.DoctorsBean bean = listDoctor.get(j);
-                                                        bean.setSelected(false);
+                                                        if(listPlan.get(i).getDoctor_id().equalsIgnoreCase(listDoctor.get(j).getDoctor_id()))
+                                                        {
+                                                            bean.setSelected(true);
+                                                        }
+                                                        else
+                                                        {
+                                                            bean.setSelected(false);
+                                                        }
                                                         listDoctor.set(j,bean);
                                                     }
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
                                                 }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
-                                        }).start();
-                                    }
-                                    else
-                                    {
-                                        tvNoPlan.setVisibility(View.GONE);
-                                        tvConfirmGift.setVisibility(View.VISIBLE);
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                try
-                                                {
-                                                    for (int i = 0; i < listPlan.size(); i++)
-                                                    {
-                                                        for (int j = 0; j < listDoctor.size(); j++)
-                                                        {
-                                                            DoctorResponse.DoctorsBean bean = listDoctor.get(j);
-                                                            if(listPlan.get(i).getDoctor_id().equalsIgnoreCase(listDoctor.get(j).getDoctor_id()))
-                                                            {
-                                                                bean.setSelected(true);
-                                                            }
-                                                            else
-                                                            {
-                                                                bean.setSelected(false);
-                                                            }
-                                                            listDoctor.set(j,bean);
-                                                        }
-                                                    }
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        }).start();
-                                    }
-
-                                    if(areaAdapter!=null)
-                                    {
-                                        doctorString = areaAdapter.getSelectedDrIds();
-                                    }
-
-                                    if(plannerAdapter!=null)
-                                    {
-                                        plannerAdapter.notifyDataSetChanged();
-                                    }
+                                        }
+                                    }).start();
                                 }
-                                else
+
+                                if(areaAdapter!=null)
                                 {
-                                    AppUtils.showToast(activity,response.body().getMessage());
+                                    doctorString = areaAdapter.getSelectedDrIds();
                                 }
-                                llLoading.setVisibility(View.GONE);
+
+                                if(plannerAdapter!=null)
+                                {
+                                    plannerAdapter.notifyDataSetChanged();
+                                }
                             }
-
-                            @Override
-                            public void onFailure(Call<CommonResponse> call, Throwable t) {
-                                llLoading.setVisibility(View.GONE);
+                            else
+                            {
+                                AppUtils.showToast(activity,response.body().getMessage());
                             }
-                        });
+                            llLoading.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onFailure(Call<CommonResponse> call, Throwable t) {
+                            llLoading.setVisibility(View.GONE);
+                        }
+                    });
 
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        dialog.dismiss();
-                        dialog.cancel();
-                    }
-
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    dialog.dismiss();
+                    dialog.cancel();
                 }
+
             });
             dialog.show();
         } catch (Exception e) {

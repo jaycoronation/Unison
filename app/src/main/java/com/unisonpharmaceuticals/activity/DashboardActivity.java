@@ -205,15 +205,12 @@ public class DashboardActivity extends BaseClass
             startActivity(intent);
             startActivityAnimation(activity);
         });
-        ivBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                sessionManager.logoutUser();
+        ivBack.setOnClickListener(v -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < ApiClient.CLICK_THRESHOLD) {
+                return;
             }
+            mLastClickTime = SystemClock.elapsedRealtime();
+            sessionManager.logoutUser();
         });
         edtEmployee.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -575,14 +572,10 @@ public class DashboardActivity extends BaseClass
                     }
                 }
             });
-            rbLogout.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            rbLogout.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if(isChecked)
                 {
-                    if(isChecked)
-                    {
-                        sessionManager.logoutUser();
-                    }
+                    sessionManager.logoutUser();
                 }
             });
 

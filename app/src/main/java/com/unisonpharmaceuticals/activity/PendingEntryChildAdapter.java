@@ -55,6 +55,7 @@ public class PendingEntryChildAdapter extends BaseAdapter
 	ArrayList<VariationResponse.VariationsBean> listVariationSearch = new ArrayList<>();
 	ArrayList<ReasonResponse.ReasonsBean> listReason;
 	int mainListPos = 0;
+
 	public static Handler handler;
 	private SessionManager sessionManager;
 	private InputFilter filter;
@@ -383,14 +384,7 @@ public class PendingEntryChildAdapter extends BaseAdapter
 			e.printStackTrace();
 		}
         
-        holder.edtProduct.setOnClickListener(new OnClickListener()
-        {
-			@Override
-			public void onClick(View v)
-			{
-				showDialog("Product",position,holder);
-			}
-		});
+        holder.edtProduct.setOnClickListener(v -> showDialog("Product",position,holder));
         
         holder.edtReason.setOnClickListener(new OnClickListener()
         {
@@ -689,22 +683,17 @@ public class PendingEntryChildAdapter extends BaseAdapter
 				}
 				else
 				{
-					getSet= listProducAdapter.get(position);
+					getSet = listProducAdapter.get(position);
 				}
 
 				holder.cbProduct.setVisibility(View.GONE);
 				holder.txtProductCode.setText(getSet.getItem_id_code());
 				holder.txtProduct.setText(getSet.getName());
 				holder.edtUnit.setVisibility(View.GONE);
-				convertView.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View v)
-					{
-						dialog.dismiss();
-						updatePendingEntry(isFor,mainListPos,getSet,"","","",pendingEntryChildAdapterHolder);
-					}
-				});
+				convertView.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    updatePendingEntry(isFor,mainListPos,getSet,"","","",pendingEntryChildAdapterHolder);
+                });
 			}
 			else
 			{
@@ -714,14 +703,10 @@ public class PendingEntryChildAdapter extends BaseAdapter
 				holder.txtProductCode.setText(getSet.getReason_code());
 				holder.txtProduct.setText(getSet.getReason());
 
-				convertView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v)
-					{
-						dialog.dismiss();
-						updatePendingEntry(isFor,mainListPos,new VariationsBean(),getSet.getReason_code(),getSet.getReason(),getSet.getReason_id(),pendingEntryChildAdapterHolder);
-					}
-				});
+				convertView.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    updatePendingEntry(isFor,mainListPos,new VariationsBean(),getSet.getReason_code(),getSet.getReason(),getSet.getReason_id(),pendingEntryChildAdapterHolder);
+                });
 
 			}
 

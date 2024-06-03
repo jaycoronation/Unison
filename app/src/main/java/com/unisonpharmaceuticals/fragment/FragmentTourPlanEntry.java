@@ -2109,39 +2109,34 @@ public class FragmentTourPlanEntry extends Fragment implements View.OnClickListe
             isDone = true;
             holder.cbLeave.setChecked(Boolean.valueOf(getSet.getLeave()));
             holder.cbHoliday.setChecked(Boolean.valueOf(getSet.getHoliday()));
-            holder.cbLeave.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            holder.cbLeave.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if(!isDone)
                 {
-                    if(!isDone)
+                    if(isChecked)
                     {
-                        if(isChecked)
-                        {
-                            getSet.setLeave("true");
-                            getSet.setArea("");
-                            getSet.setArea_name("");
-                            getSet.setDay_type(2);
-                            getSet.setWork_withString("");
-                            getSet.setWork_with(new ArrayList<TPFormResponse.ExtradaysBean.WorkWithBean>());
-                            getSet.setWork_withName("");
-                            getSet.setRemark("");
-                        }
-                        else
-                        {
-                            getSet.setLeave("false");
+                        getSet.setLeave("true");
+                        getSet.setArea("");
+                        getSet.setArea_name("");
+                        getSet.setDay_type(2);
+                        getSet.setWork_withString("");
+                        getSet.setWork_with(new ArrayList<  >());
+                        getSet.setWork_withName("");
+                        getSet.setRemark("");
+                    }
+                    else
+                    {
+                        getSet.setLeave("false");
 
-                            if(getSet.getDay_type()!=0)
-                            {
-                                getSet.setDay_type(0);
-                            }
+                        if(getSet.getDay_type()!=0)
+                        {
+                            getSet.setDay_type(0);
                         }
-
-                        listTpEntry.set(position,getSet);
-                        notifyItemChanged(position);
                     }
 
+                    listTpEntry.set(position,getSet);
+                    notifyItemChanged(position);
                 }
+
             });
 
             holder.cbHoliday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

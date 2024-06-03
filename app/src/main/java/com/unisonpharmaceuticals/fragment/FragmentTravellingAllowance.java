@@ -679,7 +679,6 @@ public class FragmentTravellingAllowance extends Fragment implements View.OnClic
         }
     }
 
-
     DialogListAdapter areaAdapter;
     public void showListDialog(final String isFor)
     {
@@ -1061,7 +1060,6 @@ public class FragmentTravellingAllowance extends Fragment implements View.OnClic
             {
                 if(!listItems.get(i).getDistance().equalsIgnoreCase(""))
                 {
-
                     sum += Float.parseFloat(listItems.get(i).getDistance());
                 }
             }

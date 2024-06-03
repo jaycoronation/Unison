@@ -231,7 +231,6 @@ public class MainActivity extends BaseClass
 
     }
 
-
     @Override
     protected void onResume()
     {
@@ -509,8 +508,6 @@ public class MainActivity extends BaseClass
 
                                             for (int i = 0; i <listDoctrosMain.size(); i++)
                                             {
-                                        /*DBArea area = new DBArea(listDoctrosMain.get(i).getArea_id(),listDoctrosMain.get(i).getArea_name());
-                                        area.save();*/
 
                                                 DBSpeciality speciality = new DBSpeciality(listDoctrosMain.get(i).getSpeciality(),
                                                         listDoctrosMain.get(i).getSpeciality_id(),
@@ -717,27 +714,24 @@ public class MainActivity extends BaseClass
                         try {
                             if(response.body().getSuccess()==1)
                             {
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DBReports.deleteAll(DBReports.class);
+                                new Thread(() -> {
+                                    DBReports.deleteAll(DBReports.class);
 
-                                        ArrayList<ReportResponse.ReportsBean>listReports = (ArrayList<ReportResponse.ReportsBean>) response.body().getReports();
+                                    ArrayList<ReportResponse.ReportsBean>listReports = (ArrayList<ReportResponse.ReportsBean>) response.body().getReports();
 
-                                        if(listReports.size()>0)
+                                    if(listReports.size()>0)
+                                    {
+                                        for (int i = 0; i < listReports.size(); i++)
                                         {
-                                            for (int i = 0; i < listReports.size(); i++)
-                                            {
-                                                DBReports reportBean = new DBReports(listReports.get(i).getReport_name(),
-                                                        listReports.get(i).getReport_code(),
-                                                        listReports.get(i).getReport_id());
-                                                reportBean.save();
-                                            }
+                                            DBReports reportBean = new DBReports(listReports.get(i).getReport_name(),
+                                                    listReports.get(i).getReport_code(),
+                                                    listReports.get(i).getReport_id());
+                                            reportBean.save();
                                         }
-                                        else
-                                        {
-                                            isSuccessApiCalled = false;
-                                        }
+                                    }
+                                    else
+                                    {
+                                        isSuccessApiCalled = false;
                                     }
                                 }).start();
                             }
@@ -886,11 +880,11 @@ public class MainActivity extends BaseClass
                 {
                     sessionManager.setIsDataFetched(true);
                 }
-
             }
-            else {
-                showToast(activity,activity.getString(R.string.network_failed_message));
-            }
+            else
+                {
+                    showToast(activity,activity.getString(R.string.network_failed_message));
+                }
         }
     }
 
@@ -916,8 +910,11 @@ public class MainActivity extends BaseClass
 
             //New Added for planner flow
             try {
-                Call<DailyPlannerResponse> getPlanner = apiService.getDailyPlannerForOffline(sessionManager.getUserId(),
-                        String.valueOf( System.currentTimeMillis()/1000), sessionManager.getUserId());
+                Call<DailyPlannerResponse> getPlanner = apiService.getDailyPlannerForOffline(
+                        sessionManager.getUserId(),
+                        String.valueOf( System.currentTimeMillis()/1000),
+                        sessionManager.getUserId()
+                );
                 getPlanner.enqueue(new Callback<DailyPlannerResponse>() {
                     @Override
                     public void onResponse(Call<DailyPlannerResponse> call, final Response<DailyPlannerResponse> response)

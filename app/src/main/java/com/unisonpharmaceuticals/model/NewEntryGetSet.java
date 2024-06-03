@@ -24,9 +24,7 @@ public class NewEntryGetSet extends SugarRecord<NewEntryGetSet>
     private String internee = "";
     private String products = "";
     private String focusProducts = "";
-
     private boolean isEditable = false;
-
     private String ddtdate	= "ddtdate";
     private String empId="";
     private String empName="";
@@ -34,6 +32,7 @@ public class NewEntryGetSet extends SugarRecord<NewEntryGetSet>
     private String advice = "";
     private boolean isWorkWithSelf = true;
     private String NCRDrData = "";
+
 
     public NewEntryGetSet(String area,
                           String area_id,

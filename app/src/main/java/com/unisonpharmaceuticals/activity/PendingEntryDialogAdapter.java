@@ -138,10 +138,10 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
             holder.llAddFocus = (LinearLayout) rowView.findViewById(R.id.llAddFocus);//For Add focus products
             holder.llAdd = (LinearLayout) rowView.findViewById(R.id.llAdd);//For Add MAin products
 
-            holder.edttext1 = (TextView) rowView.findViewById(R.id.edtProduct1);
-            holder.edttext2 = (TextView) rowView.findViewById(R.id.edtProduct2);
-            holder.edtReason1 = (TextView) rowView.findViewById(R.id.edtReason1);
-            holder.edtReason2 = (TextView) rowView.findViewById(R.id.edtReason2);
+            holder.tvText1 = (TextView) rowView.findViewById(R.id.edtProduct1);
+            holder.tvText2 = (TextView) rowView.findViewById(R.id.edtProduct2);
+            holder.tvReason1 = (TextView) rowView.findViewById(R.id.edtReason1);
+            holder.tvReason2 = (TextView) rowView.findViewById(R.id.edtReason2);
 
             holder.llFocus1 = (LinearLayout) rowView.findViewById(R.id.llFocus1);
             holder.llFocus2 = (LinearLayout) rowView.findViewById(R.id.llFocus2);
@@ -458,23 +458,23 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                     holder.llFocus1.setVisibility(View.VISIBLE);
                     holder.llFocus2.setVisibility(View.GONE);
 
-                    holder.edttext1.setText(listProduct.get(0));
-                    holder.edtReason1.setText(listReason.get(0));
+                    holder.tvText1.setText(listProduct.get(0));
+                    holder.tvReason1.setText(listReason.get(0));
 
                     String[] arrProduct = listProduct.get(0).split(" : ");
                     product1 = arrProduct[0];
-                    holder.edttext1.setText(listProduct.get(0));
+                    holder.tvText1.setText(listProduct.get(0));
 
                 } else if (listProduct.size() == 2) {
 
                     holder.llFocus1.setVisibility(View.VISIBLE);
                     holder.llFocus2.setVisibility(View.VISIBLE);
 
-                    holder.edttext1.setText(listProduct.get(0));
-                    holder.edtReason1.setText(listReason.get(0));
+                    holder.tvText1.setText(listProduct.get(0));
+                    holder.tvReason1.setText(listReason.get(0));
 
-                    holder.edttext2.setText(listProduct.get(1));
-                    holder.edtReason2.setText(listReason.get(1));
+                    holder.tvText2.setText(listProduct.get(1));
+                    holder.tvReason2.setText(listReason.get(1));
 
 
                     String[] arrProduct = listProduct.get(0).split(" : ");
@@ -488,11 +488,11 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                 {
                     holder.llAddFocus.setVisibility(View.VISIBLE);
                     holder.llAdd.setVisibility(View.VISIBLE);
-                    holder.edttext1.setClickable(true);
-                    holder.edttext2.setClickable(true);
+                    holder.tvText1.setClickable(true);
+                    holder.tvText2.setClickable(true);
 
-                    holder.edtReason1.setClickable(true);
-                    holder.edtReason2.setClickable(true);
+                    holder.tvReason1.setClickable(true);
+                    holder.tvReason2.setClickable(true);
 
                     //For Hide bottom focus add when already two items available
                     if(holder.llFocus1.getVisibility()==View.VISIBLE &&
@@ -523,11 +523,11 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                 {
                     holder.llAddFocus.setVisibility(View.GONE);
                     holder.llAdd.setVisibility(View.GONE);
-                    holder.edttext1.setClickable(false);
-                    holder.edttext2.setClickable(false);
+                    holder.tvText1.setClickable(false);
+                    holder.tvText2.setClickable(false);
 
-                    holder.edtReason1.setClickable(false);
-                    holder.edtReason2.setClickable(false);
+                    holder.tvReason1.setClickable(false);
+                    holder.tvReason2.setClickable(false);
 
                     holder.img_focus_delete_1.setVisibility(View.GONE);
                     holder.img_focus_delete_2.setVisibility(View.GONE);
@@ -549,7 +549,7 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
 
             }
 
-            holder.edttext1.setOnClickListener(new OnClickListener() {
+            holder.tvText1.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.e("List product size", listProduct.size() + " ");
@@ -557,8 +557,8 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                     if (listProduct != null && listProduct.size() > 0) {
                         try {
                             if (listPending.get(holder.ref).isEditable()) {
-                                showFocusedDialog(holder.edttext1,
-                                        holder.edttext2,
+                                showFocusedDialog(holder.tvText1,
+                                        holder.tvText2,
                                         "Product",
                                         "1",
                                         position);
@@ -570,15 +570,15 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                 }
             });
 
-            holder.edttext2.setOnClickListener(new OnClickListener() {
+            holder.tvText2.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.e("List product size", listProduct.size() + " ");
                     if (listProduct != null && listProduct.size() > 0) {
                         try {
                             if (listPending.get(holder.ref).isEditable()) {
-                                showFocusedDialog(holder.edttext1,
-                                        holder.edttext2,
+                                showFocusedDialog(holder.tvText1,
+                                        holder.tvText2,
                                         "Product",
                                         "2",
                                         position);
@@ -590,13 +590,13 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                 }
             });
 
-            holder.edtReason1.setOnClickListener(new OnClickListener() {
+            holder.tvReason1.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         if (listPending.get(holder.ref).isEditable()) {
-                            showFocusedDialog(holder.edtReason1,
-                                    holder.edtReason2,
+                            showFocusedDialog(holder.tvReason1,
+                                    holder.tvReason2,
                                     "Reason",
                                     "1",
                                     position);
@@ -608,13 +608,13 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                 }
             });
 
-            holder.edtReason2.setOnClickListener(new OnClickListener() {
+            holder.tvReason2.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         if (listPending.get(holder.ref).isEditable()) {
-                            showFocusedDialog(holder.edtReason1,
-                                    holder.edtReason2,
+                            showFocusedDialog(holder.tvReason1,
+                                    holder.tvReason2,
                                     "Reason",
                                     "2",
                                     position);
@@ -639,12 +639,12 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                     else
                         {
                         showConfirmationDialog(holder.ref,
-                                holder.edttext1,
-                                holder.edttext2,
+                                holder.tvText1,
+                                holder.tvText2,
                                 holder.llFocus1,
                                 holder.llFocus2,
-                                holder.edtReason1,
-                                holder.edtReason2,
+                                holder.tvReason1,
+                                holder.tvReason2,
                                 "1",
                                 holder.llAddFocus);
                     }
@@ -657,12 +657,12 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                 {
                     try {
                         showConfirmationDialog(holder.ref,
-                                holder.edttext1,
-                                holder.edttext2,
+                                holder.tvText1,
+                                holder.tvText2,
                                 holder.llFocus1,
                                 holder.llFocus2,
-                                holder.edtReason1,
-                                holder.edtReason2,
+                                holder.tvReason1,
+                                holder.tvReason2,
                                 "2",
                                 holder.llAddFocus);
                     } catch (Exception e) {
@@ -672,47 +672,43 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
             });
 
 
-            holder.llAdd.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v)
+            holder.llAdd.setOnClickListener(v -> {
+                try
                 {
-                    try
+                    NewEntryGetSet newEntryGetSet = listPending.get(position);
+                    VariationResponse.VariationsBean getSet1 = new VariationResponse.VariationsBean();
+                    getSet1.setName("Product");
+                    getSet1.setItem_code("Product");
+                    getSet1.setItem_id_code("Product");
+                    getSet1.setReason("R");
+                    getSet1.setReason_code("R");
+                    getSet1.setStock("1");
+                    getSet1.setProduct_type("0");
+                    getSet1.setTemp(true);
+                    ArrayList<VariationResponse.VariationsBean> listProduct = AppUtils.getArrayListFromJsonStringVariation(listPending.get(position).getProducts());
+                    listProduct.add(getSet1);
+                    newEntryGetSet.setProducts(AppUtils.getStringFromArrayListVariations(listProduct));
+                    listPending.set(position,newEntryGetSet);
+                    if(adapter!=null)
                     {
-                        NewEntryGetSet newEntryGetSet = listPending.get(position);
-                        VariationResponse.VariationsBean getSet = new VariationResponse.VariationsBean();
-                        getSet.setName("Product");
-                        getSet.setItem_code("Product");
-                        getSet.setItem_id_code("Product");
-                        getSet.setReason("R");
-                        getSet.setReason_code("R");
-                        getSet.setStock("1");
-                        getSet.setProduct_type("0");
-                        getSet.setTemp(true);
-                        ArrayList<VariationResponse.VariationsBean> listProduct = AppUtils.getArrayListFromJsonStringVariation(listPending.get(position).getProducts());
-                        listProduct.add(getSet);
-                        newEntryGetSet.setProducts(AppUtils.getStringFromArrayListVariations(listProduct));
-                        listPending.set(position,newEntryGetSet);
-                        if(adapter!=null)
-                        {
-                            adapter.notifyDataSetChanged();
-                        }
-                        notifyDataSetChanged();
-                        List<NewEntryGetSet> listOffline = NewEntryGetSet.listAll(NewEntryGetSet.class);
-                        ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
-                        for (int i = 0; i < listOffline.size(); i++)
-                        {
-                            if(listOffline.get(i).getUser_id().equals(sessionManager.getUserId()))
-                            {
-                                listUserEntry.add(listOffline.get(i));
-                            }
-                        }
-
-                        NewEntryGetSet newEntryGetSet1 = NewEntryGetSet.findById(NewEntryGetSet.class, listUserEntry.get(holder.ref).getId());
-                        newEntryGetSet1.setProducts(AppUtils.getStringFromArrayListVariations(listProduct));
-                        newEntryGetSet1.save();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        adapter.notifyDataSetChanged();
                     }
+                    notifyDataSetChanged();
+                    List<NewEntryGetSet> listOffline = NewEntryGetSet.listAll(NewEntryGetSet.class);
+                    ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
+                    for (int i = 0; i < listOffline.size(); i++)
+                    {
+                        if(listOffline.get(i).getUser_id().equals(sessionManager.getUserId()))
+                        {
+                            listUserEntry.add(listOffline.get(i));
+                        }
+                    }
+
+                    NewEntryGetSet newEntryGetSet1 = NewEntryGetSet.findById(NewEntryGetSet.class, listUserEntry.get(holder.ref).getId());
+                    newEntryGetSet1.setProducts(AppUtils.getStringFromArrayListVariations(listProduct));
+                    newEntryGetSet1.save();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
@@ -731,13 +727,13 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                             if (holder.llFocus1.getVisibility() == View.GONE) {
 
                                 //holder.edttext1.setText(listFocusProduct.get(0).getItem_id_code());
-                                holder.edttext1.setText("Select Product");
-                                holder.edtReason1.setText("New");
+                                holder.tvText1.setText("Select Product");
+                                holder.tvReason1.setText("New");
                                 holder.llFocus1.setVisibility(View.VISIBLE);
                             } else if (holder.llFocus2.getVisibility() == View.GONE) {
                                 //holder.edttext2.setText(listFocusProduct.get(0).getItem_id_code());
-                                holder.edttext2.setText("Select Product");
-                                holder.edtReason2.setText("New");
+                                holder.tvText2.setText("Select Product");
+                                holder.tvReason2.setText("New");
                                 holder.llFocus2.setVisibility(View.VISIBLE);
                             }
                         }
@@ -780,7 +776,7 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
             @Override
             public void onClick(View v)
             {
-                AppUtils.hideKeyboard(holder.edtReason1, activity);
+                AppUtils.hideKeyboard(holder.tvReason1, activity);
 
                 Log.e("POSITION  >> ", "onClick: "+holder.ref );
                 Log.e("ITEMS >>   >> ", "onClick: "+AppUtils.getArrayListFromJsonStringVariation(listPending.get(holder.ref).getProducts()).size());
@@ -801,10 +797,10 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
                                 listPending.get(holder.ref).getFocusProducts().length() > 0)
                         {
                             if (holder.llFocus1.getVisibility() == View.VISIBLE) {
-                                listRestriction.add(holder.edtReason1.getText().toString().trim());
+                                listRestriction.add(holder.tvReason1.getText().toString().trim());
                             }
                             if (holder.llFocus2.getVisibility() == View.VISIBLE) {
-                                listRestriction.add(holder.edtReason2.getText().toString().trim());
+                                listRestriction.add(holder.tvReason2.getText().toString().trim());
                             }
 
                             countNew = 0;
@@ -834,14 +830,14 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
 
                                 if (holder.llFocus1.getVisibility() == View.VISIBLE)
                                 {
-                                    if (holder.edttext1.getText().toString().equalsIgnoreCase("") ||
-                                            holder.edttext1.getText().toString().equalsIgnoreCase("Select Product")) {
+                                    if (holder.tvText1.getText().toString().equalsIgnoreCase("") ||
+                                            holder.tvText1.getText().toString().equalsIgnoreCase("Select Product")) {
                                         AppUtils.showToast(activity,"Please select focus for product.");
                                         return;
                                     }
                                     else
                                     {
-                                        tempProduct1 = doctorId + "#" + holder.edttext1.getText().toString().trim() + "---" + holder.edtReason1.getText().toString().trim();
+                                        tempProduct1 = doctorId + "#" + holder.tvText1.getText().toString().trim() + "---" + holder.tvReason1.getText().toString().trim();
                                         listString.add(tempProduct1);
                                     }
                                 }
@@ -849,15 +845,15 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
 
                                 if (holder.llFocus2.getVisibility() == View.VISIBLE)
                                 {
-                                    if (holder.edttext2.getText().toString().equalsIgnoreCase("") ||
-                                            holder.edttext2.getText().toString().equalsIgnoreCase("Select Product"))
+                                    if (holder.tvText2.getText().toString().equalsIgnoreCase("") ||
+                                            holder.tvText2.getText().toString().equalsIgnoreCase("Select Product"))
                                     {
                                         AppUtils.showToast(activity,"Please select focus for product.");
                                         return;
                                     }
                                     else
                                     {
-                                        tempProduct2 = doctorId + "#" + holder.edttext2.getText().toString().trim() + "---" + holder.edtReason2.getText().toString().trim();
+                                        tempProduct2 = doctorId + "#" + holder.tvText2.getText().toString().trim() + "---" + holder.tvReason2.getText().toString().trim();
                                         listString.add(tempProduct2);
                                     }
                                 }
@@ -1542,7 +1538,7 @@ public class PendingEntryDialogAdapter extends BaseAdapter {
         ImageView ivMinus, ivEdit, ivDone;
         MitsAutoHeightListView listChild;
         LinearLayout llFocusFor, llFocus1, llFocus2, llAdd,llAddFocus;
-        TextView edttext2, edtReason2,edtReason1,edttext1;
+        TextView tvText2, tvReason2, tvReason1, tvText1;
         ImageView img_focus_delete_1, img_focus_delete_2;
         int ref;
     }

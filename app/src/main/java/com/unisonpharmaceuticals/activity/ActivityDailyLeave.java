@@ -274,7 +274,7 @@ public class ActivityDailyLeave extends BaseClass
 					@Override
 					public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response)
 					{
-						Log.e("Response ?? ", "onResponse: "+new Gson().toJson(response) );
+						Log.e("Response ?? ", "onResponse: "+ new Gson().toJson(response));
 						if(response.body().getSuccess()==1)
 						{
 							AppUtils.showToast(activity,response.body().getMessage());

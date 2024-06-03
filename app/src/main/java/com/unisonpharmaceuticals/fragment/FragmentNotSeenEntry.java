@@ -797,14 +797,11 @@ public class FragmentNotSeenEntry extends Fragment implements View.OnClickListen
                     getSet = listEmployee.get(position);
                 }
                 holder.tvValue.setText(getSet.getName());
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        edtEmployee.setText(getSet.getName());
-                        selectedStaffId = getSet.getStaff_id();
-                        dialog.dismiss();
-                        dialog.cancel();
-                    }
+                holder.itemView.setOnClickListener(v -> {
+                    edtEmployee.setText(getSet.getName());
+                    selectedStaffId = getSet.getStaff_id();
+                    dialog.dismiss();
+                    dialog.cancel();
                 });
             }
             else if (isFor.equalsIgnoreCase(MONTH)) {
@@ -1521,10 +1518,12 @@ public class FragmentNotSeenEntry extends Fragment implements View.OnClickListen
                     dialog.dismiss();
                     dialog.cancel();
 
-                    if (isFor.equalsIgnoreCase("reason")) {
+                    if (isFor.equalsIgnoreCase("reason"))
+                    {
                         notSeenAdapter.updateOtherReason(edtOther.getText().toString().trim(), position);
                     }
-                    else {
+                    else
+                    {
                         notSeenAdapter.updateDateReason(edtOther.getText().toString().trim(), position);
                     }
 

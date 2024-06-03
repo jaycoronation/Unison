@@ -62,30 +62,26 @@ public class ActivityPendingEntry extends BaseClass
 		PendingEntryDialogAdapter adapter = new PendingEntryDialogAdapter(activity, listUserEntry,llNoData,mainListView);
 	    mainListView.setAdapter(adapter);
 
-	    handler = new Handler(new Handler.Callback() {
-			@Override
-			public boolean handleMessage(Message msg)
-			{
-				if(msg.what==101)
-				{
-					List<NewEntryGetSet> listOffline = NewEntryGetSet.listAll(NewEntryGetSet.class);
-					ArrayList<NewEntryGetSet> listEntry = (ArrayList<NewEntryGetSet>) listOffline;
+	    handler = new Handler(msg -> {
+            if(msg.what==101)
+            {
+                List<NewEntryGetSet> listOffline1 = NewEntryGetSet.listAll(NewEntryGetSet.class);
+                ArrayList<NewEntryGetSet> listEntry = (ArrayList<NewEntryGetSet>) listOffline1;
 
-					ArrayList<NewEntryGetSet> listUserEntry = new ArrayList<>();
-					for (int i = 0; i < listEntry.size(); i++)
-					{
-						if(listEntry.get(i).getUser_id().equals(sessionManager.getUserId()))
-						{
-							listUserEntry.add(listEntry.get(i));
-						}
-					}
+                ArrayList<NewEntryGetSet> listUserEntry1 = new ArrayList<>();
+                for (int i = 0; i < listEntry.size(); i++)
+                {
+                    if(listEntry.get(i).getUser_id().equals(sessionManager.getUserId()))
+                    {
+                        listUserEntry1.add(listEntry.get(i));
+                    }
+                }
 
-					PendingEntryDialogAdapter adapter = new PendingEntryDialogAdapter(activity, listUserEntry,llNoData,mainListView);
-					mainListView.setAdapter(adapter);
-				}
-				return false;
-			}
-		});
+                PendingEntryDialogAdapter adapter1 = new PendingEntryDialogAdapter(activity, listUserEntry1,llNoData,mainListView);
+                mainListView.setAdapter(adapter1);
+            }
+            return false;
+        });
 	}
 	
 	@Override
