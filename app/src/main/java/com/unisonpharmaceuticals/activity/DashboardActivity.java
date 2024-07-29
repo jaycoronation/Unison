@@ -110,7 +110,7 @@ public class DashboardActivity extends BaseClass
     private String workWithString = "";
 
     private ArrayList<WorkWithResponse.StaffBean> listWorkWith = new ArrayList<>();
-    private ArrayList<WorkWithResponse.StaffBean> listWorkWithSearch = new ArrayList<>();
+    private final ArrayList<WorkWithResponse.StaffBean> listWorkWithSearch = new ArrayList<>();
 
     private ApiInterface apiService;
 
@@ -430,12 +430,12 @@ public class DashboardActivity extends BaseClass
                             tvPg.setText(response.body().getReport().getGp().getCovered() +" / "+response.body().getReport().getGp().getTotal());
                             tvPgRes.setText(response.body().getReport().getGp().getAvg()+" %");
 
-                            tvAvgCoverage.setText(String.valueOf(response.body().getReport().getTotal().getCall_average())+" %");
+                            tvAvgCoverage.setText(response.body().getReport().getTotal().getCall_average() +" %");
                             tvTotalCoverage.setText(response.body().getReport().getTotal().getCall_coverage() +" / "+response.body().getReport().getTotal().getTotal_coverage());
 
-                            tvDays.setText(String.valueOf(response.body().getReport().getStaff_summary().getWork_day())+" / "+String.valueOf(response.body().getReport().getStaff_summary().getTotal_days()));
+                            tvDays.setText(response.body().getReport().getStaff_summary().getWork_day() +" / "+ response.body().getReport().getStaff_summary().getTotal_days());
 
-                            tvCallCoverage.setText(String.valueOf(response.body().getReport().getStaff_summary().getDay_avg())+" %");
+                            tvCallCoverage.setText(response.body().getReport().getStaff_summary().getDay_avg() +" %");
 
                         }
                         else
@@ -470,8 +470,6 @@ public class DashboardActivity extends BaseClass
 
             final Dialog dialog = new BottomSheetDialog(activity ,R.style.MaterialDialogSheetTemp);
 
-
-
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             final View sheetView = activity.getLayoutInflater().inflate(R.layout.dialog_action_pending_manager, null);
             dialog.setContentView(sheetView);
@@ -486,24 +484,24 @@ public class DashboardActivity extends BaseClass
                 }
             });
 
-            final RadioGroup rgAction = (RadioGroup) dialog.findViewById(R.id.rgAction);
-            final RadioButton rbIndividual = (RadioButton) dialog.findViewById(R.id.rbIndividual);
+            final RadioGroup rgAction = dialog.findViewById(R.id.rgAction);
+            final RadioButton rbIndividual = dialog.findViewById(R.id.rbIndividual);
             rbIndividual.setTypeface(AppUtils.getTypefaceRegular(activity));
-            final RadioButton rbJoint = (RadioButton) dialog.findViewById(R.id.rbJoint);
+            final RadioButton rbJoint = dialog.findViewById(R.id.rbJoint);
             rbJoint.setTypeface(AppUtils.getTypefaceRegular(activity));
-            final RadioButton rbLeave = (RadioButton) dialog.findViewById(R.id.rbLeave);
+            final RadioButton rbLeave = dialog.findViewById(R.id.rbLeave);
             rbLeave.setTypeface(AppUtils.getTypefaceRegular(activity));
-            final RadioButton rbLogout = (RadioButton) dialog.findViewById(R.id.rbLogout);
+            final RadioButton rbLogout = dialog.findViewById(R.id.rbLogout);
             rbLogout.setTypeface(AppUtils.getTypefaceRegular(activity));
-            final RadioButton rbHOMeeting = (RadioButton) dialog.findViewById(R.id.rbHOMeeting);
+            final RadioButton rbHOMeeting = dialog.findViewById(R.id.rbHOMeeting);
             rbHOMeeting.setTypeface(AppUtils.getTypefaceRegular(activity));
-            final RadioButton rbAdminWork = (RadioButton) dialog.findViewById(R.id.rbAdminWork);
+            final RadioButton rbAdminWork = dialog.findViewById(R.id.rbAdminWork);
             rbAdminWork.setTypeface(AppUtils.getTypefaceRegular(activity));
 
-            final RadioButton rbOffDay = (RadioButton) dialog.findViewById(R.id.rbOffDay);
+            final RadioButton rbOffDay = dialog.findViewById(R.id.rbOffDay);
             rbOffDay.setTypeface(AppUtils.getTypefaceRegular(activity));
 
-            final RadioButton rbAdminDay = (RadioButton) dialog.findViewById(R.id.rbAdminDay);
+            final RadioButton rbAdminDay = dialog.findViewById(R.id.rbAdminDay);
             rbAdminDay.setTypeface(AppUtils.getTypefaceRegular(activity));
 
             rbHOMeeting.setVisibility(View.VISIBLE);
@@ -579,7 +577,7 @@ public class DashboardActivity extends BaseClass
                 }
             });
 
-            final LinearLayout llSubmit = (LinearLayout) dialog.findViewById(R.id.llSubmit);
+            final LinearLayout llSubmit = dialog.findViewById(R.id.llSubmit);
             llSubmit.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -666,7 +664,7 @@ public class DashboardActivity extends BaseClass
                         /*dialog.dismiss();
                         dialog.cancel();*/
 
-                        Log.e("Json Array >> ", "onClick: " + commaSepValueBuilder.toString());
+                        Log.e("Json Array >> ", "onClick: " + commaSepValueBuilder);
 
                         subMitWorkType(type,commaSepValueBuilder.toString(),dialog);
                     }
@@ -708,9 +706,9 @@ public class DashboardActivity extends BaseClass
             });
 
             TextView tvTitle,tvMessage,tvTimeAgo;
-            tvTitle = (TextView) sheetView.findViewById(R.id.tvTitle);
-            tvMessage = (TextView) sheetView.findViewById(R.id.tvMessage);
-            tvTimeAgo = (TextView) sheetView.findViewById(R.id.tvTimeAgo);
+            tvTitle = sheetView.findViewById(R.id.tvTitle);
+            tvMessage = sheetView.findViewById(R.id.tvMessage);
+            tvTimeAgo = sheetView.findViewById(R.id.tvTimeAgo);
 
             tvTimeAgo.setText(timeAgo);
             tvTitle.setText(title);
@@ -927,12 +925,12 @@ public class DashboardActivity extends BaseClass
         });
 
 
-        LinearLayout btnNo = (LinearLayout) listDialog.findViewById(R.id.btnNo);
+        LinearLayout btnNo = listDialog.findViewById(R.id.btnNo);
 
-        TextView tvTitle = (TextView) listDialog.findViewById(R.id.tvTitle);
+        TextView tvTitle = listDialog.findViewById(R.id.tvTitle);
         tvTitle.setText("Select "+isFor);
 
-        TextView tvDone = (TextView) listDialog.findViewById(R.id.tvDone);
+        TextView tvDone = listDialog.findViewById(R.id.tvDone);
 
         if(isFor.equalsIgnoreCase("work with"))
         {
@@ -943,7 +941,7 @@ public class DashboardActivity extends BaseClass
             tvDone.setVisibility(View.GONE);
         }
 
-        final RecyclerView rvListDialog = (RecyclerView) listDialog.findViewById(R.id.rvDialog);
+        final RecyclerView rvListDialog = listDialog.findViewById(R.id.rvDialog);
 
         areaAdapter = new AreaAdapter(listDialog, isFor,false,"");
         rvListDialog.setLayoutManager(new LinearLayoutManager(activity));
@@ -987,7 +985,7 @@ public class DashboardActivity extends BaseClass
             }
         });
 
-        final EditText edtSearchDialog = (EditText) listDialog.findViewById(R.id.edtSearchDialog);
+        final EditText edtSearchDialog = listDialog.findViewById(R.id.edtSearchDialog);
 
         edtSearchDialog.addTextChangedListener(new TextWatcher() {
             @Override
@@ -1226,16 +1224,17 @@ public class DashboardActivity extends BaseClass
 
         public class ViewHolder extends RecyclerView.ViewHolder
         {
-            private TextView tvValue,tvId;
-            private CheckBox cb;
-            private View viewLine;
+            private final TextView tvValue;
+            private final TextView tvId;
+            private final CheckBox cb;
+            private final View viewLine;
             public ViewHolder(View itemView)
             {
                 super(itemView);
-                tvValue = (TextView) itemView.findViewById(R.id.tvValue);
-                tvId = (TextView) itemView.findViewById(R.id.tvId);
+                tvValue = itemView.findViewById(R.id.tvValue);
+                tvId = itemView.findViewById(R.id.tvId);
                 viewLine = itemView.findViewById(R.id.viewLine);
-                cb = (CheckBox) itemView.findViewById(R.id.cb);
+                cb = itemView.findViewById(R.id.cb);
                 cb.setTypeface(AppUtils.getTypefaceRegular(activity));
             }
         }
@@ -1343,14 +1342,7 @@ public class DashboardActivity extends BaseClass
                     sessionManager.setCanSTK(bean.getIs_lock_stk());
                     sessionManager.setOffDayOrAdminDay(bean.getIs_offday());
 
-                    if(bean.getIs_stk_done().equals("1"))
-                    {
-                        sessionManager.setIsSTKDone(true);
-                    }
-                    else
-                    {
-                        sessionManager.setIsSTKDone(false);
-                    }
+                    sessionManager.setIsSTKDone(bean.getIs_stk_done().equals("1"));
 
                     setSelectedRadioButton(position,bean,holder);
                     AppUtils.updateDeviceTokenForFCM(activity,apiService);
@@ -1365,14 +1357,7 @@ public class DashboardActivity extends BaseClass
             holder.rbDivision.setChecked(true);
             for (int i = 0; i < listItems.size(); i++)
             {
-                if(i==position)
-                {
-                    listItems.get(i).setSelected(true);
-                }
-                else
-                {
-                    listItems.get(i).setSelected(false);
-                }
+                listItems.get(i).setSelected(i == position);
             }
             notifyDataSetChanged();
         }
@@ -1385,12 +1370,12 @@ public class DashboardActivity extends BaseClass
 
         public class ViewHolder extends RecyclerView.ViewHolder
         {
-            private RadioButton rbDivision;
-            private View viewLine;
+            private final RadioButton rbDivision;
+            private final View viewLine;
             public ViewHolder(View itemView)
             {
                 super(itemView);
-                rbDivision = (RadioButton) itemView.findViewById(R.id.rbDivision);
+                rbDivision = itemView.findViewById(R.id.rbDivision);
                 viewLine = itemView.findViewById(R.id.viewLine);
             }
         }
@@ -1416,9 +1401,9 @@ public class DashboardActivity extends BaseClass
             dialog.setContentView(sheetView);
 
             TextView tvHeader,tvDescription,tvConfirm;
-            tvHeader = (TextView) dialog.findViewById(R.id.tvHeader);
-            tvDescription = (TextView) dialog.findViewById(R.id.tvDescription);
-            tvConfirm = (TextView) dialog.findViewById(R.id.tvConfirm);
+            tvHeader = dialog.findViewById(R.id.tvHeader);
+            tvDescription = dialog.findViewById(R.id.tvDescription);
+            tvConfirm = dialog.findViewById(R.id.tvConfirm);
             tvHeader.setText("Exit");
             tvDescription.setText("Are you sure you want to exit from Unison App?");
             tvConfirm.setText("EXIT");

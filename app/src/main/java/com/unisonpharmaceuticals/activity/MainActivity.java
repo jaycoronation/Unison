@@ -178,7 +178,6 @@ public class MainActivity extends BaseClass
 
     public void callMakeEntryService()
     {
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
         {
             Log.e("JobService >> ", " Running ? "+JobSchedulerHelper.isJobServiceRunning(activity,11));
@@ -1975,28 +1974,23 @@ public class MainActivity extends BaseClass
             holder.rbDivision.setChecked(bean.isSelected());
             holder.rbDivision.setText(bean.getCode()+" "+bean.getDivision());
             holder.rbDivision.setTypeface(AppUtils.getTypefaceRegular(activity));
-            holder.rbDivision.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    isDivisionSelected = true;
-                    selectedTerritoryId = bean.getCode();
-                    selectedUserId = bean.getEmployee_id();
-                    selectedUserType = bean.getUser_type();
-                    is_stk_done = bean.getIs_stk_done();
-                    isDayEnd = bean.getIs_day_end();
+            holder.rbDivision.setOnClickListener(view -> {
+                isDivisionSelected = true;
+                selectedTerritoryId = bean.getCode();
+                selectedUserId = bean.getEmployee_id();
+                selectedUserType = bean.getUser_type();
+                is_stk_done = bean.getIs_stk_done();
+                isDayEnd = bean.getIs_day_end();
 
-                    sessionManager.setDayEnd(String.valueOf(bean.getIs_day_end()));
-                    sessionManager.setSalesPermission(bean.getIs_sales_entry());
-                    sessionManager.setSalesReportPermission(bean.getIs_sales_report());
-                    sessionManager.setSamplePermission(bean.getIs_sample_entry());
-                    sessionManager.setSampleReportPermission(bean.getIs_sample_report());
-                    sessionManager.setCanSTK(bean.getIs_lock_stk());
-                    sessionManager.setOffDayOrAdminDay(bean.getIs_offday());
+                sessionManager.setDayEnd(String.valueOf(bean.getIs_day_end()));
+                sessionManager.setSalesPermission(bean.getIs_sales_entry());
+                sessionManager.setSalesReportPermission(bean.getIs_sales_report());
+                sessionManager.setSamplePermission(bean.getIs_sample_entry());
+                sessionManager.setSampleReportPermission(bean.getIs_sample_report());
+                sessionManager.setCanSTK(bean.getIs_lock_stk());
+                sessionManager.setOffDayOrAdminDay(bean.getIs_offday());
 
-                    setSelectedRadioButton(position,bean,holder);
-                }
+                setSelectedRadioButton(position,bean,holder);
             });
         }
 

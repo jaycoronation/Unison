@@ -389,13 +389,19 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
             } else if (msg.what == 113) {
                 try {
-                    if (sessionManager.getDayEnd().equals("false")) {
-                        if (sessionManager.getCallDoneFromTP().equalsIgnoreCase("true")) {
+                    if (sessionManager.getDayEnd().equals("false"))
+                    {
+                        if (sessionManager.getCallDoneFromTP().equalsIgnoreCase("true"))
+                        {
                             showListDialog(ADD_AREA);
-                        } else {
+                        }
+                        else
+                        {
                             AppUtils.showToast(activity, "To add area, You should have done atleast one call from your current tourplan.");
                         }
-                    } else {
+                    }
+                    else
+                    {
                         AppUtils.showToast(activity, "Your day has been ended by you.Kindly try again tomorrow.");
                     }
                 }
@@ -791,7 +797,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             edtDBC.setText("ADV : Advice");
                             dbs = "ADV";
                             selectedReportCode = "ADV";
-                            tvSaveButton.setText("Upload Entry");
+                            tvSaveButton.setText("Save Entry");
 
 
                             inputEmployee.setVisibility(View.VISIBLE);
@@ -826,7 +832,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                 edtDBC.setText("ADV : Advice");
                                 dbs = "ADV";
                                 selectedReportCode = "ADV";
-                                tvSaveButton.setText("Upload Entry");
+                                tvSaveButton.setText("Save Entry");
 
                                 inputEmployee.setVisibility(View.VISIBLE);
                                 inputDate.setVisibility(View.VISIBLE);
@@ -1237,7 +1243,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                         edtDBC.setText("ADV : Advice");
                         dbs = "ADV";
                         selectedReportCode = "ADV";
-                        tvSaveButton.setText("Upload Entry");
+                        tvSaveButton.setText("Save Entry");
 
                         inputEmployee.setVisibility(View.VISIBLE);
                         inputDate.setVisibility(View.VISIBLE);
@@ -1270,7 +1276,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                             edtDBC.setText("ADV : Advice");
                             dbs = "ADV";
                             selectedReportCode = "ADV";
-                            tvSaveButton.setText("Upload Entry");
+                            tvSaveButton.setText("Save Entry");
 
                             inputEmployee.setVisibility(View.VISIBLE);
                             inputDate.setVisibility(View.VISIBLE);
@@ -1686,7 +1692,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 //datePicker(edtDate);
-                showDatePicker(activity);
+                showDatePickerDialog();
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -1714,7 +1720,194 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                 mLastClickTime = SystemClock.elapsedRealtime();
                 if (sessionManager.getDayEnd().equals("false"))
                     {
-                        if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER) && selectedReportCode.equalsIgnoreCase("ADV"))
+
+                        if (validatePrimaryData())
+                        {
+                            Gson gson = new Gson();
+                            String productJson = gson.toJson(listSelectedProducts);
+
+                            boolean isWorkWith = true;
+                            isWorkWith = cbWorkWith.isChecked();
+
+                            if (selectedReportCode.equalsIgnoreCase("INT") ||
+                                    selectedReportCode.equalsIgnoreCase("ROR") ||
+                                    selectedReportCode.equalsIgnoreCase("ROA")) {
+                                focusForString = "";
+                            }
+
+                            NewEntryGetSet getSet = new NewEntryGetSet(edtArea.getText().toString().trim(),
+                                    selectedAreaId,
+                                    edtSpeciality.getText().toString().trim(),
+                                    selectedSpecialityId,
+                                    selectedReportCode,
+                                    edtWorkWith.getText().toString().trim(),
+                                    workWithString,
+                                    edtDoctor.getText().toString().trim(),
+                                    selectedDoctorId,
+                                    newCycle ? "1" : "0",
+                                    edtRemarks.getText().toString().trim(),
+                                    "",
+                                    edtInternee.getText().toString().trim(),
+                                    AppUtils.getStringFromArrayListVariations(listSelectedProducts),
+                                    focusForString,
+                                    isWorkWith,
+                                    String.valueOf(System.currentTimeMillis() / 1000),
+                                    NCRDrData,
+                                    selectedEmployeeID,
+                                    edtEmployee.getText().toString().trim(),
+                                    edtDate.getText().toString().trim(),
+                                    edtAdvice.getText().toString().trim(),
+                                    sessionManager.getUserId());
+
+                            getSet.save();
+
+                            //Beacsue when came from planned entry, the speciality AND area  may not available as regular dcr
+                            if (isPlannerClicked) {
+                                edtSpeciality.setText("");
+                                selectedSpecialityId = "";
+
+                                edtArea.setText("");
+                                selectedAreaId = "";
+                            }
+
+                            isPlannerClicked = false;
+
+                            isNCREntry = false;
+
+                            AppUtils.showToast(activity, "Entry Saved!");
+                            int result;
+                            result = ContextCompat.checkSelfPermission(activity,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                            if (result == PackageManager.PERMISSION_GRANTED)
+                            {
+                                AppUtils.storeJsonResponse(new Gson().toJson(getSet), selectedReportCode + "_Call");
+                            }
+                            else
+                            {
+                                ActivityCompat.requestPermissions(activity,new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },12);
+                            }
+
+                            if (selectedReportCode.equalsIgnoreCase("STK")) {
+                                sessionManager.setIsSTKDone(true);
+                            }
+
+
+                            if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER)
+                                    && listArea.size() == 0)//for manager
+                            {
+                                selectedEmployeeID = "";
+                                edtEmployee.setText("");
+                                edtDate.setText("");
+                                edtAdvice.setText("");
+                            }
+                            else//for working manager and MR
+                            {
+
+                                if (listWorkWith != null && listWorkWith.size() > 0) {
+                                    for (int i = 0; i < listWorkWith.size(); i++) {
+                                        WorkWithResponse.StaffBean staffBean = listWorkWith.get(i);
+                                        staffBean.setSelected(false);
+                                        listWorkWith.set(i, staffBean);
+                                    }
+                                }
+
+                                workWithString = "";
+                                NCRDrData = "";
+                                txtAddCount.setText("1");
+
+                                //edtSpeciality.setText("");
+                                edtInternee.setText("");
+                                edtRemarks.setText("");
+                                dbs = "DCR";
+                                selectedReportCode = "DCR";
+                                edtDBC.setText("DCR : Daily Call Report");
+                                edtWorkWith.setText("");
+                                selectedDoctorId = "";
+                                enable_focus = 0;
+                                edtDoctor.setText("");
+                                cbNewCycle.setChecked(false);
+
+                                selectedEmployeeID = "";
+                                edtEmployee.setText("");
+                                edtDate.setText("");
+                                edtAdvice.setText("");
+
+                                inputArea.setVisibility(View.VISIBLE);
+                                inputDoctor.setVisibility(View.VISIBLE);
+
+                                llWorkWith.setVisibility(View.VISIBLE);
+
+                                if (cbWorkWith.isChecked()) {
+                                    inputWorkWith.setVisibility(View.GONE);
+                                } else {
+                                    inputWorkWith.setVisibility(View.VISIBLE);
+                                }
+
+                                inputInternee.setVisibility(View.GONE);
+                                edtDoctor.setText("");
+                                inputDoctor.setEnabled(true);
+                                inputRMK.setVisibility(View.GONE);
+                                llAdvice.setVisibility(View.GONE);
+                                inputSpeciality.setVisibility(View.VISIBLE);
+                                llNewCycle.setVisibility(View.VISIBLE);
+
+                                rvVariation.setVisibility(View.VISIBLE);
+                                viewLine.setVisibility(View.GONE);
+                                llSampleDetails.setVisibility(View.VISIBLE);
+
+                                    /*listSelectedProducts.clear();
+                                    listVariation.clear();
+                                    ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                                    VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                                    bean.setStock("");
+                                    bean.setItem_code("");
+                                    bean.setItem_id_code("");
+                                    bean.setProduct_id("0");
+                                    bean.setReason("Regular Sample");
+                                    bean.setReason_code("R");
+                                    bean.setName("Product");
+                                    listVariation.add(bean);
+                                    variationAdapter = new VariationAdapter(listVariation);
+                                    rvVariation.setAdapter(variationAdapter);*/
+
+
+                                listSelectedProducts = new ArrayList<>();
+                                ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
+                                VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
+                                bean.setStock("");
+                                bean.setItem_code("");
+                                bean.setItem_id_code("");
+                                bean.setProduct_id("0");
+                                bean.setReason("Regular Sample");
+                                bean.setReason_code("R");
+                                bean.setName("Product");
+                                listTemp.add(bean);
+                                variationAdapter = new VariationAdapter(listTemp);
+                                rvVariation.setAdapter(variationAdapter);
+
+                                for (int i = 0; i < listVariation.size(); i++) {
+                                    VariationResponse.VariationsBean bean1 = listVariation.get(i);
+                                    bean1.setStock("");
+                                    bean1.setChecked(false);
+                                    //Added for not take previous reason 7_3_19
+                                    bean1.setReason("");
+                                    bean1.setReason_code("R");
+                                    listVariation.set(i, bean1);
+                                }
+
+                                Log.i("************* ", "onClick: " + listVariation.size());
+                            }
+
+                            if (handlerNCR != null) {
+                                Message message = Message.obtain();
+                                message.what = 101;
+                                handlerNCR.sendMessage(message);
+                            }
+                        }
+
+
+                        // ADVICE DIRECT STORE TO DATA BASE COMMENTED AS PER RITESHBHAI ON 18th JUNE 2024
+                        /*if (sessionManager.getUSerType().equalsIgnoreCase(ApiClient.MANAGER) && selectedReportCode.equalsIgnoreCase("ADV"))
                         {
                            if (validatePrimaryData())
                            {
@@ -1892,7 +2085,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     viewLine.setVisibility(View.GONE);
                                     llSampleDetails.setVisibility(View.VISIBLE);
 
-                                    /*listSelectedProducts.clear();
+                                    *//*listSelectedProducts.clear();
                                     listVariation.clear();
                                     ArrayList<VariationResponse.VariationsBean> listTemp = new ArrayList<>();
                                     VariationResponse.VariationsBean bean = new VariationResponse.VariationsBean();
@@ -1905,7 +2098,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     bean.setName("Product");
                                     listVariation.add(bean);
                                     variationAdapter = new VariationAdapter(listVariation);
-                                    rvVariation.setAdapter(variationAdapter);*/
+                                    rvVariation.setAdapter(variationAdapter);*//*
 
 
                                     listSelectedProducts = new ArrayList<>();
@@ -1941,7 +2134,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
                                     handlerNCR.sendMessage(message);
                                 }
                             }
-                        }
+                        }*/
 
                     }
                 else
@@ -2106,11 +2299,68 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
         // Disable Sundays and set minimum date to Monday if today is Sunday
         if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1); // Set minimum date to Monday
+            calendar.add(Calendar.DAY_OF_MONTH, 3); // Set minimum date to Monday
         }
         datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
         // Set the maximum date to today
         datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+
+        datePickerDialog.show();
+    }
+
+    private ArrayList<Calendar> selectedDates;
+    private static final int MAX_SELECTION = 3;
+
+    private void showDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+
+        // Get the last 3 days including today
+        Calendar minDate = (Calendar) calendar.clone();
+        Calendar maxDate = (Calendar) calendar.clone();
+        minDate.add(Calendar.DAY_OF_MONTH, -3);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(activity,
+                (view, year, month, dayOfMonth) -> {
+                    Calendar selectedDateData = Calendar.getInstance();
+                    selectedDateData.set(year, month, dayOfMonth);
+
+                    int dayOfWeek = selectedDateData.get(Calendar.DAY_OF_WEEK);
+
+                    /*if (dayOfWeek == Calendar.SATURDAY) {
+                        Toast.makeText(activity, "Saturdays are disabled", Toast.LENGTH_SHORT).show();
+                        return;
+                    }*/
+
+                    if (dayOfWeek == Calendar.SUNDAY) {
+                        Toast.makeText(activity, "Sundays are disabled", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    date_time = dayOfMonth + "/" + (month + 1) + "/" + year;
+
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date convertedDate2 = new Date();
+                    try {
+                        convertedDate2 = dateFormat.parse(date_time);
+                        String showDate = df.format(convertedDate2);
+                        Log.e("showDate", showDate);
+                        selectedDate = showDate;
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    edtDate.setText(selectedDate);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+
+        // Disable dates outside the last 3 days including today
+        datePickerDialog.getDatePicker().setMinDate(minDate.getTimeInMillis());
+        datePickerDialog.getDatePicker().setMaxDate(maxDate.getTimeInMillis());
 
         datePickerDialog.show();
     }
@@ -4226,7 +4476,7 @@ public class FragmentMakeEntry extends Fragment implements ActivityCompat.OnRequ
 
                             if (selectedReportCode.equals("ADV"))
                             {
-                                tvSaveButton.setText("Upload Entry");
+                                tvSaveButton.setText("Save Entry");
                             }
                             else
                             {

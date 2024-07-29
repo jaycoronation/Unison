@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -296,14 +297,30 @@ public class FragmentTANew extends Fragment implements View.OnClickListener {
                     AppUtils.showToast(activity, "Please select month");
                 } else {
                     if (sessionManager.isNetworkAvailable()) {
-                        String url = ApiClient.TRAVELLING_REPORT_DOWNLOAD + "staff_id="+selectedStaffId+"&month="+selectedMonth+"&year="+selectedYear+"&session_id="+sessionManager.getUserId();
 
-                        /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(browserIntent);*/
 
-                        Intent intent = new Intent(activity, WebViewActivity.class);
+                        try
+                        {
+
+                            String params = "staff_id="+selectedStaffId+"&month="+selectedMonth+"&year="+selectedYear+"&session_id="+sessionManager.getUserId();
+
+                            byte[] data = params.getBytes("UTF-8");
+                            String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+                            String url = ApiClient.TRAVELLING_REPORT_DOWNLOAD + "query=" + base64;
+
+                            Log.e("URL === ", url);
+
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            startActivity(browserIntent);
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                        /*Intent intent = new Intent(activity, WebViewActivity.class);
                         intent.putExtra("report_url",url);
-                        startActivity(intent);
+                        startActivity(intent);*/
                     } else {
                         AppUtils.showToast(activity, activity.getString(R.string.network_failed_message));
                     }

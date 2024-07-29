@@ -87,7 +87,7 @@ public class PendingLeaveActivity extends BaseClass
     public  static boolean flagDate = false ;
 
     private Dialog listDialog;
-    private ArrayList<String> listLeaveType = new ArrayList<>();
+    private final ArrayList<String> listLeaveType = new ArrayList<>();
 
     private String isFor = "";
 
@@ -125,9 +125,9 @@ public class PendingLeaveActivity extends BaseClass
     @Override
     public void initViews() {
         findViewById(R.id.llNotification).setVisibility(View.GONE);
-        llLogout = (LinearLayout) findViewById(R.id.llLogout);
+        llLogout = findViewById(R.id.llLogout);
         llLogout.setVisibility(View.GONE);
-        ImageView ivBack = (ImageView) findViewById(R.id.ivBack);
+        ImageView ivBack = findViewById(R.id.ivBack);
         ivBack.setImageResource(R.drawable.ic_logout);
         findViewById(R.id.llBack).setVisibility(View.VISIBLE);
         findViewById(R.id.llBack).setOnClickListener(new View.OnClickListener() {
@@ -139,35 +139,35 @@ public class PendingLeaveActivity extends BaseClass
         TextView txtTitle = findViewById(R.id.txtTitle);
         txtTitle.setText("Leave");
 
-        llLoading = (LinearLayout) findViewById(R.id.llLoading);
+        llLoading = findViewById(R.id.llLoading);
 
-        txtCasualTotal = (TextView) findViewById(R.id.txtCasualTotal);
-        txtCasualUsed = (TextView) findViewById(R.id.txtCasualUsed);
-        txtCasualPending = (TextView) findViewById(R.id.txtCasualPending);
+        txtCasualTotal = findViewById(R.id.txtCasualTotal);
+        txtCasualUsed = findViewById(R.id.txtCasualUsed);
+        txtCasualPending = findViewById(R.id.txtCasualPending);
 
-        txtPrivilegeTotal = (TextView) findViewById(R.id.txtPrivilegeTotal);
-        txtPrivilegeUsed = (TextView) findViewById(R.id.txtPrivilegeUsed);
-        txtPrivilegePending = (TextView) findViewById(R.id.txtPrivilegePending);
+        txtPrivilegeTotal = findViewById(R.id.txtPrivilegeTotal);
+        txtPrivilegeUsed = findViewById(R.id.txtPrivilegeUsed);
+        txtPrivilegePending = findViewById(R.id.txtPrivilegePending);
 
-        txtMedicalTotal = (TextView) findViewById(R.id.txtMedicalTotal);
-        txtMedicalUsed = (TextView) findViewById(R.id.txtMedicalUsed);
-        txtMedicalPending = (TextView) findViewById(R.id.txtMedicalPending);
+        txtMedicalTotal = findViewById(R.id.txtMedicalTotal);
+        txtMedicalUsed = findViewById(R.id.txtMedicalUsed);
+        txtMedicalPending = findViewById(R.id.txtMedicalPending);
 
-        txtLWPTotal = (TextView) findViewById(R.id.txtLWPTotal);
-        txtLWPUsed = (TextView) findViewById(R.id.txtLWPUsed);
-        txtLWPPending = (TextView) findViewById(R.id.txtLWPPending);
+        txtLWPTotal = findViewById(R.id.txtLWPTotal);
+        txtLWPUsed = findViewById(R.id.txtLWPUsed);
+        txtLWPPending = findViewById(R.id.txtLWPPending);
 
         //Apply For Leave
-        edtStartDate = (EditText) findViewById(R.id.edtStartDate);
-        edtEndDate = (EditText) findViewById(R.id.edtEndDate);
-        edtReason = (EditText) findViewById(R.id.edtReason);
-        edtLeaveType = (EditText) findViewById(R.id.edtLeaveType);
+        edtStartDate = findViewById(R.id.edtStartDate);
+        edtEndDate = findViewById(R.id.edtEndDate);
+        edtReason = findViewById(R.id.edtReason);
+        edtLeaveType = findViewById(R.id.edtLeaveType);
 
         edtStartDate.setInputType(InputType.TYPE_NULL);
         edtEndDate.setInputType(InputType.TYPE_NULL);
         edtLeaveType.setInputType(InputType.TYPE_NULL);
 
-        btnApply = (LinearLayout) findViewById(R.id.btnApply);
+        btnApply = findViewById(R.id.btnApply);
 
         /*listLeaveType.add("Casual Leave");
         listLeaveType.add("Privilege Leave");
@@ -290,7 +290,7 @@ public class PendingLeaveActivity extends BaseClass
                             hashMap.put("leave_type",strLeaveType);
                             hashMap.put("login_user_id",sessionManager.getUserId());
 
-                            Log.e("Leave REQUEST", "doInBackground: "+hashMap.toString() );
+                            Log.e("Leave REQUEST", "doInBackground: "+ hashMap);
 
                             String serverResponse = MitsUtils.readJSONServiceUsingPOST(ApiClient.APPLY_LEAVE,hashMap);
 
@@ -438,7 +438,7 @@ public class PendingLeaveActivity extends BaseClass
                 {
                     if(!strStartDate.equalsIgnoreCase(""))
                     {
-                        int casualPending = Integer.parseInt(strCasualPending.toString());
+                        int casualPending = Integer.parseInt(strCasualPending);
                         try
                         {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -460,7 +460,7 @@ public class PendingLeaveActivity extends BaseClass
                 {
                     if(!strStartDate.equalsIgnoreCase(""))
                     {
-                        int casualPending = Integer.parseInt(strPrivilegePending.toString());
+                        int casualPending = Integer.parseInt(strPrivilegePending);
                         try
                         {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -831,7 +831,7 @@ public class PendingLeaveActivity extends BaseClass
 
     public class LeaveTypeAdapter extends BaseAdapter
     {
-        private Activity activity;
+        private final Activity activity;
         ProgressDialog pd ;
         private LayoutInflater inflater=null;
         ArrayList<LeaveTypePojo> items ;
@@ -876,7 +876,7 @@ public class PendingLeaveActivity extends BaseClass
             {
                 holder = new LeaveTypeAdapter.ViewHolder();
                 convertView = inflater.inflate(R.layout.row_view_leave_types, null);
-                holder.txtLeaveName = (TextView) convertView.findViewById(R.id.txtLeaveName);
+                holder.txtLeaveName = convertView.findViewById(R.id.txtLeaveName);
 
                 convertView.setTag(holder);
             }
@@ -901,18 +901,12 @@ public class PendingLeaveActivity extends BaseClass
         {
             try
             {
+                // If start date is after the end date.
                 if (dfDate.parse(currentdate).after(dfDate.parse(checkdate)))
                 {
                     b = true;  // If start date is before end date.
                 }
-                else if (dfDate.parse(currentdate).equals(dfDate.parse(checkdate)))
-                {
-                    b = true;  // If two dates are equal.
-                }
-                else
-                {
-                    b = false; // If start date is after the end date.
-                }
+                else b = dfDate.parse(currentdate).equals(dfDate.parse(checkdate));  // If two dates are equal.
             }
             catch (java.text.ParseException e)
             {
@@ -937,18 +931,12 @@ public class PendingLeaveActivity extends BaseClass
         {
             try
             {
+                // If start date is after the end date.
                 if (dfDate.parse(startDate).before(dfDate.parse(endDate)))
                 {
                     b = true;  // If start date is before end date.
                 }
-                else if (dfDate.parse(startDate).equals(dfDate.parse(endDate)))
-                {
-                    b = true;  // If two dates are equal.
-                }
-                else
-                {
-                    b = false; // If start date is after the end date.
-                }
+                else b = dfDate.parse(startDate).equals(dfDate.parse(endDate));  // If two dates are equal.
             }
             catch (java.text.ParseException e)
             {
@@ -993,12 +981,12 @@ public class PendingLeaveActivity extends BaseClass
                 AppUtils.hideKeyboard(sheetView,activity);
             }
         });
-        LinearLayout btnNo = (LinearLayout) listDialog.findViewById(R.id.btnNo);
+        LinearLayout btnNo = listDialog.findViewById(R.id.btnNo);
 
-        TextView tvTitle = (TextView) listDialog.findViewById(R.id.tvTitle);
+        TextView tvTitle = listDialog.findViewById(R.id.tvTitle);
         tvTitle.setText("Select "+isFor);
 
-        TextView tvDone = (TextView) listDialog.findViewById(R.id.tvDone);
+        TextView tvDone = listDialog.findViewById(R.id.tvDone);
 
         if(isFor.equalsIgnoreCase("work with"))
         {
@@ -1009,7 +997,7 @@ public class PendingLeaveActivity extends BaseClass
             tvDone.setVisibility(View.GONE);
         }
 
-        final RecyclerView rvListDialog = (RecyclerView) listDialog.findViewById(R.id.rvDialog);
+        final RecyclerView rvListDialog = listDialog.findViewById(R.id.rvDialog);
 
         areaAdapter = new AreaAdapter();
         rvListDialog.setLayoutManager(new LinearLayoutManager(activity));
@@ -1027,7 +1015,7 @@ public class PendingLeaveActivity extends BaseClass
             }
         });
 
-        final EditText edtSearchDialog = (EditText) listDialog.findViewById(R.id.edtSearchDialog);
+        final EditText edtSearchDialog = listDialog.findViewById(R.id.edtSearchDialog);
         edtSearchDialog.setVisibility(View.GONE);
         listDialog.findViewById(R.id.inputSearch).setVisibility(View.GONE);
 
@@ -1104,16 +1092,17 @@ public class PendingLeaveActivity extends BaseClass
 
         public class ViewHolder extends RecyclerView.ViewHolder
         {
-            private TextView tvValue,tvId;
-            private CheckBox cb;
-            private View viewLine;
+            private final TextView tvValue;
+            private final TextView tvId;
+            private final CheckBox cb;
+            private final View viewLine;
             public ViewHolder(View itemView)
             {
                 super(itemView);
-                tvValue = (TextView) itemView.findViewById(R.id.tvValue);
-                tvId = (TextView) itemView.findViewById(R.id.tvId);
+                tvValue = itemView.findViewById(R.id.tvValue);
+                tvId = itemView.findViewById(R.id.tvId);
                 viewLine = itemView.findViewById(R.id.viewLine);
-                cb = (CheckBox) itemView.findViewById(R.id.cb);
+                cb = itemView.findViewById(R.id.cb);
                 cb.setTypeface(AppUtils.getTypefaceRegular(activity));
             }
         }

@@ -222,7 +222,7 @@ public class SelectProductActivity extends AppCompatActivity
                 AppUtils.showToast(activity, "Please enter unit for all samples.");
             }
         } else {
-            AppUtils.showToast(activity, "Please Select atleast One sample.");
+            AppUtils.showToast(activity, "Please Select at least One sample.");
         }
     }
 

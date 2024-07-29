@@ -268,8 +268,6 @@ public class FragmentSampleUpdateNew extends Fragment implements View.OnClickLis
 		llLoading.setVisibility(View.GONE);
 	}
 
-
-
 	private void getBusinessFromDoctor()
 	{
 		llLoading.setVisibility(View.VISIBLE);

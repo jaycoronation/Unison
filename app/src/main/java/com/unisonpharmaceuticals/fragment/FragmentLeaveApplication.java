@@ -85,7 +85,7 @@ public class FragmentLeaveApplication extends Fragment
 	public  static boolean flagDate = false ;
 
 	private Dialog listDialog;
-	private ArrayList<String> listLeaveType = new ArrayList<>();
+	private final ArrayList<String> listLeaveType = new ArrayList<>();
 
 	private long mLastClickTime = 0;
 
@@ -122,35 +122,35 @@ public class FragmentLeaveApplication extends Fragment
 	
 	private void setUpViews()
 	{
-		llLoading = (LinearLayout) rootView.findViewById(R.id.llLoading);
+		llLoading = rootView.findViewById(R.id.llLoading);
 
-		txtCasualTotal = (TextView) rootView.findViewById(R.id.txtCasualTotal);
-		txtCasualUsed = (TextView) rootView.findViewById(R.id.txtCasualUsed);
-		txtCasualPending = (TextView) rootView.findViewById(R.id.txtCasualPending);
+		txtCasualTotal = rootView.findViewById(R.id.txtCasualTotal);
+		txtCasualUsed = rootView.findViewById(R.id.txtCasualUsed);
+		txtCasualPending = rootView.findViewById(R.id.txtCasualPending);
 		
-		txtPrivilegeTotal = (TextView) rootView.findViewById(R.id.txtPrivilegeTotal);
-		txtPrivilegeUsed = (TextView) rootView.findViewById(R.id.txtPrivilegeUsed);
-		txtPrivilegePending = (TextView) rootView.findViewById(R.id.txtPrivilegePending);
+		txtPrivilegeTotal = rootView.findViewById(R.id.txtPrivilegeTotal);
+		txtPrivilegeUsed = rootView.findViewById(R.id.txtPrivilegeUsed);
+		txtPrivilegePending = rootView.findViewById(R.id.txtPrivilegePending);
 		
-		txtMedicalTotal = (TextView) rootView.findViewById(R.id.txtMedicalTotal);
-		txtMedicalUsed = (TextView) rootView.findViewById(R.id.txtMedicalUsed);
-		txtMedicalPending = (TextView) rootView.findViewById(R.id.txtMedicalPending);
+		txtMedicalTotal = rootView.findViewById(R.id.txtMedicalTotal);
+		txtMedicalUsed = rootView.findViewById(R.id.txtMedicalUsed);
+		txtMedicalPending = rootView.findViewById(R.id.txtMedicalPending);
 		
-		txtLWPTotal = (TextView) rootView.findViewById(R.id.txtLWPTotal);
-		txtLWPUsed = (TextView) rootView.findViewById(R.id.txtLWPUsed);
-		txtLWPPending = (TextView) rootView.findViewById(R.id.txtLWPPending);
+		txtLWPTotal = rootView.findViewById(R.id.txtLWPTotal);
+		txtLWPUsed = rootView.findViewById(R.id.txtLWPUsed);
+		txtLWPPending = rootView.findViewById(R.id.txtLWPPending);
 		
 		//Apply For Leave
-		edtStartDate = (EditText) rootView.findViewById(R.id.edtStartDate);
-		edtEndDate = (EditText) rootView.findViewById(R.id.edtEndDate);
-		edtReason = (EditText) rootView.findViewById(R.id.edtReason);
-		edtLeaveType = (EditText) rootView.findViewById(R.id.edtLeaveType);
+		edtStartDate = rootView.findViewById(R.id.edtStartDate);
+		edtEndDate = rootView.findViewById(R.id.edtEndDate);
+		edtReason = rootView.findViewById(R.id.edtReason);
+		edtLeaveType = rootView.findViewById(R.id.edtLeaveType);
 		
 		edtStartDate.setInputType(InputType.TYPE_NULL);
 		edtEndDate.setInputType(InputType.TYPE_NULL);
 		edtLeaveType.setInputType(InputType.TYPE_NULL);
 		
-		btnApply = (LinearLayout) rootView.findViewById(R.id.btnApply);
+		btnApply = rootView.findViewById(R.id.btnApply);
 
 		/*listLeaveType.add("Casual Leave");
 		listLeaveType.add("Privilege Leave");
@@ -273,7 +273,7 @@ public class FragmentLeaveApplication extends Fragment
 							hashMap.put("leave_type",strLeaveType);
 							hashMap.put("login_user_id",sessionManager.getUserId());
 
-							Log.e("Leave REQUEST", "doInBackground: "+hashMap.toString() );
+							Log.e("Leave REQUEST", "doInBackground: "+ hashMap);
 
 							String serverResponse = MitsUtils.readJSONServiceUsingPOST(ApiClient.APPLY_LEAVE,hashMap);
 
@@ -298,7 +298,7 @@ public class FragmentLeaveApplication extends Fragment
 
 						AppUtils.showToast(activity,message);
 
-						if(success==1)
+						if(success == 1)
 						{
 							edtEndDate.setText("");
 							edtReason.setText("");
@@ -419,7 +419,7 @@ public class FragmentLeaveApplication extends Fragment
 				{
 					if(!strStartDate.equalsIgnoreCase(""))
 					{
-						int casualPending = Integer.parseInt(strCasualPending.toString());
+						int casualPending = Integer.parseInt(strCasualPending);
 						try
 						{
 							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -441,7 +441,7 @@ public class FragmentLeaveApplication extends Fragment
 				{
 					if(!strStartDate.equalsIgnoreCase(""))
 					{
-						int casualPending = Integer.parseInt(strPrivilegePending.toString());
+						int casualPending = Integer.parseInt(strPrivilegePending);
 						try
 						{
 							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -463,7 +463,7 @@ public class FragmentLeaveApplication extends Fragment
 				{
 					if(!strStartDate.equalsIgnoreCase(""))
 					{
-						int casualPending = Integer.parseInt(strMedicalPending.toString());
+						int casualPending = Integer.parseInt(strMedicalPending);
 						try
 						{
 							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -745,18 +745,12 @@ public class FragmentLeaveApplication extends Fragment
 	    {
 	        try
 	        {
-				if (dfDate.parse(startDate).before(dfDate.parse(endDate)))
+                // If start date is after the end date.
+                if (dfDate.parse(startDate).before(dfDate.parse(endDate)))
 				{
 				    b = true;  // If start date is before end date.
 				}
-				else if (dfDate.parse(startDate).equals(dfDate.parse(endDate)))
-				{
-				    b = true;  // If two dates are equal.
-				}
-				else
-				{
-				    b = false; // If start date is after the end date.
-				}
+				else b = dfDate.parse(startDate).equals(dfDate.parse(endDate));  // If two dates are equal.
 			}
 	        catch (java.text.ParseException e)
 	        {
@@ -801,12 +795,12 @@ public class FragmentLeaveApplication extends Fragment
 				AppUtils.hideKeyboard(sheetView,activity);
 			}
 		});
-		LinearLayout btnNo = (LinearLayout) listDialog.findViewById(R.id.btnNo);
+		LinearLayout btnNo = listDialog.findViewById(R.id.btnNo);
 
-		TextView tvTitle = (TextView) listDialog.findViewById(R.id.tvTitle);
+		TextView tvTitle = listDialog.findViewById(R.id.tvTitle);
 		tvTitle.setText("Select "+isFor);
 
-		TextView tvDone = (TextView) listDialog.findViewById(R.id.tvDone);
+		TextView tvDone = listDialog.findViewById(R.id.tvDone);
 
 		if(isFor.equalsIgnoreCase("work with"))
 		{
@@ -817,7 +811,7 @@ public class FragmentLeaveApplication extends Fragment
 			tvDone.setVisibility(View.GONE);
 		}
 
-		final RecyclerView rvListDialog = (RecyclerView) listDialog.findViewById(R.id.rvDialog);
+		final RecyclerView rvListDialog = listDialog.findViewById(R.id.rvDialog);
 
 		areaAdapter = new AreaAdapter();
 		rvListDialog.setLayoutManager(new LinearLayoutManager(activity));
@@ -835,7 +829,7 @@ public class FragmentLeaveApplication extends Fragment
 			}
 		});
 
-		final EditText edtSearchDialog = (EditText) listDialog.findViewById(R.id.edtSearchDialog);
+		final EditText edtSearchDialog = listDialog.findViewById(R.id.edtSearchDialog);
 		edtSearchDialog.setVisibility(View.GONE);
 		listDialog.findViewById(R.id.inputSearch).setVisibility(View.GONE);
 
@@ -912,16 +906,17 @@ public class FragmentLeaveApplication extends Fragment
 
 		public class ViewHolder extends RecyclerView.ViewHolder
 		{
-			private TextView tvValue,tvId;
-			private CheckBox cb;
-			private View viewLine;
+			private final TextView tvValue;
+            private final TextView tvId;
+			private final CheckBox cb;
+			private final View viewLine;
 			public ViewHolder(View itemView)
 			{
 				super(itemView);
-				tvValue = (TextView) itemView.findViewById(R.id.tvValue);
-				tvId = (TextView) itemView.findViewById(R.id.tvId);
+				tvValue = itemView.findViewById(R.id.tvValue);
+				tvId = itemView.findViewById(R.id.tvId);
 				viewLine = itemView.findViewById(R.id.viewLine);
-				cb = (CheckBox) itemView.findViewById(R.id.cb);
+				cb = itemView.findViewById(R.id.cb);
 				cb.setTypeface(AppUtils.getTypefaceRegular(activity));
 			}
 		}
